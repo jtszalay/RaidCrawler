@@ -50,7 +50,7 @@ namespace RaidCrawler.Structures
             { "Ghost", "<:tGhost:1060235329665241129>"}, { "Grass", "<:tGrass:1060235303828332655>"}, { "Ground", "<:tGround:1060235355867058308>"}, { "Ice", "<:tIce:1060235356710109246>"},
             { "Normal", "<:tNormal:1060235360334008331>"}, { "Poison", "<:tPoison:1060235353732161569>"}, { "Psychic", "<:tPsychic:1060235385235570811>"}, { "Rock", "<:tRock:1060235386279972906>"},
             { "Steel", "<:tSteel:1060235358358491147>"}, { "Water", "<:tWater:1060235383411056640>"}, { "Male", "<:male:1060738367274352730>"}, { "Female", "<:female:1060738368541048965>"},
-            { "Shiny", "<:shiny:1060794151869874227>"}, { "Square Shiny", "<:square:1064683411874250815>"}, { "Event Star", "<:raidStarB:1060475726572294144>"}, { "7 Star", "<:raidStarM:1060475723405606994>"},
+            { "Shiny", "<:shiny:1065558448995049493>"}, { "Square Shiny", "<:square:1065554022708293732>"}, { "Event Star", "<:raidStarB:1060475726572294144>"}, { "7 Star", "<:raidStarM:1060475723405606994>"},
             { "Star", "<:raidStarY:1060475725498560512>"}, { "Health 0", "<:m1Health0:1063983356309688430>"}, { "Health 31", "<:m1Health31:1063983357773500508>"}, { "Attack 0", "<:m2Attack0:1063983327385751683>"},
             { "Attack 31", "<:m2Attack31:1063983329097039992>"}, { "Defense 0", "<:m3Defence0:1063983331294838814>"}, { "Defense 31", "<:m3Defence31:1063983333056458822>"}, { "SpAttack 0", "<:m4SpecialAttack0:1063983360294273084>"},
             { "SpAttack 31", "<:m4SpecialAttack31:1063983361619660861>"}, { "SpDefense 0", "<:m5SpecialDefence0:1063983385762082867>"}, { "SpDefense 31", "<:m5SpecialDefence31:1063983387137822761>"}, { "Speed 0", "<:m6Speed0:1063983390052847659>" },

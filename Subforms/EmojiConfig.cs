@@ -28,7 +28,6 @@ namespace RaidCrawler.Subforms
             this.c = c;
 
             dataGridView1.DataSource = EmojiLoad(c.Emoji);
-            dataGridView1.Columns["📷"].DefaultCellStyle.BackColor = Color.LightGray;
         }
 
         private Image EmoteParse(string text)
@@ -37,7 +36,6 @@ namespace RaidCrawler.Subforms
             {
                 string urlBase = "https://cdn.discordapp.com/emojis/";
                 string url = $"{urlBase}{result[0]}"+((bool)result[1] ? ".gif" : ".png" )+ "?v=1";
-
 
                 HttpWebRequest discoRequest = (HttpWebRequest)WebRequest.Create(url);
                 discoRequest.Method = "GET";
@@ -58,7 +56,7 @@ namespace RaidCrawler.Subforms
             return empt;
         }
 
-            private static bool TryParse(string text, out ArrayList result)
+        private static bool TryParse(string text, out ArrayList result)
         {
             result = null;
 
@@ -88,7 +86,7 @@ namespace RaidCrawler.Subforms
             return false;
         }
 
-            private DataTable EmojiLoad(Dictionary<string, string> emoji)
+        private DataTable EmojiLoad(Dictionary<string, string> emoji)
         {
             DataTable d = new DataTable();
             d.Columns.Add("Emoji", typeof(string));
@@ -98,6 +96,7 @@ namespace RaidCrawler.Subforms
             d.Columns.Add("📷", typeof(Image));
             int i = 0;
             emoji.ToList().ForEach(KeyValuePair => d.Rows[i++]["📷"] = EmoteParse(KeyValuePair.Value));
+
             d.Columns[2].ReadOnly = true;
             return d;
         }
