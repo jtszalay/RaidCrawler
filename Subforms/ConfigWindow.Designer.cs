@@ -494,7 +494,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label13.Location = new System.Drawing.Point(6, 3);
+            this.label13.Location = new System.Drawing.Point(3, 47);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(84, 15);
             this.label13.TabIndex = 39;
@@ -503,7 +503,7 @@
             // ExperimentalView
             // 
             this.ExperimentalView.AutoSize = true;
-            this.ExperimentalView.Location = new System.Drawing.Point(6, 21);
+            this.ExperimentalView.Location = new System.Drawing.Point(3, 65);
             this.ExperimentalView.Name = "ExperimentalView";
             this.ExperimentalView.Size = new System.Drawing.Size(241, 19);
             this.ExperimentalView.TabIndex = 40;
@@ -512,10 +512,10 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -806,12 +806,12 @@
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage3.Size = new System.Drawing.Size(341, 416);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Experimental";
+            this.tabPage3.Text = "General";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // InstanceName
             // 
-            this.InstanceName.Location = new System.Drawing.Point(6, 61);
+            this.InstanceName.Location = new System.Drawing.Point(3, 21);
             this.InstanceName.Name = "InstanceName";
             this.InstanceName.Size = new System.Drawing.Size(327, 23);
             this.InstanceName.TabIndex = 42;
@@ -819,7 +819,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 43);
+            this.label17.Location = new System.Drawing.Point(3, 3);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(89, 15);
             this.label17.TabIndex = 41;

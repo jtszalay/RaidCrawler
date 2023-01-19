@@ -1,4 +1,6 @@
-﻿namespace RaidCrawler.Structures
+﻿using System.Data;
+
+namespace RaidCrawler.Structures
 {
     public class Config
     {
@@ -41,7 +43,7 @@
         public int IVsStyle { get; set; } = 0;
         public string IVsSpacer { get; set; } = " ";
         public bool ToggleDen { get; set; } = true;
-		public Dictionary<string, string> Emoji { get; set; } = new Dictionary<string, string>
+        public Dictionary<string, string> Emoji { get; set; } = new Dictionary<string, string>
         {
             { "Bug", "<:tBug:1060235283976699995>" }, { "Dark", "<:tDark:1060235285394366564>" }, { "Dragon", "<:tDragon:1060235286879141917>"}, { "Electric", "<:tElectric:1060235288691093566>"},
             { "Fairy", "<:tFairy:1060235282127003730>"}, { "Fighting", "<:tFighting:1060235325705822309>"}, { "Fire", "<:tFlying:1060235328717336646>"}, { "Flying", "<:tFlying:1060235328717336646>"},
@@ -56,7 +58,6 @@
             { "Bitter Herba", "<:herbaBitter:1058436112034562088>"}, { "Spicy Herba", "<:herbaSpicy:1058436113276096614>"}, { "Bottle Cap", "<:bottlecap:1058436109761265765>"},
             { "Ability Capsule", "<:abilitycapsule:1059122237019537478>"}, { "Ability Patch", "<:abilitypatch:1059123255283302450>"}
         };
-
 
         // Experimental
         public bool StreamerView { get; set; } = false;

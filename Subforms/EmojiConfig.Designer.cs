@@ -39,15 +39,16 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(12, 12);
             this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowHeadersWidth = 15;
             this.dataGridView1.RowTemplate.Height = 25;
-            this.dataGridView1.Size = new System.Drawing.Size(350, 398);
+            this.dataGridView1.Size = new System.Drawing.Size(400, 398);
             this.dataGridView1.TabIndex = 0;
             // 
             // Save
             // 
             this.Save.Location = new System.Drawing.Point(12, 416);
             this.Save.Name = "Save";
-            this.Save.Size = new System.Drawing.Size(350, 23);
+            this.Save.Size = new System.Drawing.Size(400, 34);
             this.Save.TabIndex = 1;
             this.Save.Text = "Save";
             this.Save.UseVisualStyleBackColor = true;
@@ -57,9 +58,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(374, 450);
+            this.ClientSize = new System.Drawing.Size(424, 450);
             this.Controls.Add(this.Save);
             this.Controls.Add(this.dataGridView1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "EmojiConfig";
             this.ShowIcon = false;
             this.Text = "EmojiConfig";
