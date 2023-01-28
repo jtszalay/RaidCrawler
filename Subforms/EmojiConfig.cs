@@ -111,7 +111,8 @@ namespace RaidCrawler.Subforms
         private void Save_Click(object sender, EventArgs e)
         {
             c.Emoji = EmojiSave((DataTable)dataGridView1.DataSource);
-           
+            dataGridView1.DataSource = EmojiLoad(c.Emoji);
+
             string output = JsonConvert.SerializeObject(c);
             using StreamWriter sw = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json"));
             sw.Write(output);

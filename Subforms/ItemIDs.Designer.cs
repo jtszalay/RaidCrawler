@@ -249,6 +249,7 @@
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "ItemIDs";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ItemIDs";
             ((System.ComponentModel.ISupportInitialize)(this.PicPatch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicSweet)).EndInit();

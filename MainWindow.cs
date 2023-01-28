@@ -334,7 +334,7 @@ namespace RaidCrawler
                 EC.Text = !HideSeed ? $"{raid.EC:X8}" : "Hidden";
                 PID.Text = GetPIDString(raid, encounter);
                 Area.Text = $"{Areas.Area[raid.Area - 1]} - Den {raid.Den}";
-                IsEvent.Checked = raid.IsEvent;
+                LabelIsEvent.Visible = raid.IsEvent;
 
                 var teratype = Raid.GetTeraType(encounter, raid);
                 TeraType.Text = Raid.strings.types[teratype];
@@ -343,6 +343,8 @@ namespace RaidCrawler
 
                 if (encounter != null)
                 {
+                    var map = GenerateMap(raid, teratype);
+                    myPanel1.BackgroundImage = map;
                     var param = Raid.GetParam(encounter);
                     var blank = new PK9
                     {
@@ -359,6 +361,7 @@ namespace RaidCrawler
                     var nature = blank.Nature;
                     Nature.Text = $"{Raid.strings.Natures[nature]}";
                     Ability.Text = $"{Raid.strings.Ability[blank.Ability]}";
+                    SizeBox.Text = $"{PokeSizeDetailedUtil.GetSizeRating(blank.Scale)} ({blank.Scale})";
                     var extra_moves = new ushort[] { 0, 0, 0, 0 };
                     for (int i = 0; i < encounter.ExtraMoves.Length; i++)
                         if (i < extra_moves.Count()) extra_moves[i] = encounter.ExtraMoves[i];
@@ -382,8 +385,8 @@ namespace RaidCrawler
                     Ability.Text = string.Empty;
                 }
 
-                PID.BackColor = Raid.CheckIsShiny(raid, encounter) ? Color.Gold : DefaultColor;
-                IVs.BackColor = IVs.Text is "31/31/31/31/31/31" ? Color.YellowGreen : DefaultColor;
+                PID.BackColor = Raid.CheckIsShiny(raid, encounter) ? Color.FromArgb(125, 255, 215, 0) : DefaultColor;
+                IVs.BackColor = IVs.Text is "31/31/31/31/31/31" ? Color.FromArgb(125, 154, 205, 50) : DefaultColor;
             }
             else
             {
@@ -706,13 +709,13 @@ namespace RaidCrawler
                 return null;
             try
             {
-                var x = (den_locations[$"{raid.Area}-{raid.Den}"][0] + 2.072021484) * 512 / 5000;
+                var x = (den_locations[$"{raid.Area}-{raid.Den}"][0] - 125.072021484) * 512 / 5000;
                 var y = (den_locations[$"{raid.Area}-{raid.Den}"][2] + 5255.240018) * 512 / 5000;
                 var mapimg = ImageUtil.LayerImage(map, gem, (int)x, (int)y);
                 if (den_locations.ContainsKey($"{raid.Area}-{raid.Den}_"))
                 {
-                    x = (den_locations[$"{raid.Area}-{raid.Den}_"][0] + 2.072021484) * 512 / 5000;
-                    x = (den_locations[$"{raid.Area}-{raid.Den}_"][0] + 2.072021484) * 512 / 5000;
+                    x = (den_locations[$"{raid.Area}-{raid.Den}_"][0] - 125.072021484) * 512 / 5000;
+                    y = (den_locations[$"{raid.Area}-{raid.Den}_"][2] + 5255.240018) * 512 / 5000;
                     mapimg = ImageUtil.LayerImage(mapimg, gem, (int)x, (int)y);
                 }
                 return mapimg;
@@ -993,7 +996,7 @@ namespace RaidCrawler
             {
                 ButtonPrevious.Enabled = true;
                 ButtonNext.Enabled = true;
-                ComboIndex.DataSource = Enumerable.Range(0, Raids.Count ).Select(z => $"{z + 1:D2} {Raid.strings.Species[Encounters[z].Species]} {(Encounters[z].Form != 0 ? $"-{Encounters[z].Form}" : "")}").ToArray();
+                ComboIndex.DataSource = Enumerable.Range(0, Raids.Count ).Select(z => $"{(Raid.CheckIsShiny(Raids[z], Encounters[z]) ? "☆" : "")}{z + 1:D2} {Raid.strings.Species[Encounters[z].Species]} {(Encounters[z].Form != 0 ? $"-{Encounters[z].Form}" : "")}{(Raid.CheckIsShiny(Raids[z], Encounters[z]) ? "☆" : "")}").ToArray();
                 ComboIndex.SelectedIndex = index < Raids.Count ? index : 0;
             }
             else

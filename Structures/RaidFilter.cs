@@ -13,6 +13,7 @@ namespace RaidCrawler.Structures
         public int? Nature { get; set; }
         public int? TeraType { get; set; }
         public int? Gender { get; set; }
+        public int? Size { get; set; }
         public int IVBin { get; set; }
         public int IVComps { get; set; }
         public int IVVals { get; set; }
@@ -24,7 +25,7 @@ namespace RaidCrawler.Structures
 
         public bool IsFilterSet()
         {
-            if (Species == null && Form == null && Stars == null && Shiny == false && Square == false && Nature == null && TeraType == null && Gender == null && IVBin == 0 && (RewardItems == null || RewardsCount == 0) && BatchFilters == null)
+            if (Species == null && Form == null && Stars == null && Shiny == false && Square == false && Nature == null && TeraType == null && Gender == null && Size == null && IVBin == 0 && (RewardItems == null || RewardsCount == 0) && BatchFilters == null)
                 return false;
             return true;
         }
@@ -182,6 +183,54 @@ namespace RaidCrawler.Structures
             return blank.Gender == Gender;
         }
 
+        public bool IsSizeSatisfied(ITeraRaid? encounter, Raid raid)
+        {
+            if (Size == null)
+                return true;
+            if (encounter == null)
+                return false;
+
+            var param = Raid.GetParam(encounter);
+            var blank = new PK9();
+            blank.Species = encounter.Species;
+            blank.Form = encounter.Form;
+            Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
+            var size = $"{PokeSizeDetailedUtil.GetSizeRating(blank.Scale)}";
+            var result = 0;
+            switch (size)
+            {
+                case "XXXS":
+                    result = 0;
+                    break;
+                case "XXS":
+                    result = 1;
+                    break;
+                case "XS":
+                    result = 2;
+                    break;
+                case "S":
+                    result = 3;
+                    break;
+                case "AV":
+                    result = 4;
+                    break;
+                case "L":
+                    result = 5;
+                    break;
+                case "XL":
+                    result = 6;
+                    break;
+                case "XXL":
+                    result = 7;
+                    break;
+                case "XXXL":
+                    result = 8;
+                    break;
+            }
+
+            return result == Size;
+        }
+
         public bool IsBatchFilterSatisfied(ITeraRaid? encounter, Raid raid)
         {
             if (BatchFilters == null)
@@ -204,7 +253,7 @@ namespace RaidCrawler.Structures
         {
             return Enabled && IsIVsSatisfied(encounter, raid) && IsShinySatisfied(encounter, raid) && IsSquareSatisfied(encounter, raid) && IsSpeciesSatisfied(encounter) && IsFormSatisfied(encounter)
                 && IsNatureSatisfied(encounter, raid) && IsStarsSatisfied(encounter) && IsTeraTypeSatisfied(raid)
-                && IsRewardsSatisfied(encounter, raid, SandwichBoost) && IsGenderSatisfied(encounter, raid) && IsBatchFilterSatisfied(encounter, raid);
+                && IsRewardsSatisfied(encounter, raid, SandwichBoost) && IsGenderSatisfied(encounter, raid) && IsSizeSatisfied(encounter, raid) && IsBatchFilterSatisfied(encounter, raid);
         }
 
         public bool FilterSatisfied(List<ITeraRaid?> Encounters, List<Raid> Raids, int SandwichBoost)

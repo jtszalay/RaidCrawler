@@ -75,6 +75,8 @@
             this.LabelBatchFilters = new System.Windows.Forms.Label();
             this.BatchFilters = new System.Windows.Forms.TextBox();
             this.SquareCheck = new System.Windows.Forms.CheckBox();
+            this.SizeCheck = new System.Windows.Forms.CheckBox();
+            this.SizeBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.Form)).BeginInit();
             this.PerfectIVFilterGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.IVSPE)).BeginInit();
@@ -176,7 +178,7 @@
             // ShinyCheck
             // 
             this.ShinyCheck.AutoSize = true;
-            this.ShinyCheck.Location = new System.Drawing.Point(15, 285);
+            this.ShinyCheck.Location = new System.Drawing.Point(15, 314);
             this.ShinyCheck.Name = "ShinyCheck";
             this.ShinyCheck.Size = new System.Drawing.Size(60, 19);
             this.ShinyCheck.TabIndex = 6;
@@ -185,7 +187,7 @@
             // 
             // Add
             // 
-            this.Add.Location = new System.Drawing.Point(12, 440);
+            this.Add.Location = new System.Drawing.Point(12, 469);
             this.Add.Name = "Add";
             this.Add.Size = new System.Drawing.Size(111, 23);
             this.Add.TabIndex = 9;
@@ -213,7 +215,7 @@
             this.PerfectIVFilterGroup.Controls.Add(this.Def);
             this.PerfectIVFilterGroup.Controls.Add(this.Atk);
             this.PerfectIVFilterGroup.Controls.Add(this.HP);
-            this.PerfectIVFilterGroup.Location = new System.Drawing.Point(12, 310);
+            this.PerfectIVFilterGroup.Location = new System.Drawing.Point(12, 339);
             this.PerfectIVFilterGroup.Name = "PerfectIVFilterGroup";
             this.PerfectIVFilterGroup.Size = new System.Drawing.Size(231, 124);
             this.PerfectIVFilterGroup.TabIndex = 10;
@@ -535,7 +537,7 @@
             this.ActiveFilters.FormattingEnabled = true;
             this.ActiveFilters.Location = new System.Drawing.Point(257, 23);
             this.ActiveFilters.Name = "ActiveFilters";
-            this.ActiveFilters.Size = new System.Drawing.Size(185, 256);
+            this.ActiveFilters.Size = new System.Drawing.Size(185, 274);
             this.ActiveFilters.TabIndex = 20;
             this.ActiveFilters.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ActiveFilters_ItemCheck);
             this.ActiveFilters.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ActiveFilters_DrawItem);
@@ -561,7 +563,7 @@
             // 
             // Remove
             // 
-            this.Remove.Location = new System.Drawing.Point(132, 440);
+            this.Remove.Location = new System.Drawing.Point(132, 469);
             this.Remove.Name = "Remove";
             this.Remove.Size = new System.Drawing.Size(111, 23);
             this.Remove.TabIndex = 23;
@@ -597,7 +599,7 @@
             ">=",
             "<=",
             "<"});
-            this.RewardsComp.Location = new System.Drawing.Point(172, 256);
+            this.RewardsComp.Location = new System.Drawing.Point(172, 285);
             this.RewardsComp.Name = "RewardsComp";
             this.RewardsComp.Size = new System.Drawing.Size(53, 23);
             this.RewardsComp.TabIndex = 27;
@@ -605,7 +607,7 @@
             // CheckRewards
             // 
             this.CheckRewards.AutoSize = true;
-            this.CheckRewards.Location = new System.Drawing.Point(15, 229);
+            this.CheckRewards.Location = new System.Drawing.Point(15, 258);
             this.CheckRewards.Name = "CheckRewards";
             this.CheckRewards.Size = new System.Drawing.Size(70, 19);
             this.CheckRewards.TabIndex = 26;
@@ -616,7 +618,7 @@
             // Rewards
             // 
             this.Rewards.Enabled = false;
-            this.Rewards.Location = new System.Drawing.Point(104, 227);
+            this.Rewards.Location = new System.Drawing.Point(104, 256);
             this.Rewards.Name = "Rewards";
             this.Rewards.Size = new System.Drawing.Size(96, 23);
             this.Rewards.TabIndex = 28;
@@ -625,7 +627,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 259);
+            this.label2.Location = new System.Drawing.Point(14, 288);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(82, 15);
             this.label2.TabIndex = 29;
@@ -634,7 +636,7 @@
             // RewardsCount
             // 
             this.RewardsCount.Enabled = false;
-            this.RewardsCount.Location = new System.Drawing.Point(104, 256);
+            this.RewardsCount.Location = new System.Drawing.Point(104, 285);
             this.RewardsCount.Maximum = new decimal(new int[] {
             12,
             0,
@@ -646,7 +648,7 @@
             // 
             // ButtonOpenRewardsList
             // 
-            this.ButtonOpenRewardsList.Location = new System.Drawing.Point(206, 227);
+            this.ButtonOpenRewardsList.Location = new System.Drawing.Point(206, 256);
             this.ButtonOpenRewardsList.Name = "ButtonOpenRewardsList";
             this.ButtonOpenRewardsList.Size = new System.Drawing.Size(19, 23);
             this.ButtonOpenRewardsList.TabIndex = 31;
@@ -681,7 +683,7 @@
             // LabelBatchFilters
             // 
             this.LabelBatchFilters.AutoSize = true;
-            this.LabelBatchFilters.Location = new System.Drawing.Point(257, 285);
+            this.LabelBatchFilters.Location = new System.Drawing.Point(257, 315);
             this.LabelBatchFilters.Name = "LabelBatchFilters";
             this.LabelBatchFilters.Size = new System.Drawing.Size(71, 15);
             this.LabelBatchFilters.TabIndex = 34;
@@ -690,7 +692,7 @@
             // BatchFilters
             // 
             this.BatchFilters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.BatchFilters.Location = new System.Drawing.Point(257, 305);
+            this.BatchFilters.Location = new System.Drawing.Point(257, 335);
             this.BatchFilters.Multiline = true;
             this.BatchFilters.Name = "BatchFilters";
             this.BatchFilters.Size = new System.Drawing.Size(185, 157);
@@ -699,18 +701,50 @@
             // SquareCheck
             // 
             this.SquareCheck.AutoSize = true;
-            this.SquareCheck.Location = new System.Drawing.Point(91, 285);
+            this.SquareCheck.Location = new System.Drawing.Point(91, 314);
             this.SquareCheck.Name = "SquareCheck";
             this.SquareCheck.Size = new System.Drawing.Size(99, 19);
             this.SquareCheck.TabIndex = 36;
             this.SquareCheck.Text = "Square Shiny?";
             this.SquareCheck.UseVisualStyleBackColor = true;
             // 
+            // SizeCheck
+            // 
+            this.SizeCheck.AutoSize = true;
+            this.SizeCheck.Location = new System.Drawing.Point(15, 229);
+            this.SizeCheck.Name = "SizeCheck";
+            this.SizeCheck.Size = new System.Drawing.Size(46, 19);
+            this.SizeCheck.TabIndex = 38;
+            this.SizeCheck.Text = "Size";
+            this.SizeCheck.UseVisualStyleBackColor = true;
+            this.SizeCheck.CheckedChanged += new System.EventHandler(this.SizeCheck_CheckedChanged);
+            // 
+            // SizeBox
+            // 
+            this.SizeBox.Enabled = false;
+            this.SizeBox.FormattingEnabled = true;
+            this.SizeBox.Items.AddRange(new object[] {
+            "XXXS",
+            "XXS",
+            "XS",
+            "S",
+            "AV",
+            "L",
+            "XL",
+            "XXL",
+            "XXXL"});
+            this.SizeBox.Location = new System.Drawing.Point(104, 227);
+            this.SizeBox.Name = "SizeBox";
+            this.SizeBox.Size = new System.Drawing.Size(121, 23);
+            this.SizeBox.TabIndex = 37;
+            // 
             // FilterSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(454, 474);
+            this.ClientSize = new System.Drawing.Size(454, 505);
+            this.Controls.Add(this.SizeCheck);
+            this.Controls.Add(this.SizeBox);
             this.Controls.Add(this.SquareCheck);
             this.Controls.Add(this.BatchFilters);
             this.Controls.Add(this.LabelBatchFilters);
@@ -811,5 +845,7 @@
         private Label LabelBatchFilters;
         private TextBox BatchFilters;
         private CheckBox SquareCheck;
+        private CheckBox SizeCheck;
+        private ComboBox SizeBox;
     }
 }

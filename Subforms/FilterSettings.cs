@@ -57,12 +57,14 @@ namespace RaidCrawler.Subforms
             StarsComp.SelectedIndex = filter.StarsComp;
             TeraType.SelectedIndex = filter.TeraType != null ? (int)filter.TeraType : 0;
             Gender.SelectedIndex = filter.Gender != null ? (int)filter.Gender : 0;
+            SizeBox.SelectedIndex = filter.Size != null ? (int)filter.Size : 0;
             SpeciesCheck.Checked = filter.Species != null;
             FormCheck.Checked = filter.Form != null;
             NatureCheck.Checked = filter.Nature != null;
             StarCheck.Checked = filter.Stars != null;
             TeraCheck.Checked = filter.TeraType != null;
             GenderCheck.Checked = filter.Gender != null;
+            SizeCheck.Checked = filter.Size != null;
             ShinyCheck.Checked = filter.Shiny;
             SquareCheck.Checked = filter.Square;
             CheckRewards.Checked = filter.RewardItems != null && filter.RewardsCount > 0;
@@ -120,6 +122,7 @@ namespace RaidCrawler.Subforms
             RewardsComp.Enabled = CheckRewards.Checked;
             TeraType.Enabled = TeraCheck.Checked;
             Gender.Enabled = GenderCheck.Checked;
+            SizeBox.Enabled = SizeCheck.Checked;
         }
 
         private void Add_Filter_Click(object sender, EventArgs e)
@@ -146,6 +149,7 @@ namespace RaidCrawler.Subforms
             filter.StarsComp = StarsComp.SelectedIndex;
             filter.TeraType = TeraCheck.Checked ? TeraType.SelectedIndex : null;
             filter.Gender = GenderCheck.Checked ? Gender.SelectedIndex : null;
+            filter.Size = SizeCheck.Checked ? SizeBox.SelectedIndex : null;
             filter.Shiny = ShinyCheck.Checked;
             filter.Square = SquareCheck.Checked;
             filter.IVBin = ivbin;
@@ -209,6 +213,11 @@ namespace RaidCrawler.Subforms
         private void GenderCheck_CheckedChanged(object sender, EventArgs e)
         {
             Gender.Enabled = GenderCheck.Checked;
+        }
+
+        private void SizeCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            SizeBox.Enabled = SizeCheck.Checked;
         }
 
         private void HP_CheckedChanged(object sender, EventArgs e)

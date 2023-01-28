@@ -92,22 +92,21 @@
             this.SearchTimer = new System.Windows.Forms.Timer(this.components);
             this.SearchTime = new System.Windows.Forms.Label();
             this.DaySkipSuccessRate = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.Sprite)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GemIcon)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.myPanel1.SuspendLayout();
+            this.myPanel2.SuspendLayout();
+            this.myPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // ButtonAdvanceDate
             // 
             this.ButtonAdvanceDate.Enabled = false;
-            this.ButtonAdvanceDate.Location = new System.Drawing.Point(7, 225);
+            this.ButtonAdvanceDate.Location = new System.Drawing.Point(8, 216);
             this.ButtonAdvanceDate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ButtonAdvanceDate.Name = "ButtonAdvanceDate";
             this.ButtonAdvanceDate.Size = new System.Drawing.Size(198, 33);
@@ -123,7 +122,7 @@
             this.CheckEnableFilters.AutoSize = true;
             this.CheckEnableFilters.Checked = true;
             this.CheckEnableFilters.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CheckEnableFilters.Location = new System.Drawing.Point(111, 199);
+            this.CheckEnableFilters.Location = new System.Drawing.Point(112, 190);
             this.CheckEnableFilters.Name = "CheckEnableFilters";
             this.CheckEnableFilters.Size = new System.Drawing.Size(95, 19);
             this.CheckEnableFilters.TabIndex = 119;
@@ -136,7 +135,7 @@
             // ButtonDisconnect
             // 
             this.ButtonDisconnect.Enabled = false;
-            this.ButtonDisconnect.Location = new System.Drawing.Point(111, 61);
+            this.ButtonDisconnect.Location = new System.Drawing.Point(112, 52);
             this.ButtonDisconnect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ButtonDisconnect.Name = "ButtonDisconnect";
             this.ButtonDisconnect.Size = new System.Drawing.Size(97, 27);
@@ -147,7 +146,7 @@
             // 
             // ButtonConnect
             // 
-            this.ButtonConnect.Location = new System.Drawing.Point(7, 61);
+            this.ButtonConnect.Location = new System.Drawing.Point(8, 52);
             this.ButtonConnect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ButtonConnect.Name = "ButtonConnect";
             this.ButtonConnect.Size = new System.Drawing.Size(97, 27);
@@ -160,7 +159,7 @@
             // 
             this.ConnectionStatusText.AutoSize = true;
             this.ConnectionStatusText.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ConnectionStatusText.Location = new System.Drawing.Point(78, 44);
+            this.ConnectionStatusText.Location = new System.Drawing.Point(79, 35);
             this.ConnectionStatusText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ConnectionStatusText.Name = "ConnectionStatusText";
             this.ConnectionStatusText.Size = new System.Drawing.Size(83, 13);
@@ -170,7 +169,7 @@
             // 
             // InputSwitchIP
             // 
-            this.InputSwitchIP.Location = new System.Drawing.Point(78, 16);
+            this.InputSwitchIP.Location = new System.Drawing.Point(79, 7);
             this.InputSwitchIP.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.InputSwitchIP.Name = "InputSwitchIP";
             this.InputSwitchIP.Size = new System.Drawing.Size(129, 23);
@@ -181,7 +180,7 @@
             // LabelStatus
             // 
             this.LabelStatus.AutoSize = true;
-            this.LabelStatus.Location = new System.Drawing.Point(24, 42);
+            this.LabelStatus.Location = new System.Drawing.Point(25, 33);
             this.LabelStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LabelStatus.Name = "LabelStatus";
             this.LabelStatus.Size = new System.Drawing.Size(42, 15);
@@ -191,7 +190,7 @@
             // LabelSwitchIP
             // 
             this.LabelSwitchIP.AutoSize = true;
-            this.LabelSwitchIP.Location = new System.Drawing.Point(7, 19);
+            this.LabelSwitchIP.Location = new System.Drawing.Point(8, 10);
             this.LabelSwitchIP.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LabelSwitchIP.Name = "LabelSwitchIP";
             this.LabelSwitchIP.Size = new System.Drawing.Size(58, 15);
@@ -202,7 +201,7 @@
             // 
             this.LabelLoadedRaids.AutoSize = true;
             this.LabelLoadedRaids.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.LabelLoadedRaids.Location = new System.Drawing.Point(12, 12);
+            this.LabelLoadedRaids.Location = new System.Drawing.Point(9, 6);
             this.LabelLoadedRaids.Name = "LabelLoadedRaids";
             this.LabelLoadedRaids.Size = new System.Drawing.Size(122, 15);
             this.LabelLoadedRaids.TabIndex = 12;
@@ -357,7 +356,7 @@
             // ButtonReadRaids
             // 
             this.ButtonReadRaids.Enabled = false;
-            this.ButtonReadRaids.Location = new System.Drawing.Point(7, 94);
+            this.ButtonReadRaids.Location = new System.Drawing.Point(8, 85);
             this.ButtonReadRaids.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ButtonReadRaids.Name = "ButtonReadRaids";
             this.ButtonReadRaids.Size = new System.Drawing.Size(97, 27);
@@ -366,24 +365,17 @@
             this.ButtonReadRaids.UseVisualStyleBackColor = true;
             this.ButtonReadRaids.Click += new System.EventHandler(this.ButtonReadRaids_Click);
             // 
-            // IsEvent
-            // 
-            this.IsEvent.AutoCheck = false;
-            this.IsEvent.AutoSize = true;
-            this.IsEvent.Location = new System.Drawing.Point(330, 78);
-            this.IsEvent.Name = "IsEvent";
-            this.IsEvent.Size = new System.Drawing.Size(15, 14);
-            this.IsEvent.TabIndex = 83;
-            this.IsEvent.UseVisualStyleBackColor = true;
-            // 
             // LabelIsEvent
             // 
             this.LabelIsEvent.AutoSize = true;
-            this.LabelIsEvent.Location = new System.Drawing.Point(283, 78);
+            this.LabelIsEvent.BackColor = System.Drawing.Color.Transparent;
+            this.LabelIsEvent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.LabelIsEvent.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.LabelIsEvent.Location = new System.Drawing.Point(294, 66);
             this.LabelIsEvent.Name = "LabelIsEvent";
-            this.LabelIsEvent.Size = new System.Drawing.Size(47, 15);
+            this.LabelIsEvent.Size = new System.Drawing.Size(39, 15);
             this.LabelIsEvent.TabIndex = 84;
-            this.LabelIsEvent.Text = "Is Event";
+            this.LabelIsEvent.Text = "Event";
             this.LabelIsEvent.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // Difficulty
@@ -415,7 +407,7 @@
             "3",
             "4",
             "5"});
-            this.Progress.Location = new System.Drawing.Point(157, 291);
+            this.Progress.Location = new System.Drawing.Point(158, 282);
             this.Progress.Name = "Progress";
             this.Progress.Size = new System.Drawing.Size(48, 23);
             this.Progress.TabIndex = 87;
@@ -425,7 +417,7 @@
             // LabelStoryProgress
             // 
             this.LabelStoryProgress.AutoSize = true;
-            this.LabelStoryProgress.Location = new System.Drawing.Point(7, 294);
+            this.LabelStoryProgress.Location = new System.Drawing.Point(8, 285);
             this.LabelStoryProgress.Name = "LabelStoryProgress";
             this.LabelStoryProgress.Size = new System.Drawing.Size(115, 15);
             this.LabelStoryProgress.TabIndex = 88;
@@ -434,7 +426,7 @@
             // ButtonViewRAM
             // 
             this.ButtonViewRAM.Enabled = false;
-            this.ButtonViewRAM.Location = new System.Drawing.Point(111, 94);
+            this.ButtonViewRAM.Location = new System.Drawing.Point(112, 85);
             this.ButtonViewRAM.Name = "ButtonViewRAM";
             this.ButtonViewRAM.Size = new System.Drawing.Size(97, 27);
             this.ButtonViewRAM.TabIndex = 89;
@@ -520,7 +512,7 @@
             // LabelGame
             // 
             this.LabelGame.AutoSize = true;
-            this.LabelGame.Location = new System.Drawing.Point(7, 267);
+            this.LabelGame.Location = new System.Drawing.Point(8, 258);
             this.LabelGame.Name = "LabelGame";
             this.LabelGame.Size = new System.Drawing.Size(41, 15);
             this.LabelGame.TabIndex = 100;
@@ -532,7 +524,7 @@
             this.Game.Items.AddRange(new object[] {
             "Scarlet",
             "Violet"});
-            this.Game.Location = new System.Drawing.Point(109, 264);
+            this.Game.Location = new System.Drawing.Point(110, 255);
             this.Game.Name = "Game";
             this.Game.Size = new System.Drawing.Size(96, 23);
             this.Game.TabIndex = 99;
@@ -542,7 +534,7 @@
             // LabelEventProgress
             // 
             this.LabelEventProgress.AutoSize = true;
-            this.LabelEventProgress.Location = new System.Drawing.Point(6, 322);
+            this.LabelEventProgress.Location = new System.Drawing.Point(7, 313);
             this.LabelEventProgress.Name = "LabelEventProgress";
             this.LabelEventProgress.Size = new System.Drawing.Size(117, 15);
             this.LabelEventProgress.TabIndex = 102;
@@ -556,7 +548,7 @@
             "2",
             "3",
             "4"});
-            this.EventProgress.Location = new System.Drawing.Point(157, 320);
+            this.EventProgress.Location = new System.Drawing.Point(158, 311);
             this.EventProgress.Name = "EventProgress";
             this.EventProgress.Size = new System.Drawing.Size(48, 23);
             this.EventProgress.TabIndex = 101;
@@ -605,7 +597,7 @@
             // 
             // StopFilter
             // 
-            this.StopFilter.Location = new System.Drawing.Point(8, 196);
+            this.StopFilter.Location = new System.Drawing.Point(9, 187);
             this.StopFilter.Name = "StopFilter";
             this.StopFilter.Size = new System.Drawing.Size(97, 23);
             this.StopFilter.TabIndex = 107;
@@ -615,9 +607,9 @@
             // 
             // Sprite
             // 
-            this.Sprite.BackColor = System.Drawing.SystemColors.Control;
+            this.Sprite.BackColor = System.Drawing.Color.Transparent;
             this.Sprite.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Sprite.Location = new System.Drawing.Point(277, 14);
+            this.Sprite.Location = new System.Drawing.Point(279, 3);
             this.Sprite.Name = "Sprite";
             this.Sprite.Size = new System.Drawing.Size(68, 56);
             this.Sprite.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -646,9 +638,9 @@
             // 
             // GemIcon
             // 
-            this.GemIcon.BackColor = System.Drawing.SystemColors.Control;
+            this.GemIcon.BackColor = System.Drawing.Color.Transparent;
             this.GemIcon.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.GemIcon.Location = new System.Drawing.Point(231, 30);
+            this.GemIcon.Location = new System.Drawing.Point(233, 19);
             this.GemIcon.Name = "GemIcon";
             this.GemIcon.Size = new System.Drawing.Size(40, 40);
             this.GemIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -658,7 +650,7 @@
             // ButtonDownloadEvents
             // 
             this.ButtonDownloadEvents.Enabled = false;
-            this.ButtonDownloadEvents.Location = new System.Drawing.Point(111, 127);
+            this.ButtonDownloadEvents.Location = new System.Drawing.Point(112, 118);
             this.ButtonDownloadEvents.Name = "ButtonDownloadEvents";
             this.ButtonDownloadEvents.Size = new System.Drawing.Size(97, 27);
             this.ButtonDownloadEvents.TabIndex = 112;
@@ -668,7 +660,7 @@
             // 
             // ConfigSettings
             // 
-            this.ConfigSettings.Location = new System.Drawing.Point(6, 405);
+            this.ConfigSettings.Location = new System.Drawing.Point(7, 396);
             this.ConfigSettings.Name = "ConfigSettings";
             this.ConfigSettings.Size = new System.Drawing.Size(199, 33);
             this.ConfigSettings.TabIndex = 115;
@@ -678,7 +670,7 @@
             // 
             // Rewards
             // 
-            this.Rewards.Location = new System.Drawing.Point(75, 319);
+            this.Rewards.Location = new System.Drawing.Point(77, 308);
             this.Rewards.Name = "Rewards";
             this.Rewards.Size = new System.Drawing.Size(76, 23);
             this.Rewards.TabIndex = 116;
@@ -689,7 +681,7 @@
             // LabelSandwichBonus
             // 
             this.LabelSandwichBonus.AutoSize = true;
-            this.LabelSandwichBonus.Location = new System.Drawing.Point(6, 350);
+            this.LabelSandwichBonus.Location = new System.Drawing.Point(7, 341);
             this.LabelSandwichBonus.Name = "LabelSandwichBonus";
             this.LabelSandwichBonus.Size = new System.Drawing.Size(120, 15);
             this.LabelSandwichBonus.TabIndex = 118;
@@ -703,7 +695,7 @@
             "1",
             "2",
             "3"});
-            this.RaidBoost.Location = new System.Drawing.Point(157, 347);
+            this.RaidBoost.Location = new System.Drawing.Point(158, 338);
             this.RaidBoost.Name = "RaidBoost";
             this.RaidBoost.Size = new System.Drawing.Size(48, 23);
             this.RaidBoost.TabIndex = 117;
@@ -723,7 +715,7 @@
             // 
             // SendScreenshot
             // 
-            this.SendScreenshot.Location = new System.Drawing.Point(8, 376);
+            this.SendScreenshot.Location = new System.Drawing.Point(9, 367);
             this.SendScreenshot.Name = "SendScreenshot";
             this.SendScreenshot.Size = new System.Drawing.Size(198, 23);
             this.SendScreenshot.TabIndex = 121;
@@ -738,7 +730,7 @@
             // SearchTime
             // 
             this.SearchTime.AutoSize = true;
-            this.SearchTime.Location = new System.Drawing.Point(52, 27);
+            this.SearchTime.Location = new System.Drawing.Point(49, 21);
             this.SearchTime.Name = "SearchTime";
             this.SearchTime.Size = new System.Drawing.Size(82, 15);
             this.SearchTime.TabIndex = 122;
@@ -748,82 +740,24 @@
             // DaySkipSuccessRate
             // 
             this.DaySkipSuccessRate.AutoSize = true;
-            this.DaySkipSuccessRate.Location = new System.Drawing.Point(6, 41);
+            this.DaySkipSuccessRate.Location = new System.Drawing.Point(3, 35);
             this.DaySkipSuccessRate.Name = "DaySkipSuccessRate";
             this.DaySkipSuccessRate.Size = new System.Drawing.Size(128, 15);
             this.DaySkipSuccessRate.TabIndex = 123;
             this.DaySkipSuccessRate.Text = "Day skip success rate: -";
             this.DaySkipSuccessRate.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // groupBox1
+            // label1
             // 
-            this.groupBox1.Controls.Add(this.Sprite);
-            this.groupBox1.Controls.Add(this.GemIcon);
-            this.groupBox1.Controls.Add(this.Seed);
-            this.groupBox1.Controls.Add(this.LabelSeed);
-            this.groupBox1.Controls.Add(this.Rewards);
-            this.groupBox1.Controls.Add(this.IsEvent);
-            this.groupBox1.Controls.Add(this.TeraType);
-            this.groupBox1.Controls.Add(this.LabelIsEvent);
-            this.groupBox1.Controls.Add(this.LabelTeraType);
-            this.groupBox1.Controls.Add(this.Ability);
-            this.groupBox1.Controls.Add(this.LabelAbility);
-            this.groupBox1.Controls.Add(this.Nature);
-            this.groupBox1.Controls.Add(this.LabelNature);
-            this.groupBox1.Controls.Add(this.Gender);
-            this.groupBox1.Controls.Add(this.LabelGender);
-            this.groupBox1.Controls.Add(this.Move4);
-            this.groupBox1.Controls.Add(this.Move3);
-            this.groupBox1.Controls.Add(this.Move2);
-            this.groupBox1.Controls.Add(this.Move1);
-            this.groupBox1.Controls.Add(this.LabelMoves);
-            this.groupBox1.Controls.Add(this.Species);
-            this.groupBox1.Controls.Add(this.LabelSpecies);
-            this.groupBox1.Controls.Add(this.Difficulty);
-            this.groupBox1.Controls.Add(this.LabelDifficulty);
-            this.groupBox1.Controls.Add(this.IVs);
-            this.groupBox1.Controls.Add(this.LabelIVs);
-            this.groupBox1.Controls.Add(this.Area);
-            this.groupBox1.Controls.Add(this.LabelUNK_2);
-            this.groupBox1.Controls.Add(this.PID);
-            this.groupBox1.Controls.Add(this.LabelPID);
-            this.groupBox1.Controls.Add(this.EC);
-            this.groupBox1.Controls.Add(this.LabelEC);
-            this.groupBox1.Location = new System.Drawing.Point(226, 35);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(350, 346);
-            this.groupBox1.TabIndex = 124;
-            this.groupBox1.TabStop = false;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.LabelSwitchIP);
-            this.groupBox2.Controls.Add(this.LabelStatus);
-            this.groupBox2.Controls.Add(this.SendScreenshot);
-            this.groupBox2.Controls.Add(this.CheckEnableFilters);
-            this.groupBox2.Controls.Add(this.InputSwitchIP);
-            this.groupBox2.Controls.Add(this.LabelSandwichBonus);
-            this.groupBox2.Controls.Add(this.ConnectionStatusText);
-            this.groupBox2.Controls.Add(this.RaidBoost);
-            this.groupBox2.Controls.Add(this.StopFilter);
-            this.groupBox2.Controls.Add(this.ButtonConnect);
-            this.groupBox2.Controls.Add(this.ConfigSettings);
-            this.groupBox2.Controls.Add(this.ButtonDisconnect);
-            this.groupBox2.Controls.Add(this.ButtonDownloadEvents);
-            this.groupBox2.Controls.Add(this.ButtonReadRaids);
-            this.groupBox2.Controls.Add(this.LabelEventProgress);
-            this.groupBox2.Controls.Add(this.ButtonAdvanceDate);
-            this.groupBox2.Controls.Add(this.EventProgress);
-            this.groupBox2.Controls.Add(this.Progress);
-            this.groupBox2.Controls.Add(this.LabelGame);
-            this.groupBox2.Controls.Add(this.LabelStoryProgress);
-            this.groupBox2.Controls.Add(this.Game);
-            this.groupBox2.Controls.Add(this.ButtonViewRAM);
-            this.groupBox2.Location = new System.Drawing.Point(7, -1);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(212, 445);
-            this.groupBox2.TabIndex = 125;
-            this.groupBox2.TabStop = false;
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(233, 202);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(32, 15);
+            this.label1.TabIndex = 117;
+            this.label1.Text = "Size:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // panel2
             // 
@@ -835,26 +769,261 @@
             this.panel2.Size = new System.Drawing.Size(232, 33);
             this.panel2.TabIndex = 127;
             // 
-            // groupBox3
+            // Seed
             // 
-            this.groupBox3.Controls.Add(this.LabelLoadedRaids);
-            this.groupBox3.Controls.Add(this.SearchTime);
-            this.groupBox3.Controls.Add(this.DaySkipSuccessRate);
-            this.groupBox3.Location = new System.Drawing.Point(226, 380);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(350, 63);
-            this.groupBox3.TabIndex = 128;
-            this.groupBox3.TabStop = false;
+            this.Seed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Seed.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Seed.Location = new System.Drawing.Point(77, 4);
+            this.Seed.Name = "Seed";
+            this.Seed.ReadOnly = true;
+            this.Seed.Size = new System.Drawing.Size(95, 23);
+            this.Seed.TabIndex = 119;
+            this.Seed.Click += new System.EventHandler(this.Seed_Clicked);
+            // 
+            // myPanel1
+            // 
+            this.myPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.myPanel1.Controls.Add(this.Move4);
+            this.myPanel1.Controls.Add(this.Move3);
+            this.myPanel1.Controls.Add(this.Move2);
+            this.myPanel1.Controls.Add(this.Move1);
+            this.myPanel1.Controls.Add(this.Ability);
+            this.myPanel1.Controls.Add(this.SizeBox);
+            this.myPanel1.Controls.Add(this.Area);
+            this.myPanel1.Controls.Add(this.IVs);
+            this.myPanel1.Controls.Add(this.Species);
+            this.myPanel1.Controls.Add(this.Nature);
+            this.myPanel1.Controls.Add(this.Gender);
+            this.myPanel1.Controls.Add(this.TeraType);
+            this.myPanel1.Controls.Add(this.Difficulty);
+            this.myPanel1.Controls.Add(this.PID);
+            this.myPanel1.Controls.Add(this.EC);
+            this.myPanel1.Controls.Add(this.Seed);
+            this.myPanel1.Controls.Add(this.Sprite);
+            this.myPanel1.Controls.Add(this.LabelEC);
+            this.myPanel1.Controls.Add(this.LabelGender);
+            this.myPanel1.Controls.Add(this.label1);
+            this.myPanel1.Controls.Add(this.LabelPID);
+            this.myPanel1.Controls.Add(this.GemIcon);
+            this.myPanel1.Controls.Add(this.LabelNature);
+            this.myPanel1.Controls.Add(this.LabelMoves);
+            this.myPanel1.Controls.Add(this.LabelUNK_2);
+            this.myPanel1.Controls.Add(this.LabelSeed);
+            this.myPanel1.Controls.Add(this.LabelAbility);
+            this.myPanel1.Controls.Add(this.LabelSpecies);
+            this.myPanel1.Controls.Add(this.Rewards);
+            this.myPanel1.Controls.Add(this.LabelIVs);
+            this.myPanel1.Controls.Add(this.LabelTeraType);
+            this.myPanel1.Controls.Add(this.LabelDifficulty);
+            this.myPanel1.Controls.Add(this.LabelIsEvent);
+            this.myPanel1.Location = new System.Drawing.Point(226, 43);
+            this.myPanel1.Name = "myPanel1";
+            this.myPanel1.Size = new System.Drawing.Size(350, 338);
+            this.myPanel1.TabIndex = 130;
+            // 
+            // Move4
+            // 
+            this.Move4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Move4.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Move4.Location = new System.Drawing.Point(214, 253);
+            this.Move4.Name = "Move4";
+            this.Move4.ReadOnly = true;
+            this.Move4.Size = new System.Drawing.Size(133, 23);
+            this.Move4.TabIndex = 134;
+            this.Move4.Click += new System.EventHandler(this.Move_Clicked);
+            // 
+            // Move3
+            // 
+            this.Move3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Move3.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Move3.Location = new System.Drawing.Point(77, 253);
+            this.Move3.Name = "Move3";
+            this.Move3.ReadOnly = true;
+            this.Move3.Size = new System.Drawing.Size(133, 23);
+            this.Move3.TabIndex = 133;
+            this.Move3.Click += new System.EventHandler(this.Move_Clicked);
+            // 
+            // Move2
+            // 
+            this.Move2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Move2.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Move2.Location = new System.Drawing.Point(214, 226);
+            this.Move2.Name = "Move2";
+            this.Move2.ReadOnly = true;
+            this.Move2.Size = new System.Drawing.Size(133, 23);
+            this.Move2.TabIndex = 132;
+            this.Move2.Click += new System.EventHandler(this.Move_Clicked);
+            // 
+            // Move1
+            // 
+            this.Move1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Move1.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Move1.Location = new System.Drawing.Point(77, 226);
+            this.Move1.Name = "Move1";
+            this.Move1.ReadOnly = true;
+            this.Move1.Size = new System.Drawing.Size(133, 23);
+            this.Move1.TabIndex = 131;
+            this.Move1.Click += new System.EventHandler(this.Move_Clicked);
+            // 
+            // Ability
+            // 
+            this.Ability.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Ability.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Ability.Location = new System.Drawing.Point(77, 199);
+            this.Ability.Name = "Ability";
+            this.Ability.ReadOnly = true;
+            this.Ability.Size = new System.Drawing.Size(133, 23);
+            this.Ability.TabIndex = 130;
+            // 
+            // SizeBox
+            // 
+            this.SizeBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.SizeBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SizeBox.Location = new System.Drawing.Point(279, 199);
+            this.SizeBox.Name = "SizeBox";
+            this.SizeBox.ReadOnly = true;
+            this.SizeBox.Size = new System.Drawing.Size(68, 23);
+            this.SizeBox.TabIndex = 129;
+            // 
+            // Area
+            // 
+            this.Area.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Area.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Area.Location = new System.Drawing.Point(77, 280);
+            this.Area.Name = "Area";
+            this.Area.ReadOnly = true;
+            this.Area.Size = new System.Drawing.Size(270, 23);
+            this.Area.TabIndex = 128;
+            this.Area.Click += new System.EventHandler(this.DisplayMap);
+            // 
+            // IVs
+            // 
+            this.IVs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.IVs.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.IVs.Location = new System.Drawing.Point(77, 171);
+            this.IVs.Name = "IVs";
+            this.IVs.ReadOnly = true;
+            this.IVs.Size = new System.Drawing.Size(270, 23);
+            this.IVs.TabIndex = 127;
+            // 
+            // Species
+            // 
+            this.Species.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Species.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Species.Location = new System.Drawing.Point(77, 115);
+            this.Species.Name = "Species";
+            this.Species.ReadOnly = true;
+            this.Species.Size = new System.Drawing.Size(270, 23);
+            this.Species.TabIndex = 126;
+            // 
+            // Nature
+            // 
+            this.Nature.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Nature.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Nature.Location = new System.Drawing.Point(252, 143);
+            this.Nature.Name = "Nature";
+            this.Nature.ReadOnly = true;
+            this.Nature.Size = new System.Drawing.Size(95, 23);
+            this.Nature.TabIndex = 125;
+            // 
+            // Gender
+            // 
+            this.Gender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Gender.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Gender.Location = new System.Drawing.Point(77, 143);
+            this.Gender.Name = "Gender";
+            this.Gender.ReadOnly = true;
+            this.Gender.Size = new System.Drawing.Size(95, 23);
+            this.Gender.TabIndex = 124;
+            // 
+            // TeraType
+            // 
+            this.TeraType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.TeraType.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.TeraType.Location = new System.Drawing.Point(252, 86);
+            this.TeraType.Name = "TeraType";
+            this.TeraType.ReadOnly = true;
+            this.TeraType.Size = new System.Drawing.Size(95, 23);
+            this.TeraType.TabIndex = 123;
+            // 
+            // Difficulty
+            // 
+            this.Difficulty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.Difficulty.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Difficulty.Location = new System.Drawing.Point(77, 85);
+            this.Difficulty.Name = "Difficulty";
+            this.Difficulty.ReadOnly = true;
+            this.Difficulty.Size = new System.Drawing.Size(95, 23);
+            this.Difficulty.TabIndex = 122;
+            // 
+            // PID
+            // 
+            this.PID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.PID.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.PID.Location = new System.Drawing.Point(77, 58);
+            this.PID.Name = "PID";
+            this.PID.ReadOnly = true;
+            this.PID.Size = new System.Drawing.Size(95, 23);
+            this.PID.TabIndex = 121;
+            // 
+            // EC
+            // 
+            this.EC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.EC.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.EC.Location = new System.Drawing.Point(77, 31);
+            this.EC.Name = "EC";
+            this.EC.ReadOnly = true;
+            this.EC.Size = new System.Drawing.Size(95, 23);
+            this.EC.TabIndex = 120;
+            // 
+            // myPanel2
+            // 
+            this.myPanel2.Controls.Add(this.LabelLoadedRaids);
+            this.myPanel2.Controls.Add(this.DaySkipSuccessRate);
+            this.myPanel2.Controls.Add(this.SearchTime);
+            this.myPanel2.Location = new System.Drawing.Point(226, 389);
+            this.myPanel2.Name = "myPanel2";
+            this.myPanel2.Size = new System.Drawing.Size(350, 55);
+            this.myPanel2.TabIndex = 131;
+            // 
+            // myPanel3
+            // 
+            this.myPanel3.Controls.Add(this.LabelSwitchIP);
+            this.myPanel3.Controls.Add(this.ConfigSettings);
+            this.myPanel3.Controls.Add(this.LabelStatus);
+            this.myPanel3.Controls.Add(this.ButtonViewRAM);
+            this.myPanel3.Controls.Add(this.SendScreenshot);
+            this.myPanel3.Controls.Add(this.Game);
+            this.myPanel3.Controls.Add(this.CheckEnableFilters);
+            this.myPanel3.Controls.Add(this.LabelStoryProgress);
+            this.myPanel3.Controls.Add(this.InputSwitchIP);
+            this.myPanel3.Controls.Add(this.LabelGame);
+            this.myPanel3.Controls.Add(this.LabelSandwichBonus);
+            this.myPanel3.Controls.Add(this.Progress);
+            this.myPanel3.Controls.Add(this.ConnectionStatusText);
+            this.myPanel3.Controls.Add(this.EventProgress);
+            this.myPanel3.Controls.Add(this.RaidBoost);
+            this.myPanel3.Controls.Add(this.ButtonAdvanceDate);
+            this.myPanel3.Controls.Add(this.StopFilter);
+            this.myPanel3.Controls.Add(this.LabelEventProgress);
+            this.myPanel3.Controls.Add(this.ButtonConnect);
+            this.myPanel3.Controls.Add(this.ButtonReadRaids);
+            this.myPanel3.Controls.Add(this.ButtonDownloadEvents);
+            this.myPanel3.Controls.Add(this.ButtonDisconnect);
+            this.myPanel3.Location = new System.Drawing.Point(8, 8);
+            this.myPanel3.Name = "myPanel3";
+            this.myPanel3.Size = new System.Drawing.Size(212, 436);
+            this.myPanel3.TabIndex = 132;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 451);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.myPanel3);
+            this.Controls.Add(this.myPanel2);
+            this.Controls.Add(this.myPanel1);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.groupBox2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -863,13 +1032,13 @@
             this.Load += new System.EventHandler(this.MainWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.Sprite)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GemIcon)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.panel2.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.myPanel1.ResumeLayout(false);
+            this.myPanel1.PerformLayout();
+            this.myPanel2.ResumeLayout(false);
+            this.myPanel2.PerformLayout();
+            this.myPanel3.ResumeLayout(false);
+            this.myPanel3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -900,7 +1069,6 @@
         private Label LabelIVs;
         private Button ButtonReadRaids;
         private Button ButtonAdvanceDate;
-        private CheckBox IsEvent;
         private Label LabelIsEvent;
         private TextBox Difficulty;
         private Label LabelDifficulty;
@@ -940,9 +1108,11 @@
         private int DaySkipTries = 0;
         private int DaySkipSuccess = 0;
         private Label DaySkipSuccessRate;
-        private GroupBox groupBox1;
-        private GroupBox groupBox2;
         private Panel panel2;
-        private GroupBox groupBox3;
+        private Label label1;
+        private Structures.TransparentBackgroundTextBox Seed;
+        private Structures.MyPanel myPanel1;
+        private Structures.MyPanel myPanel2;
+        private Structures.MyPanel myPanel3;
     }
 }

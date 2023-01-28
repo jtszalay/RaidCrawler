@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using PKHeX.Core;
 using PKHeX.Drawing.PokeSprite;
@@ -66,6 +67,10 @@ namespace RaidCrawler.Structures
             var emoji = c.EnableEmoji;
             var isevent = raid.IsEvent;
             var species = $"{Raid.strings.Species[encounter.Species]}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}";
+            var dexNumber = SpeciesConverter.FromEncounterToDex(encounter.Species);
+            var form = ShowdownParsing.GetStringFromForm(encounter.Form, GameInfo.GetStrings(GameLanguage.DefaultLanguage), dexNumber, blank.Context);
+            var betterspecies = $"{Raid.strings.Species[encounter.Species]}{(encounter.Form != 0 ? $"{(form == "F" ? "" : $" ({form})")}" : "")}";
+
             var difficulty = Difficulty(c, encounter.Stars, isevent, emoji);
             var nature = $"{Raid.strings.Natures[blank.Nature]}";
             var ability = $"{Raid.strings.Ability[blank.Ability]}";
@@ -77,13 +82,16 @@ namespace RaidCrawler.Structures
             var tera = $"{Raid.strings.types[teratype]}";
             var teraemoji = TeraEmoji(c, $"{Raid.strings.types[teratype]}", emoji);
             var ivs = IVsStringEmoji(c, ToSpeedLast(blank.IVs), c.IVsStyle, c.IVsSpacer, c.VerboseIVs, emoji);
-            var sprite_name = SpriteName.GetResourceStringSprite(blank.Species, blank.Form, blank.Gender, blank.FormArgument, blank.Generation, Raid.CheckIsShiny(raid,encounter));
+            var sprite_name = SpriteName.GetResourceStringSprite(dexNumber, blank.Form, blank.Gender, blank.FormArgument, blank.Generation, Raid.CheckIsShiny(raid,encounter));
             var moves = new ushort[4] { encounter.Move1, encounter.Move2, encounter.Move3, encounter.Move4 };
             var movestr = string.Concat(moves.Where(z => z != 0).Select(z => $"{Raid.strings.Move[z]}ㅤ\n")).Trim();
             var extramoves = string.Concat(encounter.ExtraMoves.Where(z => z != 0).Select(z => $"{Raid.strings.Move[z]}ㅤ\n")).Trim();
             var area = $"{Areas.Area[raid.Area - 1]}" + (c.ToggleDen ? $" [Den {raid.Den}]ㅤ" : "ㅤ");
             var instance = " " + c.InstanceName;
             var rewards = GetRewards(c, RewardsList, emoji);
+            var scale = blank.Scale;
+            var height = blank.HeightScalar;
+            var weight = blank.WeightScalar;
             var SuccessWebHook = new
             {
                 username = $"RaidCrawler" + instance,
@@ -93,12 +101,12 @@ namespace RaidCrawler.Structures
                 {
                     new
                     {
-                        title = $"{shiny} {species} {gender} {teraemoji}",
+                        title = $"{shiny} {betterspecies} {gender} {teraemoji}",
                         description = $"",
                         color = int.Parse(hexcolor, System.Globalization.NumberStyles.HexNumber),
                         thumbnail = new
                         {
-                            url = $"https://github.com/kwsch/PKHeX/blob/master/PKHeX.Drawing.PokeSprite/Resources/img/Artwork%20Pokemon%20Sprites/a{sprite_name}.png?raw=true"
+                            url = $"https://github.com/kwsch/PKHeX/blob/master/PKHeX.Drawing.PokeSprite/Resources/img/Artwork%20Pokemon%20Sprites/a_{dexNumber}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}.png?raw=true"
                         },
                         fields = new List<object>
                         {
@@ -114,7 +122,10 @@ namespace RaidCrawler.Structures
                             new { name = "Search Time󠀠󠀠󠀠", value = time, inline = true, },
                             new { name = "Filter Name" + (filters.Count() > 1 ? "s" : string.Empty), value = string.Join(", ", filters.Select(z => z.Name)), inline = true, },
 
-                            new { name = (rewards != "" ? "Rewards" : ""), value = rewards, inline = false, },
+                            new { name = (rewards != "" ? "Rewards" : ""), value = rewards, inline = true, },
+                            new { name = "", value = "", inline = true, },
+                            new { name = "Size", value = $"{PokeSizeDetailedUtil.GetSizeRating(scale)} ({scale})", inline = true, },
+
                         },
                     }
                 }
