@@ -37,7 +37,15 @@ namespace RaidCrawler.Structures
         public decimal ReturnGame { get; set; } = 4000;
         public decimal SystemOvershoot { get; set; } = 950;
 
+        // Save
+        public bool SaveAfterFind { get; set; } = false;
+        public bool BackupAfterSave { get; set; } = false;
+        public bool ContinueAfterBackup { get; set; } = false;
+        public decimal SaveTiming { get; set; } = 0;
+        public decimal JKSVTiming { get; set; } = 0;
+
         // Webhook
+        public bool CopyEmoji { get; set; } = false;
         public bool EnableEmoji { get; set; } = true;
         public bool VerboseIVs { get; set; } = false;
         public int IVsStyle { get; set; } = 0;
@@ -61,7 +69,13 @@ namespace RaidCrawler.Structures
 
         // Experimental
         public bool StreamerView { get; set; } = false;
+        public bool MapBackground { get; set; } = false;
         public string InstanceName { get; set; } = string.Empty;
+
+        // Theme
+        public Color windowColor { get; set; } = Color.FromArgb(255, 240, 240, 240);
+        public Color textColor { get; set; } = Color.Blue;
+        public Color buttColor { get; set; } = Color.FromArgb(255, 0, 0, 253);
 
     }
 }

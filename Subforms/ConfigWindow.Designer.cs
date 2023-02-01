@@ -64,6 +64,11 @@
             this.label13 = new System.Windows.Forms.Label();
             this.ExperimentalView = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.MapBackground = new System.Windows.Forms.CheckBox();
+            this.CopyEmoji = new System.Windows.Forms.CheckBox();
+            this.InstanceName = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.label16 = new System.Windows.Forms.Label();
@@ -86,9 +91,7 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.EnableEmoji = new System.Windows.Forms.CheckBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.InstanceName = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
+            this.SaveAfterFind = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.BaseDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SystemDDownPresses)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NavigateToSettings)).BeginInit();
@@ -101,11 +104,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.ReturnGame)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DaysToSkip)).BeginInit();
             this.tabControl1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SystemOvershoot)).BeginInit();
             this.tabPage4.SuspendLayout();
-            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // FocusWindow
@@ -494,7 +497,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label13.Location = new System.Drawing.Point(3, 47);
+            this.label13.Location = new System.Drawing.Point(3, 97);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(84, 15);
             this.label13.TabIndex = 39;
@@ -503,7 +506,7 @@
             // ExperimentalView
             // 
             this.ExperimentalView.AutoSize = true;
-            this.ExperimentalView.Location = new System.Drawing.Point(3, 65);
+            this.ExperimentalView.Location = new System.Drawing.Point(3, 115);
             this.ExperimentalView.Name = "ExperimentalView";
             this.ExperimentalView.Size = new System.Drawing.Size(241, 19);
             this.ExperimentalView.TabIndex = 40;
@@ -522,6 +525,59 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(349, 444);
             this.tabControl1.TabIndex = 41;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.SaveAfterFind);
+            this.tabPage3.Controls.Add(this.MapBackground);
+            this.tabPage3.Controls.Add(this.CopyEmoji);
+            this.tabPage3.Controls.Add(this.InstanceName);
+            this.tabPage3.Controls.Add(this.label17);
+            this.tabPage3.Controls.Add(this.label13);
+            this.tabPage3.Controls.Add(this.ExperimentalView);
+            this.tabPage3.Location = new System.Drawing.Point(4, 24);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(341, 416);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "General";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // MapBackground
+            // 
+            this.MapBackground.AutoSize = true;
+            this.MapBackground.Location = new System.Drawing.Point(3, 133);
+            this.MapBackground.Name = "MapBackground";
+            this.MapBackground.Size = new System.Drawing.Size(169, 19);
+            this.MapBackground.TabIndex = 44;
+            this.MapBackground.Text = "Enable Map as Background";
+            this.MapBackground.UseVisualStyleBackColor = true;
+            // 
+            // CopyEmoji
+            // 
+            this.CopyEmoji.AutoSize = true;
+            this.CopyEmoji.Location = new System.Drawing.Point(3, 50);
+            this.CopyEmoji.Name = "CopyEmoji";
+            this.CopyEmoji.Size = new System.Drawing.Size(174, 19);
+            this.CopyEmoji.TabIndex = 43;
+            this.CopyEmoji.Text = "Enable Copy Message Emoji";
+            this.CopyEmoji.UseVisualStyleBackColor = true;
+            // 
+            // InstanceName
+            // 
+            this.InstanceName.Location = new System.Drawing.Point(3, 21);
+            this.InstanceName.Name = "InstanceName";
+            this.InstanceName.Size = new System.Drawing.Size(327, 23);
+            this.InstanceName.TabIndex = 42;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(3, 3);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(89, 15);
+            this.label17.TabIndex = 41;
+            this.label17.Text = "Instance Name:";
             // 
             // tabPage1
             // 
@@ -663,9 +719,9 @@
             this.labelWebhooks.AutoSize = true;
             this.labelWebhooks.Location = new System.Drawing.Point(7, 389);
             this.labelWebhooks.Name = "labelWebhooks";
-            this.labelWebhooks.Size = new System.Drawing.Size(85, 15);
+            this.labelWebhooks.Size = new System.Drawing.Size(132, 15);
             this.labelWebhooks.TabIndex = 44;
-            this.labelWebhooks.Text = "Webhooks are ";
+            this.labelWebhooks.Text = "Webhooks are disabled.";
             // 
             // label21
             // 
@@ -790,40 +846,20 @@
             this.EnableEmoji.CheckState = System.Windows.Forms.CheckState.Checked;
             this.EnableEmoji.Location = new System.Drawing.Point(8, 69);
             this.EnableEmoji.Name = "EnableEmoji";
-            this.EnableEmoji.Size = new System.Drawing.Size(94, 19);
+            this.EnableEmoji.Size = new System.Drawing.Size(110, 19);
             this.EnableEmoji.TabIndex = 0;
-            this.EnableEmoji.Text = "Enable Emoji";
+            this.EnableEmoji.Text = "Webhook Emoji";
             this.EnableEmoji.UseVisualStyleBackColor = true;
             // 
-            // tabPage3
+            // SaveAfterFind
             // 
-            this.tabPage3.Controls.Add(this.InstanceName);
-            this.tabPage3.Controls.Add(this.label17);
-            this.tabPage3.Controls.Add(this.label13);
-            this.tabPage3.Controls.Add(this.ExperimentalView);
-            this.tabPage3.Location = new System.Drawing.Point(4, 24);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(341, 416);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "General";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // InstanceName
-            // 
-            this.InstanceName.Location = new System.Drawing.Point(3, 21);
-            this.InstanceName.Name = "InstanceName";
-            this.InstanceName.Size = new System.Drawing.Size(327, 23);
-            this.InstanceName.TabIndex = 42;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(3, 3);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(89, 15);
-            this.label17.TabIndex = 41;
-            this.label17.Text = "Instance Name:";
+            this.SaveAfterFind.AutoSize = true;
+            this.SaveAfterFind.Location = new System.Drawing.Point(3, 68);
+            this.SaveAfterFind.Name = "SaveAfterFind";
+            this.SaveAfterFind.Size = new System.Drawing.Size(182, 19);
+            this.SaveAfterFind.TabIndex = 45;
+            this.SaveAfterFind.Text = "Save game after match found";
+            this.SaveAfterFind.UseVisualStyleBackColor = true;
             // 
             // ConfigWindow
             // 
@@ -849,6 +885,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.ReturnGame)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DaysToSkip)).EndInit();
             this.tabControl1.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
@@ -856,8 +894,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.SystemOvershoot)).EndInit();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -925,5 +961,8 @@
         private Label label14;
         private Label labelWebhooks;
         private Button EmojiConfig;
+        private CheckBox CopyEmoji;
+        private CheckBox MapBackground;
+        private CheckBox SaveAfterFind;
     }
 }

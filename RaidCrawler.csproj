@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -50,9 +50,10 @@
 
   <ItemGroup>
     <PackageReference Include="FlatSharp" Version="6.3.5" />
+    <PackageReference Include="LibUsbDotNet" Version="2.2.29" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="NLog" Version="5.1.0" />
-    <PackageReference Include="PKHeX.Core" Version="22.12.1" />
+    <PackageReference Include="NLog" Version="5.1.1" />
+    <PackageReference Include="PKHeX.Core" Version="23.1.30" />
   </ItemGroup>
 
   <ItemGroup>

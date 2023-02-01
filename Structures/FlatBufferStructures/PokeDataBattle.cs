@@ -1,4 +1,5 @@
 ﻿using FlatSharp.Attributes;
+using PKHeX.Core;
 using System.ComponentModel;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -68,7 +69,7 @@ public class PokeDataBattle
         if (BallId != 0)
             throw new ArgumentOutOfRangeException($"No {BallId} allowed!");
 
-        bw.Write(DevId);
+        bw.Write(SpeciesConverterSV.GetNational9(DevId)); ;
         bw.Write((byte)FormId);
         bw.Write((byte)Sex);
 

@@ -42,6 +42,8 @@ namespace RaidCrawler.Subforms
             ReturnHome.Value = c.ReturnHome;
             ReturnGame.Value = c.ReturnGame;
 
+            SaveAfterFind.Checked = c.SaveAfterFind;
+
             SystemDDownPresses.Enabled = !UseOvershoot.Checked;
             SystemOvershoot.Enabled = UseOvershoot.Checked;
 
@@ -52,8 +54,10 @@ namespace RaidCrawler.Subforms
             denToggle.Checked = c.ToggleDen;
 
             EnableEmoji.Checked = c.EnableEmoji;
+            CopyEmoji.Checked = c.CopyEmoji;
 
             ExperimentalView.Checked = c.StreamerView;
+            MapBackground.Checked = c.MapBackground;
         }
 
         /*private DataTable EmojiLoad(Dictionary<string, string> emoji)
@@ -112,14 +116,18 @@ namespace RaidCrawler.Subforms
             c.ReturnHome = ReturnHome.Value;
             c.ReturnGame = ReturnGame.Value;
 
+            c.SaveAfterFind = SaveAfterFind.Checked;
+
             c.IVsStyle = IVstyle.SelectedIndex;
             c.IVsSpacer = IVspacer.Text;
             c.VerboseIVs = IVverbose.Checked;
 
             c.EnableEmoji = EnableEmoji.Checked;
+            c.CopyEmoji= CopyEmoji.Checked;
 
             c.ToggleDen = denToggle.Checked;
             c.StreamerView = ExperimentalView.Checked;
+            c.MapBackground = MapBackground.Checked;
 			
             string output = JsonConvert.SerializeObject(c);
             using StreamWriter sw = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json"));

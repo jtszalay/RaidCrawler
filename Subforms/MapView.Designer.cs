@@ -47,6 +47,8 @@
             this.ClientSize = new System.Drawing.Size(512, 512);
             this.Controls.Add(this.Map);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "MapView";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Possible Den Location(s)";

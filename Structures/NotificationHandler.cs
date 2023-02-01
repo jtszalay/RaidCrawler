@@ -14,15 +14,14 @@ namespace RaidCrawler.Structures
         {
             get
             {
-                if (_client == null)
-                    _client = new HttpClient();
+                _client ??= new HttpClient();
                 return _client;
             }
         }
 
-        public static string[]? DiscordWebhooks;
+        private static string[]? DiscordWebhooks;
 
-        public static void SendNotifications(Config c, ITeraRaid? encounter, Raid raid, IEnumerable<RaidFilter> filters, String time, List<(int, int, int)>? RewardsList)
+        public static void SendNotifications(Config c, ITeraRaid? encounter, Raid raid, IEnumerable<RaidFilter> filters, string time, List<(int, int, int)>? RewardsList)
         {
             if (encounter == null)
                 return;
@@ -40,7 +39,7 @@ namespace RaidCrawler.Structures
             DiscordWebhooks = c.EnableNotification ? c.DiscordWebhook.Split(',') : null;
             if (DiscordWebhooks == null)
                 return;
-            var screenshot = SysBot.Base.Decoder.ConvertHexByteStringToBytes(nx.PixelPeek(new CancellationToken()).Result);
+            var screenshot = nx.Screengrab(new CancellationToken()).Result;
             var content = new MultipartFormDataContent();
             var info = new
             {
@@ -55,7 +54,47 @@ namespace RaidCrawler.Structures
                 Client.PostAsync(url.Trim(), content).Wait();
         }
 
-        public static object GenerateWebhook(Config c, ITeraRaid encounter, Raid raid, IEnumerable<RaidFilter> filters, String time, List<(int, int, int)>? RewardsList)
+        public static string GeneratePasteAnnounce(Config c, ITeraRaid encounter, Raid raid, List<(int, int, int)>? rewardsList)
+        {
+            var param = Raid.GetParam(encounter);
+            var blank = new PK9
+            {
+                Species = encounter.Species,
+                Form = encounter.Form
+            };
+            Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
+
+            var emoji = c.CopyEmoji;
+            var shiny = Shiny(c, Raid.CheckIsShiny(raid, encounter), ShinyExtensions.IsSquareShinyExist(blank), emoji);
+            var teratype = Raid.GetTeraType(encounter, raid);
+            var teraemoji = TeraEmoji(c, $"{Raid.strings.types[teratype]}", emoji);
+            var terastring = Raid.strings.types[teratype];
+            var species = $"{Raid.strings.Species[encounter.Species]}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}";
+            var gender = Gender(c, blank.Gender, emoji);
+            var nature = $"{Raid.strings.Natures[blank.Nature]}";
+            var ivs = IVsStringEmoji(c, ToSpeedLast(blank.IVs), c.IVsStyle, c.IVsSpacer, c.VerboseIVs, emoji);
+            var perfIvCount = blank.IVs.Count(iv => iv == 31);
+            var ability = $"{Raid.strings.Ability[blank.Ability]}";
+            var moves = new ushort[4] { encounter.Move1, encounter.Move2, encounter.Move3, encounter.Move4 };
+            var movestr = string.Concat(moves.Where(z => z != 0).Select(z => $"`{Raid.strings.Move[z]}`  ")).Trim();
+            var extramoves = string.Concat(encounter.ExtraMoves.Where(z => z != 0).Select(z => $"`{Raid.strings.Move[z]}`  ")).Trim();
+            var extramovesstr = extramoves == string.Empty ? "None" : extramoves;
+            var rewards = GetRewards(c, rewardsList, emoji);
+            var isevent = raid.IsEvent;
+            var difficulty = Difficulty(c, encounter.Stars, isevent, emoji);
+            var scale = $"{PokeSizeDetailedUtil.GetSizeRating(blank.Scale)}";
+
+            var announce = $"{difficulty} {shiny} **{species}** {gender} **{teraemoji}** `{scale}`\n" +
+                           $"**__{perfIvCount}__IV**: {ivs}  **Nature:** `{nature}`  **Ability:** `{ability}`\n" +
+                           $"**Moves:** {movestr}\n" +
+                           $"**Extra Moves:** {extramovesstr}\n" +
+                           $"**Rewards:** {rewards}\n" +
+                           $"***Code:*** ";
+
+            return announce;
+        }
+        
+    public static object GenerateWebhook(Config c, ITeraRaid encounter, Raid raid, IEnumerable<RaidFilter> filters, String time, List<(int, int, int)>? RewardsList)
         {
             var param = Raid.GetParam(encounter);
             var blank = new PK9
@@ -67,8 +106,8 @@ namespace RaidCrawler.Structures
             var emoji = c.EnableEmoji;
             var isevent = raid.IsEvent;
             var species = $"{Raid.strings.Species[encounter.Species]}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}";
-            var dexNumber = SpeciesConverter.FromEncounterToDex(encounter.Species);
-            var form = ShowdownParsing.GetStringFromForm(encounter.Form, GameInfo.GetStrings(GameLanguage.DefaultLanguage), dexNumber, blank.Context);
+            //var dexNumber = SpeciesConverter.FromEncounterToDex(encounter.Species);
+            var form = ShowdownParsing.GetStringFromForm(encounter.Form, GameInfo.GetStrings(GameLanguage.DefaultLanguage), blank.Species, blank.Context);
             var betterspecies = $"{Raid.strings.Species[encounter.Species]}{(encounter.Form != 0 ? $"{(form == "F" ? "" : $" ({form})")}" : "")}";
 
             var difficulty = Difficulty(c, encounter.Stars, isevent, emoji);
@@ -82,7 +121,7 @@ namespace RaidCrawler.Structures
             var tera = $"{Raid.strings.types[teratype]}";
             var teraemoji = TeraEmoji(c, $"{Raid.strings.types[teratype]}", emoji);
             var ivs = IVsStringEmoji(c, ToSpeedLast(blank.IVs), c.IVsStyle, c.IVsSpacer, c.VerboseIVs, emoji);
-            var sprite_name = SpriteName.GetResourceStringSprite(dexNumber, blank.Form, blank.Gender, blank.FormArgument, blank.Generation, Raid.CheckIsShiny(raid,encounter));
+            var sprite_name = SpriteName.GetResourceStringSprite(blank.Species, blank.Form, blank.Gender, blank.FormArgument, EntityContext.Gen9, Raid.CheckIsShiny(raid,encounter));
             var moves = new ushort[4] { encounter.Move1, encounter.Move2, encounter.Move3, encounter.Move4 };
             var movestr = string.Concat(moves.Where(z => z != 0).Select(z => $"{Raid.strings.Move[z]}ㅤ\n")).Trim();
             var extramoves = string.Concat(encounter.ExtraMoves.Where(z => z != 0).Select(z => $"{Raid.strings.Move[z]}ㅤ\n")).Trim();
@@ -106,7 +145,7 @@ namespace RaidCrawler.Structures
                         color = int.Parse(hexcolor, System.Globalization.NumberStyles.HexNumber),
                         thumbnail = new
                         {
-                            url = $"https://github.com/kwsch/PKHeX/blob/master/PKHeX.Drawing.PokeSprite/Resources/img/Artwork%20Pokemon%20Sprites/a_{dexNumber}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}.png?raw=true"
+                            url = $"https://github.com/kwsch/PKHeX/blob/master/PKHeX.Drawing.PokeSprite/Resources/img/Artwork%20Pokemon%20Sprites/a_{encounter.Species}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}.png?raw=true"
                         },
                         fields = new List<object>
                         {
@@ -126,6 +165,8 @@ namespace RaidCrawler.Structures
                             new { name = "", value = "", inline = true, },
                             new { name = "Size", value = $"{PokeSizeDetailedUtil.GetSizeRating(scale)} ({scale})", inline = true, },
 
+                            //new { name = "URL", value = $"https://github.com/kwsch/PKHeX/blob/master/PKHeX.Drawing.PokeSprite/Resources/img/Artwork%20Pokemon%20Sprites/a{encounter.Species}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}.png?raw=true", inline = true, }
+
                         },
                     }
                 }
@@ -136,9 +177,9 @@ namespace RaidCrawler.Structures
         private static string Difficulty(Config c, byte stars, bool isevent, bool emoji)
         {
             string s = string.Empty;
-            string mstar = (emoji ? c.Emoji["7 Star"] : ":star");
-            string bstar = (emoji ? c.Emoji["Event Star"] : ":star");
-            string ystar = (emoji ? c.Emoji["Star"] : ":star");
+            string mstar = (emoji ? c.Emoji["7 Star"] : ":star:");
+            string bstar = (emoji ? c.Emoji["Event Star"] : ":star:");
+            string ystar = (emoji ? c.Emoji["Star"] : ":star:");
             s = (stars == 7) ? string.Concat(Enumerable.Repeat(mstar, stars)) :
                 (isevent) ? string.Concat(Enumerable.Repeat(bstar, stars)) : string.Concat(Enumerable.Repeat(ystar, stars));
             return s;
@@ -167,7 +208,7 @@ namespace RaidCrawler.Structures
             int bitterherba = 0;
             int spicyherba = 0;
 
-            for (int i = 0; i < rewards.Count; i++)
+            for (int i = 0; i < rewards!.Count; i++)
             {
                 switch (rewards[i].Item1)
                 {

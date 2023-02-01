@@ -9,8 +9,11 @@ using SysBot.Base;
 using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Net;
 using System.Net.Sockets;
+using System.Security.Policy;
 using System.Text;
+using System.Windows.Forms;
 using static RaidCrawler.Structures.Offsets;
 using static SysBot.Base.SwitchButton;
 using static System.Buffers.Binary.BinaryPrimitives;
@@ -44,9 +47,13 @@ namespace RaidCrawler
 
         private Color DefaultColor;
         private FormWindowState _WindowState;
-        private Stopwatch stopwatch = new Stopwatch();
-        private TeraRaidView teraRaidView;
+        private readonly Stopwatch stopwatch = new();
+        private readonly TeraRaidView teraRaidView;
 
+        private bool stopRequested = false;
+        private bool screenState = false;
+
+        private CancellationTokenSource AdvanceDateCancellationTokenSource;
         public MainWindow()
         {
             string build = string.Empty;
@@ -82,7 +89,7 @@ namespace RaidCrawler
                 Config = new Config();
                 SaveConfig();
             }
-            Text = "RaidCrawler v" + v.Major + "." + v.Minor + "." + v.Build + build + " " + Config.InstanceName;
+            Text = "RaidCrawlerV v" + v.Major + "." + v.Minor + "." + v.Build + build + " " + Config.InstanceName;
 
 
             // load rewards
@@ -125,6 +132,10 @@ namespace RaidCrawler
                 teraRaidView.Map.Image = map;
                 teraRaidView.Show();
             }
+
+            if (Config.BackupAfterSave) Cheat.ForeColor = Color.BlueViolet;
+            if (Config.ContinueAfterBackup) Cheat.ForeColor = Color.OrangeRed;
+
         }
 
         private void InputSwitchIP_Changed(object sender, EventArgs e)
@@ -140,6 +151,8 @@ namespace RaidCrawler
 
         private void Disconnect_Click(object sender, EventArgs e)
         {
+            if (AdvanceDateCancellationTokenSource != null)
+                AdvanceDateCancellationTokenSource.Cancel(true);
             Disconnect();
             ConnectionStatusText.Text = "Disconnected";
             stopwatch.Stop();
@@ -147,8 +160,11 @@ namespace RaidCrawler
             ButtonDisconnect.Enabled = false;
             ButtonReadRaids.Enabled = false;
             ButtonAdvanceDate.Enabled = false;
+            ButtonStopCrawl.Enabled = false;
             ButtonViewRAM.Enabled = false;
             ButtonDownloadEvents.Enabled = false;
+            ButtonSceenState.Enabled = false;
+            SendScreenshot.Enabled = false;
         }
 
         private async void Connect()
@@ -173,7 +189,7 @@ namespace RaidCrawler
                     }
                     else
                     {
-                        MessageBox.Show("Unable to detect Pokémon Scarlet or Pokémon Violet running on your switch!");
+                        MessageBox.Show("Unable to detect game!");
                         Disconnect();
                         IsReading = false;
                     }
@@ -182,19 +198,22 @@ namespace RaidCrawler
                     Progress.SelectedIndex = await GetStoryProgress(CancellationToken.None);
                     EventProgress.SelectedIndex = Math.Min(Progress.SelectedIndex, 3);
 
-                    ConnectionStatusText.Text = "Reading event raid status";
+                    ConnectionStatusText.Text = "Reading event";
                     await ReadEventRaids();
 
                     ConnectionStatusText.Text = "Reading raids";
                     await ReadRaids(CancellationToken.None);
 
                     IsReading = false;
+                    stopRequested = false;
                     ButtonAdvanceDate.Enabled = true;
                     ButtonReadRaids.Enabled = true;
                     ButtonConnect.Enabled = false;
                     ButtonDisconnect.Enabled = true;
                     ButtonViewRAM.Enabled = true;
                     ButtonDownloadEvents.Enabled = true;
+                    ButtonSceenState.Enabled = true;
+                    SendScreenshot.Enabled = true;
                 }
                 catch (SocketException err)
                 {
@@ -244,7 +263,7 @@ namespace RaidCrawler
             var header_ofs = await OffsetUtil.GetPointerAddress($"[{SaveBlockPointer}+{offset + 8:X}]", token);
             var header = await SwitchConnection.ReadBytesAbsoluteAsync(header_ofs, 5, token);
             header = DecryptBlock(key, header);
-            var size = ReadUInt32LittleEndian(header[1..]);
+            var size = ReadUInt32LittleEndian(header.AsSpan()[1..]);
             var obj = await SwitchConnection.ReadBytesAbsoluteAsync(header_ofs, 5 + (int)size, token);
             return DecryptBlock(key, obj)[5..];
         }
@@ -339,12 +358,13 @@ namespace RaidCrawler
                 var teratype = Raid.GetTeraType(encounter, raid);
                 TeraType.Text = Raid.strings.types[teratype];
                 int StarCount = encounter is TeraDistribution ? encounter.Stars : Raid.GetStarCount(raid.Difficulty, Progress.SelectedIndex, raid.IsBlack);
-                Difficulty.Text = string.Concat(Enumerable.Repeat("☆", StarCount));
+                Difficulty.Text = string.Concat(Enumerable.Repeat("★", StarCount));
 
                 if (encounter != null)
                 {
                     var map = GenerateMap(raid, teratype);
-                    myPanel1.BackgroundImage = map;
+                    myPanel1.BackgroundImage = (Config.MapBackground ? map : null);
+
                     var param = Raid.GetParam(encounter);
                     var blank = new PK9
                     {
@@ -364,7 +384,7 @@ namespace RaidCrawler
                     SizeBox.Text = $"{PokeSizeDetailedUtil.GetSizeRating(blank.Scale)} ({blank.Scale})";
                     var extra_moves = new ushort[] { 0, 0, 0, 0 };
                     for (int i = 0; i < encounter.ExtraMoves.Length; i++)
-                        if (i < extra_moves.Count()) extra_moves[i] = encounter.ExtraMoves[i];
+                        if (i < extra_moves.Length) extra_moves[i] = encounter.ExtraMoves[i];
                     Move1.Text = ShowExtraMoves ? Raid.strings.Move[extra_moves[0]] : Raid.strings.Move[encounter.Move1];
                     Move2.Text = ShowExtraMoves ? Raid.strings.Move[extra_moves[1]] : Raid.strings.Move[encounter.Move2];
                     Move3.Text = ShowExtraMoves ? Raid.strings.Move[extra_moves[2]] : Raid.strings.Move[encounter.Move3];
@@ -383,10 +403,12 @@ namespace RaidCrawler
                     Gender.Text = string.Empty;
                     Nature.Text = string.Empty;
                     Ability.Text = string.Empty;
+                    SizeBox.Text = string.Empty;
                 }
-
+                
                 PID.BackColor = Raid.CheckIsShiny(raid, encounter) ? Color.FromArgb(125, 255, 215, 0) : DefaultColor;
                 IVs.BackColor = IVs.Text is "31/31/31/31/31/31" ? Color.FromArgb(125, 154, 205, 50) : DefaultColor;
+                EC.BackColor = (raid.EC % 100 == 0 && (encounter.Species == 945 || encounter.Species == 206) ? Color.FromArgb(125, 0, 215, 255) : DefaultColor);
             }
             else
             {
@@ -404,9 +426,7 @@ namespace RaidCrawler
                 teraRaidView.Area.Text = $"{Areas.Area[raid.Area - 1]} - Den {raid.Den}";
 
                 var teratype = Raid.GetTeraType(encounter, raid);
-                var tempTeraType = teratype + 1;
-                teraRaidView.TeraType.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("gem_text_" + teratype);
-                // IsEvent.Checked = raid.IsEvent;
+                teraRaidView.TeraType.Image = (Bitmap)Properties.Resources.ResourceManager.GetObject("gem_text_" + teratype)!;
 
                 int StarCount = encounter is TeraDistribution ? encounter.Stars : Raid.GetStarCount(raid.Difficulty, Progress.SelectedIndex, raid.IsBlack);
                 teraRaidView.Difficulty.Text = string.Concat(Enumerable.Repeat("⭐", StarCount));
@@ -440,7 +460,7 @@ namespace RaidCrawler
 
                     var extra_moves = new ushort[] { 0, 0, 0, 0 };
                     for (int i = 0; i < encounter.ExtraMoves.Length; i++)
-                        if (i < extra_moves.Count()) extra_moves[i] = encounter.ExtraMoves[i];
+                        if (i < extra_moves.Length) extra_moves[i] = encounter.ExtraMoves[i];
                     teraRaidView.Moveset5.Text = (encounter.ExtraMoves.Length > 0) ? Raid.strings.Move[extra_moves[0]] : "---";
                     teraRaidView.Moveset6.Text = (encounter.ExtraMoves.Length > 1) ? Raid.strings.Move[extra_moves[1]] : "---";
                     teraRaidView.Moveset7.Text = (encounter.ExtraMoves.Length > 2) ? Raid.strings.Move[extra_moves[2]] : "---";
@@ -564,7 +584,7 @@ namespace RaidCrawler
                     teraRaidView.textSpicyHerba.ForeColor = Color.DimGray;
                     teraRaidView.labelSpicyHerba.ForeColor = Color.DimGray;
 
-                    for (int i = 0; i < rewards.Count; i++)
+                    for (int i = 0; i < rewards!.Count; i++)
                     {
                         if (rewards[i].Item1 == 645)
                         {
@@ -615,8 +635,8 @@ namespace RaidCrawler
                             teraRaidView.labelSpicyHerba.ForeColor = Color.WhiteSmoke;
                         }
                     }
-                    teraRaidView.Shiny.Visible = Raid.CheckIsShiny(raid, encounter) ? true : false;
-                    teraRaidView.picShinyAlert.Enabled = Raid.CheckIsShiny(raid, encounter) ? true : false;
+                    teraRaidView.Shiny.Visible = Raid.CheckIsShiny(raid, encounter);
+                    teraRaidView.picShinyAlert.Enabled = Raid.CheckIsShiny(raid, encounter);
                 }
                 else
                 {
@@ -703,20 +723,23 @@ namespace RaidCrawler
             if (original == null)
                 return null;
             var gem = (Image)new Bitmap(original, new Size(30, 30));
+            var gem2 = (Image)new Bitmap(original, new Size(30, 30));
             SpriteUtil.GetSpriteGlow(gem, 0xFF, 0xFF, 0xFF, out var glow, true);
+            SpriteUtil.GetSpriteGlow(gem, 0xCC, 0xCC, 0xCC, out var glow2, true);
             gem = ImageUtil.LayerImage(gem, ImageUtil.GetBitmap(glow, gem.Width, gem.Height, gem.PixelFormat), 0, 0);
+            gem2 = ImageUtil.LayerImage(gem, ImageUtil.GetBitmap(glow2, gem.Width, gem.Height, gem.PixelFormat), 0, 0);
             if (den_locations == null || den_locations.Count == 0)
                 return null;
             try
             {
-                var x = (den_locations[$"{raid.Area}-{raid.Den}"][0] - 125.072021484) * 512 / 5000;
-                var y = (den_locations[$"{raid.Area}-{raid.Den}"][2] + 5255.240018) * 512 / 5000;
+                var x = (den_locations[$"{raid.Area}-{raid.Den}"][0] - 100.072021484) * 512 / 5000;
+                var y = (den_locations[$"{raid.Area}-{raid.Den}"][2] + 5350.240018) * 512 / 5000;
                 var mapimg = ImageUtil.LayerImage(map, gem, (int)x, (int)y);
                 if (den_locations.ContainsKey($"{raid.Area}-{raid.Den}_"))
                 {
-                    x = (den_locations[$"{raid.Area}-{raid.Den}_"][0] - 125.072021484) * 512 / 5000;
-                    y = (den_locations[$"{raid.Area}-{raid.Den}_"][2] + 5255.240018) * 512 / 5000;
-                    mapimg = ImageUtil.LayerImage(mapimg, gem, (int)x, (int)y);
+                    x = (den_locations[$"{raid.Area}-{raid.Den}_"][0] - 100.072021484) * 512 / 5000;
+                    y = (den_locations[$"{raid.Area}-{raid.Den}_"][2] + 5350.240018) * 512 / 5000;
+                    mapimg = ImageUtil.LayerImage(mapimg, gem2, (int)x, (int)y);
                 }
                 return mapimg;
             }
@@ -854,8 +877,102 @@ namespace RaidCrawler
             await Click(HOME, (int)Config.ReturnGame + BaseDelay, token).ConfigureAwait(false);
         }
 
+        private async Task SaveGame(CancellationToken token)
+        {
+            int BaseDelay = (int)Config.BaseDelay;
+            int SaveTiming = (int)Config.SaveTiming;
+            await Click(LSTICK, 0_050 + BaseDelay, token).ConfigureAwait(false); // Sometimes it seems like the first command doesn't go through so send this just in case
+
+            //Make sure menus are closed
+            await Click(B, 0_1000 + BaseDelay + SaveTiming, token).ConfigureAwait(false);
+            await Click(B, 0_1000 + BaseDelay + SaveTiming, token).ConfigureAwait(false);
+            //Open menu and save
+            await Click(X, 0_1000 + BaseDelay + SaveTiming, token).ConfigureAwait(false);
+            await Click(R, 0_1000 + BaseDelay + SaveTiming, token).ConfigureAwait(false);
+            await Click(A, 0_1000 + BaseDelay + SaveTiming, token).ConfigureAwait(false);
+            await Click(A, 0_5000 + BaseDelay + SaveTiming, token).ConfigureAwait(false);
+        }
+
+        private async Task JKSV(CancellationToken token, ITeraRaid encounter, Raid raid)
+        {
+            int BaseDelay = (int)Config.BaseDelay;
+            int JKSVTiming = (int)Config.JKSVTiming;
+            await Click(LSTICK, 0_050 + BaseDelay, token).ConfigureAwait(false); // Sometimes it seems like the first command doesn't go through so send this just in case
+
+            //Go to home screen and close game
+            await Click(HOME, 0_2000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(X, 0_1000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(A, 0_3000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            //navigate to JKSV
+            await Click(DDOWN, 0_100 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(DRIGHT, 0_100 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(DRIGHT, 0_100 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(DRIGHT, 0_100 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(A, 0_1000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            //Open JKSV, game, create new save
+            await Click(A, 0_5000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(A, 0_1000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(A, 0_1000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(A, 0_1000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            //Navigate before date
+            for (int i = 0; i < 23; i++) await Click(L, 0_100 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            //Keyboard stuff
+            var blank = new PK9
+            {
+                Species = encounter.Species,
+                Form = encounter.Form
+            };
+            var s = $"{Raid.strings.Species[encounter.Species]}";
+            var s2 = $"{Raid.strings.types[Raid.GetTeraType(encounter, raid)]}";
+            var strokes = s.ToUpper().ToCharArray();
+            var strokes2 = s2.ToUpper().ToCharArray();
+            var number = $"NumPad";
+            List<HidKeyboardKey> keystopress = new();
+            foreach (var str in strokes)
+            {
+                foreach (HidKeyboardKey keypress in (HidKeyboardKey[])Enum.GetValues(typeof(HidKeyboardKey)))
+                {
+                    if (str.ToString().Equals(keypress.ToString()) || (number + str.ToString()).Equals(keypress.ToString()))
+                        keystopress.Add(keypress);
+                }
+            }
+            List<HidKeyboardKey> keystopress2 = new();
+            foreach (var str in strokes2)
+            {
+                foreach (HidKeyboardKey keypress in (HidKeyboardKey[])Enum.GetValues(typeof(HidKeyboardKey)))
+                {
+                    if (str.ToString().Equals(keypress.ToString()) || (number + str.ToString()).Equals(keypress.ToString()))
+                        keystopress2.Add(keypress);
+                }
+            }
+            //Type word1, space, word2, space
+            await SwitchConnection.TypeMultiKeys(keystopress, token).ConfigureAwait(false);
+            await Task.Delay(500);
+            await Click(Y, 0_100 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await SwitchConnection.TypeMultiKeys(keystopress2, token).ConfigureAwait(false);
+            await Task.Delay(500);
+            await Click(Y, 0_100 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            //Save
+            await Click(PLUS, 0_3000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(PLUS, 0_1000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            //Open the game
+            await Click(HOME, 0_2000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false); 
+            await Click(A, 0_1000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(A, 0_19000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(A, 0_17000 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+            await Click(X, 0_050 + BaseDelay + JKSVTiming, token).ConfigureAwait(false);
+        }
+
+       
+        private void ButtonStopCrawl_Click(object sender, EventArgs e)
+        {
+            stopRequested = true;
+            this.ButtonStopCrawl.Enabled = false;
+        }
+
         private async void ButtonAdvanceDate_Click(object sender, EventArgs e)
         {
+            Cheater:
             if (SwitchConnection.Connected)
             {
                 SearchTimer.Start();
@@ -863,23 +980,38 @@ namespace RaidCrawler
                 stopwatch.Start();
                 DaySkipTries = 0;
                 DaySkipSuccess = 0;
+                DaySkipStreak = 0;
+                DaySkipShiny = 0;
 
                 ButtonReadRaids.Enabled = false;
                 ButtonAdvanceDate.Enabled = false;
+                ButtonStopCrawl.Enabled = true;
                 _WindowState = WindowState;
                 var prompt = false;
                 do
                 {
+                    // average run takes between 15-18secs on a v1 switch, undocked
+                    // if a single run of the loop takes more than a minute, stop it, something is wrong
+                    AdvanceDateCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(90));
                     prev = Raids.Select(z => z.Seed).ToList();
-                    await AdvanceDate(CancellationToken.None);
-                    await ReadRaids(CancellationToken.None);
-                } while (CheckAdvanceDate(out prompt));
+                    try
+                    {
+                        await AdvanceDate(AdvanceDateCancellationTokenSource.Token);
+                        await ReadRaids(AdvanceDateCancellationTokenSource.Token);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        // Stop button was pressed or timed out
+                    }
+                } while (CheckAdvanceDate(AdvanceDateCancellationTokenSource.Token, out prompt));
                 if (prompt)
                 {
                     stopwatch.Stop();
                     var timeSpan = stopwatch.Elapsed;
                     string time = String.Format("{0:00}:{1:00}:{2:00}",
                     timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
+                    var encounter = Encounters[0];
+                    var raid = Raids[0];
                     if (Config.PlaySound) System.Media.SystemSounds.Asterisk.Play();
                     if (Config.FocusWindow)
                     {
@@ -900,9 +1032,33 @@ namespace RaidCrawler
                             }
                         }
                         if (satisfied_filters.Count > 0)
+                        {
                             NotificationHandler.SendNotifications(Config, Encounters[i], Raids[i], satisfied_filters, time, RewardsList[i]);
+                            encounter = Encounters[i];
+                            raid = Raids[i];
+                        }
                     }
+                    try
+                    {
+                        if (Config.SaveAfterFind) await SaveGame(AdvanceDateCancellationTokenSource.Token);
+                        if (Config.BackupAfterSave)
+                        {
+                            await JKSV(AdvanceDateCancellationTokenSource.Token, encounter!, raid);
+                            await Task.Delay(1500);
+                        }
+                        if (Config.ContinueAfterBackup)
+                        {
+                            //This is bad, change it later. 
+                            goto Cheater;
+                        }
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        // Stop button was pressed or timed out
+                    }
+
                     if (Config.EnableAlertWindow) MessageBox.Show(Config.AlertWindowMessage + "\n\nTime Spent: " + time, "Result found!", MessageBoxButtons.OK);
+                    ButtonStopCrawl.Enabled = false;
                 }
 
                 ButtonReadRaids.Enabled = true;
@@ -911,10 +1067,10 @@ namespace RaidCrawler
             }
         }
 
-        private bool CheckAdvanceDate(out bool prompt)
+        private bool CheckAdvanceDate(CancellationToken cancellationToken, out bool prompt)
         {
             prompt = false;
-            if (!CheckEnableFilters.Checked)
+            if (cancellationToken.IsCancellationRequested || !CheckEnableFilters.Checked)
                 return false;
             if (prev.Count != Raids.Count)
                 return true;
@@ -927,13 +1083,30 @@ namespace RaidCrawler
 
             DaySkipTries++;
             if (!sameraids)
+            {
                 DaySkipSuccess++;
-            DaySkipSuccessRate.Text = $"Day skip success rate: {DaySkipSuccess}/{DaySkipTries}";
+                DaySkipStreak++;
+            }
+            else
+            {
+                DaySkipStreak = 0;
+            }
+                
+            DaySkipSuccessRate.Text = $"Skip Rate: {DaySkipSuccess}/{DaySkipTries}     Total Miss: {DaySkipTries - DaySkipSuccess}     Streak: {DaySkipStreak}";
+            
+            DaySkipShiny += Enumerable.Range(0, Raids.Count).Where(i => Raid.CheckIsShiny(Raids[i], Encounters[i])).Count();
+            ShinyCount.Text = $"Total Shinies Found: {DaySkipShiny}";
+
 
             if (sameraids)
                 return true;
             if (RaidFilters.Any(z => z.FilterSatisfied(Encounters, Raids, RaidBoost.SelectedIndex)))
                 prompt = true;
+            if (stopRequested)
+            {
+                stopRequested = false;
+                return false;
+            }
             if (StopAdvances || prompt == true)
                 return false;
             return true;
@@ -967,7 +1140,7 @@ namespace RaidCrawler
             Encounters.Clear();
             RewardsList.Clear();
             index = 0;
-
+            
             ConnectionStatusText.Text = "Reading raid block";
             var Data = await SwitchConnection.ReadBytesAbsoluteAsync(offset + RaidBlock.HEADER_SIZE, (int)(RaidBlock.SIZE - RaidBlock.HEADER_SIZE), token);
             Raid raid;
@@ -990,22 +1163,66 @@ namespace RaidCrawler
             }
 
             ConnectionStatusText.Text = "Completed";
-            LabelLoadedRaids.Text = $"Raids Loaded/Shiny: {Raids.Count}/{Enumerable.Range(0, Raids.Count).Where(i => Raid.CheckIsShiny(Raids[i], Encounters[i])).Count()}";
+            LabelLoadedRaids.Text = $"Met Filters/Shiny: {Enumerable.Range(0, Raids.Count).Count(i => RaidFilters.Any(z => z.FilterSatisfied(Encounters[i], Raids[i], RaidBoost.SelectedIndex)))}/{Enumerable.Range(0, Raids.Count).Where(i => Raid.CheckIsShiny(Raids[i], Encounters[i])).Count()}";
             //LabelLoadedRaids.Text = $"Raids: {Raids.Count} | Shiny: {Enumerable.Range(0, Raids.Count).Where(i => Raid.CheckIsShiny(Raids[i], Encounters[i])).Count()}";
             if (Raids.Count > 0)
             {
                 ButtonPrevious.Enabled = true;
                 ButtonNext.Enabled = true;
-                ComboIndex.DataSource = Enumerable.Range(0, Raids.Count ).Select(z => $"{(Raid.CheckIsShiny(Raids[z], Encounters[z]) ? "☆" : "")}{z + 1:D2} {Raid.strings.Species[Encounters[z].Species]} {(Encounters[z].Form != 0 ? $"-{Encounters[z].Form}" : "")}{(Raid.CheckIsShiny(Raids[z], Encounters[z]) ? "☆" : "")}").ToArray();
-                ComboIndex.SelectedIndex = index < Raids.Count ? index : 0;
+                CopyAnnounce.Enabled = true;
+                Rewards.Enabled = true;
+
+                if (Encounters.Count > 0)
+                {
+                    ComboIndex.DataSource = GetComboList();
+                    ///ComboIndex.DataSource = Enumerable.Range(0, Raids.Count).Select(z => $"{z + 1:D2} / {Raids.Count:D2} {Raid.strings.Species[Encounters[z].Species]}{(Encounters[z].Form != 0 ? $"-{Encounters[z].Form}" : "")}").ToArray();
+                    //ComboIndex.DataSource = Enumerable.Range(0, Raids.Count ).Select(z => $"{(Raid.CheckIsShiny(Raids[z], Encounters[z]) ? "☆" : "")}{z + 1:D2} {Raid.strings.Species[Encounters[z].Species]} {(Encounters[z].Form != 0 ? $"-{Encounters[z].Form}" : "")}{(Raid.CheckIsShiny(Raids[z], Encounters[z]) ? "☆" : "")}").ToArray();
+                    ComboIndex.SelectedIndex = index < Raids.Count ? index : 0;
+                }
             }
             else
             {
                 ButtonPrevious.Enabled = false;
                 ButtonNext.Enabled = false;
+                CopyAnnounce.Enabled = false;
+                Rewards.Enabled = false;
+
                 if (Raids.Count > RaidBlock.MAX_COUNT || Raids.Count == 0) MessageBox.Show("Bad read, ensure there are no cheats running or anything else that might shift RAM (Edizon, overlays, etc.), then reboot your console and try again.");
 
             }
+        }
+
+        private List<string> GetComboList()
+        {
+            var combo = new List<String>();
+            //List<Raid> Raids, List<ITeraRaid?> Encounters
+            for (var i = 0; Raids.Count > i; i++)
+            {
+                string s = string.Empty;
+                string form = string.Empty;
+                string name = string.Empty;
+                Raid raid = Raids[i];
+                var encounter = Encounters[i];
+
+                if (encounter is not null)
+                {
+                    var blank = new PK9
+                    {
+                        Species = encounter.Species,
+                        Form = encounter.Form
+                    };
+                    form = ShowdownParsing.GetStringFromForm(encounter.Form, GameInfo.GetStrings(GameLanguage.DefaultLanguage), blank.Species, blank.Context);
+                    name = $" {Raid.strings.Species[encounter.Species]}{(encounter.Form != 0 ? $"{(form == "F" ? "" : $" ({form})")}" : "")}";
+                }
+
+                var shiny = $"{(Raid.CheckIsShiny(raid, encounter) ? "☆" : "")}";
+                s = $"{shiny}{i + 1:D2}{name}{shiny}";
+
+                combo.Add(s);
+
+
+            }
+            return combo;
         }
 
         private void Progress_SelectedIndexChanged(object sender, EventArgs e)
@@ -1088,6 +1305,34 @@ namespace RaidCrawler
             ActiveControl = null;
         }
 
+        private void EC_Clicked(object sender, EventArgs e)
+        {
+            if (ModifierKeys != Keys.Shift)
+                return;
+            if (Raids.Count <= index)
+                return;
+            var raid = Raids[index];
+            Seed.Text = HideSeed ? $"{raid.Seed:X8}" : "Hidden";
+            EC.Text = HideSeed ? $"{raid.EC:X8}" : "Hidden";
+            PID.Text = (HideSeed ? $"{raid.PID:X8}" : "Hidden") + $"{(raid.IsShiny ? " (☆)" : string.Empty)}";
+            HideSeed = !HideSeed;
+            ActiveControl = null;
+        }
+
+        private void PID_Clicked(object sender, EventArgs e)
+        {
+            if (ModifierKeys != Keys.Shift)
+                return;
+            if (Raids.Count <= index)
+                return;
+            var raid = Raids[index];
+            Seed.Text = HideSeed ? $"{raid.Seed:X8}" : "Hidden";
+            EC.Text = HideSeed ? $"{raid.EC:X8}" : "Hidden";
+            PID.Text = (HideSeed ? $"{raid.PID:X8}" : "Hidden") + $"{(raid.IsShiny ? " (☆)" : string.Empty)}";
+            HideSeed = !HideSeed;
+            ActiveControl = null;
+        }
+
         private void ConfigSettings_Click(object sender, EventArgs e)
         {
             var form = new ConfigWindow(Config);
@@ -1145,8 +1390,8 @@ namespace RaidCrawler
             }
         }
 
-        Point Default = new(24, 255);
-        Point ShowExtra = new(33, 255);
+        Point Default = new(25, 236);
+        Point ShowExtra = new(34, 236);
         private void Move_Clicked(object sender, EventArgs e)
         {
             if (Raids.Count == 0)
@@ -1162,7 +1407,7 @@ namespace RaidCrawler
             LabelMoves.Location = ShowExtraMoves ? ShowExtra : Default;
             var extra_moves = new ushort[] { 0, 0, 0, 0 };
             for (int i = 0; i < encounter.ExtraMoves.Length; i++)
-                if (i < extra_moves.Count()) extra_moves[i] = encounter.ExtraMoves[i];
+                if (i < extra_moves.Length) extra_moves[i] = encounter.ExtraMoves[i];
             Move1.Text = ShowExtraMoves ? Raid.strings.Move[extra_moves[0]] : Raid.strings.Move[encounter.Move1];
             Move2.Text = ShowExtraMoves ? Raid.strings.Move[extra_moves[1]] : Raid.strings.Move[encounter.Move2];
             Move3.Text = ShowExtraMoves ? Raid.strings.Move[extra_moves[2]] : Raid.strings.Move[encounter.Move3];
@@ -1184,7 +1429,7 @@ namespace RaidCrawler
         {
             if (!SwitchConnection.Connected)
             {
-                MessageBox.Show("Cannot send a screenshot since switch is not connected.");
+                MessageBox.Show("Cannot send a screenshot, Switch not connected.");
                 return;
             }
 
@@ -1213,10 +1458,8 @@ namespace RaidCrawler
 
         public void TestWebhook()
         {
-            var filter = new RaidFilter();
-            filter.Name = "Test Webhook";
-            var satisfied_filters = new List<RaidFilter>();
-            satisfied_filters.Add(filter);
+            var filter = new RaidFilter { Name = "Test Webhook" };
+            var satisfied_filters = new List<RaidFilter> { filter };
 
             int i = ComboIndex.SelectedIndex;
             if (i > -1 && Encounters[i] != null && Raids[i] != null)
@@ -1229,6 +1472,42 @@ namespace RaidCrawler
             {
                 MessageBox.Show("Please connect to your device and ensure a raid has been found.");
             }
+        }
+
+        private void CopyAnnounce_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(NotificationHandler.GeneratePasteAnnounce(Config, Encounters[index], Raids[index], RewardsList[index]));
+        }
+
+        private async void ButtonSceenState_Click(object sender, EventArgs e)
+        {
+            ButtonSceenState.Text = $"{(screenState ? "Screen Off" : "Screen On")}";
+            await SwitchConnection.SendAsync(SwitchCommand.SetScreen(screenState ? ScreenState.On : ScreenState.Off), CancellationToken.None).ConfigureAwait(false);
+            screenState = !screenState;
+        }
+
+        private void Cheat_Click(object sender, EventArgs e)
+        {
+            if (ModifierKeys != Keys.Shift)
+                return;
+            if (!Config.BackupAfterSave & !Config.ContinueAfterBackup) {Config.BackupAfterSave = true;}
+            else if (Config.BackupAfterSave & !Config.ContinueAfterBackup) {Config.ContinueAfterBackup = true;}
+            else if (Config.BackupAfterSave & Config.ContinueAfterBackup)
+            {
+                Config.BackupAfterSave = false;
+                Config.ContinueAfterBackup = false;
+            }
+
+            if (Config.BackupAfterSave)
+            {
+                Cheat.ForeColor = Color.BlueViolet;
+            }
+            else
+            {
+                Cheat.ForeColor = Color.FromArgb(255, 240 , 240, 240);
+            }
+
+            if (Config.ContinueAfterBackup) Cheat.ForeColor = Color.OrangeRed;
         }
     }
 }
