@@ -6,6 +6,8 @@ namespace RaidCrawler.Structures
     {
         // General
         public string SwitchIP { get; set; } = "192.168.0.0";
+        public string SwitchUSBPort { get; set; } = "1";
+        public string SwitchProtocol { get; set; } = "wifi";
         public string Game { get; set; } = "Scarlet";
         public int Progress { get; set; } = 0;
         public int EventProgress { get; set; } = 0;

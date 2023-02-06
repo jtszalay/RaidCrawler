@@ -66,6 +66,7 @@
             this.DaySkipSuccessRate = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.myPanel1 = new RaidCrawler.Structures.MyPanel();
+            this.shinyBox = new System.Windows.Forms.PictureBox();
             this.LabelIsEvent = new RaidCrawler.Structures.RoundLabel();
             this.LabelUNK_2 = new RaidCrawler.Structures.RoundLabel();
             this.LabelMoves = new RaidCrawler.Structures.RoundLabel();
@@ -109,6 +110,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.GemIcon)).BeginInit();
             this.panel2.SuspendLayout();
             this.myPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.shinyBox)).BeginInit();
             this.myPanel2.SuspendLayout();
             this.myPanel3.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -498,6 +500,7 @@
             // 
             this.myPanel1.BackColor = System.Drawing.Color.Transparent;
             this.myPanel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.myPanel1.Controls.Add(this.shinyBox);
             this.myPanel1.Controls.Add(this.LabelIsEvent);
             this.myPanel1.Controls.Add(this.LabelUNK_2);
             this.myPanel1.Controls.Add(this.LabelMoves);
@@ -536,6 +539,15 @@
             this.myPanel1.Name = "myPanel1";
             this.myPanel1.Size = new System.Drawing.Size(350, 327);
             this.myPanel1.TabIndex = 130;
+            // 
+            // shinyBox
+            // 
+            this.shinyBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.shinyBox.Location = new System.Drawing.Point(195, 15);
+            this.shinyBox.Name = "shinyBox";
+            this.shinyBox.Size = new System.Drawing.Size(32, 32);
+            this.shinyBox.TabIndex = 166;
+            this.shinyBox.TabStop = false;
             // 
             // LabelIsEvent
             // 
@@ -968,6 +980,7 @@
             this.panel2.ResumeLayout(false);
             this.myPanel1.ResumeLayout(false);
             this.myPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.shinyBox)).EndInit();
             this.myPanel2.ResumeLayout(false);
             this.myPanel2.PerformLayout();
             this.myPanel3.ResumeLayout(false);
@@ -1059,5 +1072,6 @@
         private Structures.RoundLabel LabelEC;
         private Structures.RoundLabel LabelIsEvent;
         private Label Cheat;
+        private PictureBox shinyBox;
     }
 }

@@ -707,6 +707,7 @@
             this.SquareCheck.TabIndex = 36;
             this.SquareCheck.Text = "Square Shiny?";
             this.SquareCheck.UseVisualStyleBackColor = true;
+            this.SquareCheck.CheckedChanged += new System.EventHandler(this.SquareCheck_CheckedChanged);
             // 
             // SizeCheck
             // 

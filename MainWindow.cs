@@ -2,6 +2,7 @@ using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using PKHeX.Core;
 using PKHeX.Drawing;
+using PKHeX.Drawing.Misc.Properties;
 using PKHeX.Drawing.PokeSprite;
 using RaidCrawler.Structures;
 using RaidCrawler.Subforms;
@@ -26,7 +27,7 @@ namespace RaidCrawler
 
         private readonly static SwitchConnectionConfig ConnectionConfig = new() { Protocol = SwitchProtocol.WiFi, IP = "192.168.0.0", Port = 6000 };
         private readonly static SwitchSocketAsync SwitchConnection = new(ConnectionConfig);
-
+        //private readonly static SwitchUSBAsync SwitchConnection = new(ConnectionConfig.Port);
         private readonly static OffsetUtil OffsetUtil = new(SwitchConnection);
 
         private readonly List<Raid> Raids = new();
@@ -121,6 +122,7 @@ namespace RaidCrawler
             if (Location.X == 0 && Location.Y == 0)
                 CenterToScreen();
             InputSwitchIP.Text = Config.SwitchIP;
+            //InputSwitchIP.Text = Config.SwitchIP.Port
             DefaultColor = IVs.BackColor;
             Progress.SelectedIndex = Config.Progress;
             EventProgress.SelectedIndex = Config.EventProgress;
@@ -364,7 +366,7 @@ namespace RaidCrawler
                 {
                     var map = GenerateMap(raid, teratype);
                     myPanel1.BackgroundImage = (Config.MapBackground ? map : null);
-
+                    
                     var param = Raid.GetParam(encounter);
                     var blank = new PK9
                     {
@@ -391,6 +393,9 @@ namespace RaidCrawler
                     Move4.Text = ShowExtraMoves ? Raid.strings.Move[extra_moves[3]] : Raid.strings.Move[encounter.Move4];
                     IVs.Text = IVsString(ToSpeedLast(blank.IVs));
                     toolTip.SetToolTip(IVs, IVsString(ToSpeedLast(blank.IVs), true));
+
+                    shinyBox.Image = Raid.CheckIsShiny(raid, encounter) ? (ShinyExtensions.IsSquareShinyExist(blank) ? Properties.Resources.square : Properties.Resources.shiny) : null;
+                    shinyBox.SizeMode = PictureBoxSizeMode.Zoom;
                 }
                 else
                 {
@@ -408,7 +413,7 @@ namespace RaidCrawler
                 
                 PID.BackColor = Raid.CheckIsShiny(raid, encounter) ? Color.FromArgb(125, 255, 215, 0) : DefaultColor;
                 IVs.BackColor = IVs.Text is "31/31/31/31/31/31" ? Color.FromArgb(125, 154, 205, 50) : DefaultColor;
-                EC.BackColor = (raid.EC % 100 == 0 && (encounter.Species == 945 || encounter.Species == 206) ? Color.FromArgb(125, 0, 215, 255) : DefaultColor);
+                EC.BackColor = (raid.EC % 100 == 0 && (encounter!.Species == 945 || encounter.Species == 206) ? Color.FromArgb(125, 0, 215, 255) : DefaultColor);
             }
             else
             {
@@ -992,7 +997,7 @@ namespace RaidCrawler
                 {
                     // average run takes between 15-18secs on a v1 switch, undocked
                     // if a single run of the loop takes more than a minute, stop it, something is wrong
-                    AdvanceDateCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(90));
+                    AdvanceDateCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(120));
                     prev = Raids.Select(z => z.Seed).ToList();
                     try
                     {
@@ -1058,9 +1063,9 @@ namespace RaidCrawler
                     }
 
                     if (Config.EnableAlertWindow) MessageBox.Show(Config.AlertWindowMessage + "\n\nTime Spent: " + time, "Result found!", MessageBoxButtons.OK);
-                    ButtonStopCrawl.Enabled = false;
                 }
 
+                ButtonStopCrawl.Enabled = false;
                 ButtonReadRaids.Enabled = true;
                 ButtonAdvanceDate.Enabled = true;
                 SearchTimer.Stop();
@@ -1145,12 +1150,21 @@ namespace RaidCrawler
             var Data = await SwitchConnection.ReadBytesAbsoluteAsync(offset + RaidBlock.HEADER_SIZE, (int)(RaidBlock.SIZE - RaidBlock.HEADER_SIZE), token);
             Raid raid;
             var count = Data.Length / Raid.SIZE;
+            HashSet<int> possible_groups = new HashSet<int>();
+            if (Raid.DistTeraRaids != null)
+            { 
+                foreach (TeraDistribution e in Raid.DistTeraRaids)
+                {
+                    if (TeraDistribution.AvailableInGame(e.Entity, Config.Game))
+                        possible_groups.Add(e.DeliveryGroupID);
+                }
+            }
             var eventct = 0;
             for (int i = 0; i < count; i++)
             {
                 raid = new Raid(Data.Skip(i * Raid.SIZE).Take(Raid.SIZE).ToArray());
                 var progress = raid.IsEvent ? EventProgress.SelectedIndex : Progress.SelectedIndex;
-                var raid_delivery_group_id = raid.IsEvent ? TeraDistribution.GetDeliveryGroupID(eventct, Raid.DeliveryRaidPriority) : -1;
+                var raid_delivery_group_id = raid.IsEvent ? TeraDistribution.GetDeliveryGroupID(eventct, Raid.DeliveryRaidPriority, possible_groups) : -1;
                 var encounter = raid.Encounter(progress, raid_delivery_group_id);
                 if (raid.IsValid)
                 {

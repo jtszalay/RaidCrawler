@@ -256,6 +256,12 @@ namespace RaidCrawler.Subforms
             SpeComp.Enabled = Spe.Checked;
         }
 
+        private void SquareCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            if (SquareCheck.Checked) { ShinyCheck.Enabled = false; ShinyCheck.Checked = false; }
+            else { ShinyCheck.Enabled = true; }
+        }
+
         private void Save_Click(object sender, EventArgs e)
         {
             HashSet<int> indexset = new HashSet<int>(ActiveFilters.CheckedIndices.Cast<int>());
@@ -343,5 +349,7 @@ namespace RaidCrawler.Subforms
 
             e.DrawFocusRectangle();
         }
+
+
     }
 }

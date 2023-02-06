@@ -95,7 +95,7 @@ namespace RaidCrawler.Structures
         {
             if (Square == false)
                 return true;
-            _ = PersonalTable.SV.GetFormEntry(encounter!.Species, encounter.Form);
+            _ = PersonalTable.SV.GetFormEntry(encounter.Species, encounter.Form);
             var param = Raid.GetParam(encounter);
             PK9 blank = new()
             {
