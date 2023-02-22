@@ -65,6 +65,7 @@
             this.ExperimentalView = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.SaveAfterFind = new System.Windows.Forms.CheckBox();
             this.MapBackground = new System.Windows.Forms.CheckBox();
             this.CopyEmoji = new System.Windows.Forms.CheckBox();
             this.InstanceName = new System.Windows.Forms.TextBox();
@@ -91,7 +92,7 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.EnableEmoji = new System.Windows.Forms.CheckBox();
-            this.SaveAfterFind = new System.Windows.Forms.CheckBox();
+            this.SkipFirmware = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.BaseDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SystemDDownPresses)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NavigateToSettings)).BeginInit();
@@ -528,6 +529,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.SkipFirmware);
             this.tabPage3.Controls.Add(this.SaveAfterFind);
             this.tabPage3.Controls.Add(this.MapBackground);
             this.tabPage3.Controls.Add(this.CopyEmoji);
@@ -542,6 +544,16 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "General";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // SaveAfterFind
+            // 
+            this.SaveAfterFind.AutoSize = true;
+            this.SaveAfterFind.Location = new System.Drawing.Point(3, 68);
+            this.SaveAfterFind.Name = "SaveAfterFind";
+            this.SaveAfterFind.Size = new System.Drawing.Size(182, 19);
+            this.SaveAfterFind.TabIndex = 45;
+            this.SaveAfterFind.Text = "Save game after match found";
+            this.SaveAfterFind.UseVisualStyleBackColor = true;
             // 
             // MapBackground
             // 
@@ -851,15 +863,15 @@
             this.EnableEmoji.Text = "Webhook Emoji";
             this.EnableEmoji.UseVisualStyleBackColor = true;
             // 
-            // SaveAfterFind
+            // SkipFirmware
             // 
-            this.SaveAfterFind.AutoSize = true;
-            this.SaveAfterFind.Location = new System.Drawing.Point(3, 68);
-            this.SaveAfterFind.Name = "SaveAfterFind";
-            this.SaveAfterFind.Size = new System.Drawing.Size(182, 19);
-            this.SaveAfterFind.TabIndex = 45;
-            this.SaveAfterFind.Text = "Save game after match found";
-            this.SaveAfterFind.UseVisualStyleBackColor = true;
+            this.SkipFirmware.AutoSize = true;
+            this.SkipFirmware.Location = new System.Drawing.Point(3, 152);
+            this.SkipFirmware.Name = "SkipFirmware";
+            this.SkipFirmware.Size = new System.Drawing.Size(184, 19);
+            this.SkipFirmware.TabIndex = 46;
+            this.SkipFirmware.Text = "Skip Firmware Update Prompt";
+            this.SkipFirmware.UseVisualStyleBackColor = true;
             // 
             // ConfigWindow
             // 
@@ -964,5 +976,6 @@
         private CheckBox CopyEmoji;
         private CheckBox MapBackground;
         private CheckBox SaveAfterFind;
+        private CheckBox SkipFirmware;
     }
 }

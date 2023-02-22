@@ -877,9 +877,20 @@ namespace RaidCrawler
             for (int i = 0; i < 6; i++) await Click(DRIGHT, 0_050 + BaseDelay, token).ConfigureAwait(false);
             await Click(A, 0_500 + BaseDelay, token).ConfigureAwait(false);
 
-            // Return to game
-            await Click(HOME, (int)Config.ReturnHome + BaseDelay, token).ConfigureAwait(false);
-            await Click(HOME, (int)Config.ReturnGame + BaseDelay, token).ConfigureAwait(false);
+            if (Config.SkipFirmware == false)
+            {
+                // Return to game
+                await Click(HOME, (int)Config.ReturnHome + BaseDelay, token).ConfigureAwait(false);
+                await Click(HOME, (int)Config.ReturnGame + BaseDelay, token).ConfigureAwait(false);
+            }
+            else
+            {
+                // Return to game skipping system update prompt
+                await Click(HOME, (int)Config.ReturnHome + BaseDelay, token).ConfigureAwait(false);
+                await Click(HOME, 0_500, token).ConfigureAwait(false);
+                await Click(DUP, 0_500, token).ConfigureAwait(false);
+                await Click(A, (int)Config.ReturnGame + BaseDelay, token).ConfigureAwait(false);
+            }
         }
 
         private async Task SaveGame(CancellationToken token)

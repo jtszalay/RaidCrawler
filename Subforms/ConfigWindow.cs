@@ -58,6 +58,7 @@ namespace RaidCrawler.Subforms
 
             ExperimentalView.Checked = c.StreamerView;
             MapBackground.Checked = c.MapBackground;
+            SkipFirmware.Checked = c.SkipFirmware;
         }
 
         /*private DataTable EmojiLoad(Dictionary<string, string> emoji)
@@ -128,6 +129,7 @@ namespace RaidCrawler.Subforms
             c.ToggleDen = denToggle.Checked;
             c.StreamerView = ExperimentalView.Checked;
             c.MapBackground = MapBackground.Checked;
+            c.SkipFirmware = SkipFirmware.Checked;
 			
             string output = JsonConvert.SerializeObject(c);
             using StreamWriter sw = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json"));

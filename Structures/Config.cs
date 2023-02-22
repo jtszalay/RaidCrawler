@@ -73,6 +73,7 @@ namespace RaidCrawler.Structures
         public bool StreamerView { get; set; } = false;
         public bool MapBackground { get; set; } = false;
         public string InstanceName { get; set; } = string.Empty;
+        public bool SkipFirmware { get; set; } = false;
 
         // Theme
         public Color windowColor { get; set; } = Color.FromArgb(255, 240, 240, 240);
