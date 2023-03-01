@@ -374,7 +374,7 @@ namespace RaidCrawler
                         Form = encounter.Form
                     };
                     Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
-                    var img = blank.Sprite(SpriteBuilderTweak.None);
+                    var img = blank.Sprite();
                     img = ApplyTeraColor((byte)teratype, img, SpriteBackgroundType.BottomStripe);
                     Species.Text = $"{Raid.strings.Species[encounter.Species]}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}";
                     Sprite.Image = img;
@@ -445,7 +445,7 @@ namespace RaidCrawler
                         Form = encounter.Form
                     };
                     Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
-                    var img = blank.Sprite(SpriteBuilderTweak.None);
+                    var img = blank.Sprite();
 
                     teraRaidView.picBoxPokemon.Image = img;
 
