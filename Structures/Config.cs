@@ -56,7 +56,7 @@ namespace RaidCrawler.Structures
         public Dictionary<string, string> Emoji { get; set; } = new Dictionary<string, string>
         {
             { "Bug", "<:tBug:1060235283976699995>" }, { "Dark", "<:tDark:1060235285394366564>" }, { "Dragon", "<:tDragon:1060235286879141917>"}, { "Electric", "<:tElectric:1060235288691093566>"},
-            { "Fairy", "<:tFairy:1060235282127003730>"}, { "Fighting", "<:tFighting:1060235325705822309>"}, { "Fire", "<:tFlying:1060235328717336646>"}, { "Flying", "<:tFlying:1060235328717336646>"},
+            { "Fairy", "<:tFairy:1060235282127003730>"}, { "Fighting", "<:tFighting:1060235325705822309>"}, { "Fire", "<:tFire:1060235326834102382>"}, { "Flying", "<:tFlying:1060235328717336646>"},
             { "Ghost", "<:tGhost:1060235329665241129>"}, { "Grass", "<:tGrass:1060235303828332655>"}, { "Ground", "<:tGround:1060235355867058308>"}, { "Ice", "<:tIce:1060235356710109246>"},
             { "Normal", "<:tNormal:1060235360334008331>"}, { "Poison", "<:tPoison:1060235353732161569>"}, { "Psychic", "<:tPsychic:1060235385235570811>"}, { "Rock", "<:tRock:1060235386279972906>"},
             { "Steel", "<:tSteel:1060235358358491147>"}, { "Water", "<:tWater:1060235383411056640>"}, { "Male", "<:male:1060738367274352730>"}, { "Female", "<:female:1060738368541048965>"},
@@ -66,7 +66,7 @@ namespace RaidCrawler.Structures
             { "SpAttack 31", "<:m4SpecialAttack31:1063983361619660861>"}, { "SpDefense 0", "<:m5SpecialDefence0:1063983385762082867>"}, { "SpDefense 31", "<:m5SpecialDefence31:1063983387137822761>"}, { "Speed 0", "<:m6Speed0:1063983390052847659>" },
             { "Speed 31", "<:m6Speed31:1063983441672163469>" }, { "Sweet Herba", "<:herbaSweet:1058436152924844052>"}, { "Sour Herba", "<:herbaSour:1058436114752475228>"}, { "Salty Herba", "<:herbaSalty:1058436153931464764>"},
             { "Bitter Herba", "<:herbaBitter:1058436112034562088>"}, { "Spicy Herba", "<:herbaSpicy:1058436113276096614>"}, { "Bottle Cap", "<:bottlecap:1058436109761265765>"},
-            { "Ability Capsule", "<:abilitycapsule:1059122237019537478>"}, { "Ability Patch", "<:abilitypatch:1059123255283302450>"}
+            { "Ability Capsule", "<:abilitycapsule:1059122237019537478>"}, { "Ability Patch", "<:abilitypatch:1059123255283302450>"}, { "Error", "<:exclamation:1065868106360160346>" }
         };
 
         // Experimental

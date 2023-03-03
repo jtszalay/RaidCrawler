@@ -1150,20 +1150,20 @@ namespace RaidCrawler
         private async Task ReadRaids(CancellationToken token)
         {
             ConnectionStatusText.Text = "Parsing pointer";
-            offset = await OffsetUtil.GetPointerAddress(RaidBlockPointer, CancellationToken.None);
+            try { offset = await OffsetUtil.GetPointerAddress(RaidBlockPointer, CancellationToken.None); } catch { NotificationHandler.SendNotifications(Config, true); };
 
             Raids.Clear();
             Encounters.Clear();
             RewardsList.Clear();
             index = 0;
-            
+
             ConnectionStatusText.Text = "Reading raid block";
             var Data = await SwitchConnection.ReadBytesAbsoluteAsync(offset + RaidBlock.HEADER_SIZE, (int)(RaidBlock.SIZE - RaidBlock.HEADER_SIZE), token);
             Raid raid;
             var count = Data.Length / Raid.SIZE;
             HashSet<int> possible_groups = new HashSet<int>();
             if (Raid.DistTeraRaids != null)
-            { 
+            {
                 foreach (TeraDistribution e in Raid.DistTeraRaids)
                 {
                     if (TeraDistribution.AvailableInGame(e.Entity, Config.Game))
@@ -1215,7 +1215,7 @@ namespace RaidCrawler
                 if (Raids.Count > RaidBlock.MAX_COUNT || Raids.Count == 0) MessageBox.Show("Bad read, ensure there are no cheats running or anything else that might shift RAM (Edizon, overlays, etc.), then reboot your console and try again.");
 
             }
-        }
+            }
 
         private List<string> GetComboList()
         {

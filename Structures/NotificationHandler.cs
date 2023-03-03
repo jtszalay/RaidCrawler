@@ -1,9 +1,14 @@
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
+using NLog.Filters;
 using PKHeX.Core;
 using PKHeX.Drawing.PokeSprite;
 using SysBot.Base;
+using System.Diagnostics.Metrics;
 using System.Text;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Text.RegularExpressions;
 
 namespace RaidCrawler.Structures
 {
@@ -32,6 +37,42 @@ namespace RaidCrawler.Structures
             var content = new StringContent(JsonConvert.SerializeObject(webhook), Encoding.UTF8, "application/json");
             foreach (var url in DiscordWebhooks)
                 Client.PostAsync(url.Trim(), content).Wait();
+        }
+
+        public static void SendNotifications(Config c, bool error)
+        {
+            if (error)
+            {
+                DiscordWebhooks = c.EnableNotification ? c.DiscordWebhook.Split(',') : null;
+                if (DiscordWebhooks == null)
+                    return;
+                var webhook = new
+                    {
+                        username = $"RaidCrawler" + c.InstanceName,
+                        avatar_url = "https://www.serebii.net/scarletviolet/ribbons/mightiestmark.png",
+                        content = c.DiscordMessageContent,
+                        embeds = new List<object>
+                    {
+                        new
+                        {
+                            title = $"Error Occurred",
+                            description = $"Did your switch turn off or close the game?",
+                            color = int.Parse("FF4F4E", System.Globalization.NumberStyles.HexNumber),
+                            thumbnail = new
+                            {
+                                url = $"https://cdn.discordapp.com/emojis/1065868106360160346.png?v=1"
+                            },
+                            /*fields = new List<object>
+                            {
+                                new { name = "ㅤㅤㅤㅤㅤㅤ", value = "", inline = false, },
+                            },*/
+                        }
+                    }
+                };
+                var content = new StringContent(JsonConvert.SerializeObject(webhook), Encoding.UTF8, "application/json");
+                foreach (var url in DiscordWebhooks)
+                    Client.PostAsync(url.Trim(), content).Wait();
+            }
         }
 
         public static void SendScreenshot(Config c, SwitchSocketAsync nx)
