@@ -86,6 +86,8 @@ namespace RaidCrawler.WinForms.SubForms
             UseOvershoot = new CheckBox();
             BaseDelay = new NumericUpDown();
             tabWebhook = new TabPage();
+            IVspacerLabel = new Label();
+            IVspacer = new TextBox();
             EmojiConfig = new Button();
             labelWebhooks = new Label();
             label21 = new Label();
@@ -694,6 +696,8 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // tabWebhook
             // 
+            tabWebhook.Controls.Add(IVspacerLabel);
+            tabWebhook.Controls.Add(IVspacer);
             tabWebhook.Controls.Add(EmojiConfig);
             tabWebhook.Controls.Add(labelWebhooks);
             tabWebhook.Controls.Add(label21);
@@ -713,6 +717,23 @@ namespace RaidCrawler.WinForms.SubForms
             tabWebhook.TabIndex = 3;
             tabWebhook.Text = "Webhook";
             tabWebhook.UseVisualStyleBackColor = true;
+            // 
+            // IVspacerLabel
+            // 
+            IVspacerLabel.AutoSize = true;
+            IVspacerLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            IVspacerLabel.Location = new Point(8, 227);
+            IVspacerLabel.Name = "IVspacerLabel";
+            IVspacerLabel.Size = new Size(60, 15);
+            IVspacerLabel.TabIndex = 48;
+            IVspacerLabel.Text = "IV Spacer";
+            // 
+            // IVspacer
+            // 
+            IVspacer.Location = new Point(8, 245);
+            IVspacer.Name = "IVspacer";
+            IVspacer.Size = new Size(100, 23);
+            IVspacer.TabIndex = 47;
             // 
             // EmojiConfig
             // 
@@ -774,7 +795,7 @@ namespace RaidCrawler.WinForms.SubForms
             denToggle.AutoSize = true;
             denToggle.Checked = true;
             denToggle.CheckState = CheckState.Checked;
-            denToggle.Location = new Point(8, 249);
+            denToggle.Location = new Point(8, 293);
             denToggle.Name = "denToggle";
             denToggle.Size = new Size(79, 19);
             denToggle.TabIndex = 21;
@@ -785,7 +806,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             LocationSettings_label.AutoSize = true;
             LocationSettings_label.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            LocationSettings_label.Location = new Point(7, 231);
+            LocationSettings_label.Location = new Point(6, 275);
             LocationSettings_label.Name = "LocationSettings_label";
             LocationSettings_label.Size = new Size(103, 15);
             LocationSettings_label.TabIndex = 20;
@@ -1047,5 +1068,7 @@ namespace RaidCrawler.WinForms.SubForms
         private CheckBox SaveGame;
         private CheckBox DodgeSystemUpdate;
         private CheckBox UseSetStick;
+        private TextBox IVspacer;
+        private Label IVspacerLabel;
     }
 }

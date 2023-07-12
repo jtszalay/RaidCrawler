@@ -12,9 +12,11 @@ namespace RaidCrawler.Core.Interfaces
         string DiscordMessageContent { get; set; }
 
         bool EnableEmoji { get; set; }
+        bool CopyEmoji { get; set; }
         Dictionary<string, string> Emoji { get; set; }
 
         bool VerboseIVs { get; set; }
         int IVsStyle { get; set; }
+        string IVsSpacer { get; set; }
     }
 }

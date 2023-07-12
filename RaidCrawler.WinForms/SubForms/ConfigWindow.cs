@@ -59,6 +59,7 @@ namespace RaidCrawler.WinForms.SubForms
             SaveGameDelay.Enabled = SaveGame.Checked;
 
             IVstyle.SelectedIndex = c.IVsStyle;
+            IVspacer.Text = c.IVsSpacer;
             IVverbose.Checked = c.VerboseIVs;
 
             denToggle.Checked = c.ToggleDen;
@@ -121,6 +122,7 @@ namespace RaidCrawler.WinForms.SubForms
             c.SaveGameDelay = (int)SaveGameDelay.Value;
 
             c.IVsStyle = IVstyle.SelectedIndex;
+            c.IVsSpacer = IVspacer.Text;
             c.VerboseIVs = IVverbose.Checked;
 
             c.EnableEmoji = EnableEmoji.Checked;
