@@ -28,34 +28,35 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.EmojiGrid = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.EmojiGrid)).BeginInit();
-            this.SuspendLayout();
+            EmojiGrid = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)EmojiGrid).BeginInit();
+            SuspendLayout();
             // 
             // EmojiGrid
             // 
-            this.EmojiGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.EmojiGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.EmojiGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.EmojiGrid.Location = new System.Drawing.Point(0, 0);
-            this.EmojiGrid.Name = "EmojiGrid";
-            this.EmojiGrid.RowTemplate.Height = 25;
-            this.EmojiGrid.Size = new System.Drawing.Size(374, 450);
-            this.EmojiGrid.TabIndex = 0;
-            this.EmojiGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.EmojiGrid_Changed);
+            EmojiGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            EmojiGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            EmojiGrid.Dock = DockStyle.Fill;
+            EmojiGrid.Location = new Point(0, 0);
+            EmojiGrid.Name = "EmojiGrid";
+            EmojiGrid.RowTemplate.Height = 25;
+            EmojiGrid.Size = new Size(374, 450);
+            EmojiGrid.TabIndex = 0;
+            EmojiGrid.CellEndEdit += EmojiGrid_Changed;
             // 
             // EmojiConfig
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(374, 450);
-            this.Controls.Add(this.EmojiGrid);
-            this.Name = "EmojiConfig";
-            this.ShowIcon = false;
-            this.Text = "EmojiConfig";
-            ((System.ComponentModel.ISupportInitialize)(this.EmojiGrid)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(374, 450);
+            Controls.Add(EmojiGrid);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "EmojiConfig";
+            ShowIcon = false;
+            Text = "EmojiConfig";
+            ((System.ComponentModel.ISupportInitialize)EmojiGrid).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion

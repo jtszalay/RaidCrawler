@@ -51,5 +51,6 @@ namespace RaidCrawler.Core.Structures
         public void ClearRewards() => Rewards = new List<List<(int, int, int)>>();
         public void SetRewards(IReadOnlyList<IReadOnlyList<(int, int, int)>> rewards) => Rewards = rewards;
         public void SetGame(string game) => Game = game;
+
     }
 }

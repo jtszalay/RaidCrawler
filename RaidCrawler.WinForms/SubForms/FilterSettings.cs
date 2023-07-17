@@ -52,18 +52,21 @@ namespace RaidCrawler.WinForms.SubForms
         {
             FilterName.Text = filter.Name;
             Species.SelectedIndex = filter.Species != null ? (int)filter.Species : 0;
+            RareVariant.Checked = filter.RareVariant;
             Form.Value = filter.Form != null ? (int)filter.Form : 0;
             Nature.SelectedIndex = filter.Nature != null ? (int)filter.Nature : 0;
             Stars.SelectedIndex = filter.Stars != null ? (int)filter.Stars - 1 : 0;
             StarsComp.SelectedIndex = filter.StarsComp;
             TeraType.SelectedIndex = filter.TeraType != null ? (int)filter.TeraType : 0;
             Gender.SelectedIndex = filter.Gender != null ? (int)filter.Gender : 0;
+            SizeBox.SelectedIndex = filter.Size != null ? (int)filter.Size : 0;
             SpeciesCheck.Checked = filter.Species != null;
             FormCheck.Checked = filter.Form != null;
             NatureCheck.Checked = filter.Nature != null;
             StarCheck.Checked = filter.Stars != null;
             TeraCheck.Checked = filter.TeraType != null;
             GenderCheck.Checked = filter.Gender != null;
+            SizeCheck.Checked = filter.Size != null;
             ShinyCheck.Checked = filter.Shiny;
             SquareCheck.Checked = filter.Square;
             CheckRewards.Checked = filter.RewardItems != null && filter.RewardsCount > 0;
@@ -112,6 +115,8 @@ namespace RaidCrawler.WinForms.SubForms
             SpeComp.Enabled = Spe.Checked;
 
             Species.Enabled = SpeciesCheck.Checked;
+            RareVariant.Visible = Species.SelectedIndex == 206 || Species.SelectedIndex == 924;
+            textBox1.Text = Species.SelectedIndex.ToString();
             Nature.Enabled = NatureCheck.Checked;
             Stars.Enabled = StarCheck.Checked;
             StarsComp.Enabled = StarCheck.Checked;
@@ -121,6 +126,7 @@ namespace RaidCrawler.WinForms.SubForms
             RewardsComp.Enabled = CheckRewards.Checked;
             TeraType.Enabled = TeraCheck.Checked;
             Gender.Enabled = GenderCheck.Checked;
+            SizeBox.Enabled = SizeCheck.Checked;
         }
 
         private void Add_Filter_Click(object sender, EventArgs e)
@@ -141,12 +147,14 @@ namespace RaidCrawler.WinForms.SubForms
 
             filter.Name = FilterName.Text.Trim();
             filter.Species = SpeciesCheck.Checked ? Species.SelectedIndex : null;
+            filter.RareVariant = RareVariant.Checked;
             filter.Form = FormCheck.Checked ? (int)Form.Value : null;
             filter.Nature = NatureCheck.Checked ? Nature.SelectedIndex : null;
             filter.Stars = StarCheck.Checked ? Stars.SelectedIndex + 1 : null;
             filter.StarsComp = StarsComp.SelectedIndex;
             filter.TeraType = TeraCheck.Checked ? TeraType.SelectedIndex : null;
             filter.Gender = GenderCheck.Checked ? Gender.SelectedIndex : null;
+            filter.Size = SizeCheck.Checked ? SizeBox.SelectedIndex : null;
             filter.Shiny = ShinyCheck.Checked;
             filter.Square = SquareCheck.Checked;
             filter.IVBin = ivbin;
@@ -187,6 +195,21 @@ namespace RaidCrawler.WinForms.SubForms
             Species.Enabled = SpeciesCheck.Checked;
         }
 
+        private void Species_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Species.SelectedIndex == 206 || Species.SelectedIndex == 924)
+            {
+                RareVariant.Visible = true;
+                Species.Size = new Size(90, 23);
+            }
+            else
+            {
+                RareVariant.Checked = false;
+                RareVariant.Visible = false;
+                Species.Size = new Size(178, 23);
+            }
+        }
+
         private void FormCheck_CheckedChanged(object sender, EventArgs e)
         {
             Form.Enabled = FormCheck.Checked;
@@ -211,6 +234,11 @@ namespace RaidCrawler.WinForms.SubForms
         private void GenderCheck_CheckedChanged(object sender, EventArgs e)
         {
             Gender.Enabled = GenderCheck.Checked;
+        }
+
+        private void SizeCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            SizeBox.Enabled = SizeCheck.Checked;
         }
 
         private void HP_CheckedChanged(object sender, EventArgs e)
@@ -332,10 +360,11 @@ namespace RaidCrawler.WinForms.SubForms
             e.DrawFocusRectangle();
         }
 
-        private void ShinyCheck_CheckedChanged(object sender, EventArgs e)
+        private void SquareCheck_CheckedChanged(object sender, EventArgs e)
         {
-            SquareCheck.Enabled = ShinyCheck.Checked;
-            if (!ShinyCheck.Checked) SquareCheck.Checked = false;
+            if (SquareCheck.Checked) { ShinyCheck.Enabled = false; ShinyCheck.Checked = false; }
+            else { ShinyCheck.Enabled = true; }
         }
+
     }
 }

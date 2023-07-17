@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace RaidCrawler.WinForms.SubForms
 {
@@ -32,7 +34,6 @@ namespace RaidCrawler.WinForms.SubForms
             DiscordWebhook.Text = c.DiscordWebhook;
             DiscordWebhook.Enabled = EnableDiscordNotifications.Checked;
             DiscordMessageContent.Text = c.DiscordMessageContent;
-            DiscordMessageContent.Enabled = EnableDiscordNotifications.Checked;
 
             UseTouch.Checked = c.UseTouch;
             UseOvershoot.Checked = c.UseOvershoot;
@@ -65,14 +66,21 @@ namespace RaidCrawler.WinForms.SubForms
             denToggle.Checked = c.ToggleDen;
 
             EnableEmoji.Checked = c.EnableEmoji;
+            CopyEmoji.Checked = c.CopyEmoji;
 
             ExperimentalView.Checked = c.StreamerView;
+            MapBackground.Checked = c.MapBackground;
+            TitleSearchTime.Checked = c.SearchTimeInTitle;
 
             labelAppVersion.Text = "v" + v.Major + "." + v.Minor + "." + v.Build + "-" + shaField?.GetValue(null);
             labelAppVersion.Left = (tabAbout.Width - labelAppVersion.Width) / 2;
-            labelAppName.Left = ((tabAbout.Width - labelAppName.Width) / 2) + (picAppIcon.Width / 2) + 2;
-            picAppIcon.Left = labelAppName.Left - picAppIcon.Width - 2;
+            labelAppName.Left = ((tabAbout.Width - labelAppName.Width) / 2) /*+ (picAppIcon.Width / 2) + 2*/;
+            //picAppIcon.Left = labelAppName.Left - picAppIcon.Width - 2;
             linkLabel1.Left = (tabAbout.Width - linkLabel1.Width) / 2;
+            linkLabel2.Left = (tabAbout.Width - linkLabel2.Width) / 2;
+            label1.Left = (tabAbout.Width - label1.Width) / 2;
+            label2.Left = (tabAbout.Width - label2.Width) / 2;
+
 
             labelWebhooks.Text = "Webhooks are " + (DiscordWebhook.Enabled ? "enabled." : "disabled.");
         }
@@ -80,13 +88,6 @@ namespace RaidCrawler.WinForms.SubForms
         private void EnableAlert_CheckedChanged(object sender, EventArgs e)
         {
             AlertMessage.Enabled = EnableAlert.Checked;
-        }
-
-        private void EnableDiscordNotifications_Click(object sender, EventArgs e)
-        {
-            DiscordWebhook.Enabled = EnableDiscordNotifications.Checked;
-            DiscordMessageContent.Enabled = EnableDiscordNotifications.Checked;
-            labelWebhooks.Text = "Webhooks are " + (DiscordWebhook.Enabled ? "enabled." : "disabled.");
         }
 
         private void Config_Closing(object sender, EventArgs e)
@@ -126,11 +127,37 @@ namespace RaidCrawler.WinForms.SubForms
             c.VerboseIVs = IVverbose.Checked;
 
             c.EnableEmoji = EnableEmoji.Checked;
+            c.CopyEmoji = CopyEmoji.Checked;
 
             c.ToggleDen = denToggle.Checked;
             c.StreamerView = ExperimentalView.Checked;
+            c.MapBackground = MapBackground.Checked;
+            c.SearchTimeInTitle = TitleSearchTime.Checked;
 
             c.Protocol = (SysBot.Base.SwitchProtocol)Protocol_dropdown.SelectedIndex;
+
+            //Update mainForm title and webhook on save
+            if (!TitleSearchTime.Checked || InstanceName.Modified)
+            {
+                c.SearchTimeInTitle = false;
+                var mainForm = Application.OpenForms.OfType<MainWindow>().Single();
+                var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version!;
+                var build = string.Empty;
+#if DEBUG
+                var date = File.GetLastWriteTime(AppContext.BaseDirectory);
+                var build = $" (dev-{date:yyyyMMdd})";
+#endif                
+                mainForm.formTitle = "RaidCrawlerV v" + v.Major + "." + v.Minor + "." + v.Build + build + " " + c.InstanceName;
+                Invoke(() => mainForm.Text = mainForm.formTitle);
+            }
+            if (DiscordWebhook.Modified)
+            {
+                DiscordWebhook.Enabled = EnableDiscordNotifications.Checked;
+                labelWebhooks.Text = "Webhooks are " + (DiscordWebhook.Enabled ? "enabled." : "disabled.");
+                var mainForm = Application.OpenForms.OfType<MainWindow>().Single();
+                mainForm.UpdateWebhook(c);
+            }
+            //end update stuff
 
             JsonSerializerOptions options = new() { WriteIndented = true };
             string output = JsonSerializer.Serialize(c, options);
@@ -144,7 +171,7 @@ namespace RaidCrawler.WinForms.SubForms
             SystemOvershoot.Enabled = UseOvershoot.Checked;
         }
 
-        private void UseSetStick_CheckedChanged(Object sender, EventArgs e)
+        private void UseSetStick_CheckedChanged(object sender, EventArgs e)
         {
             UseSetStick.Enabled = !UseSetStick.Checked;
         }
@@ -168,6 +195,11 @@ namespace RaidCrawler.WinForms.SubForms
         }
 
         private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(((LinkLabel)sender).Text) { UseShellExecute = true });
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(((LinkLabel)sender).Text) { UseShellExecute = true });
         }
@@ -199,5 +231,32 @@ namespace RaidCrawler.WinForms.SubForms
             var mainForm = Application.OpenForms.OfType<MainWindow>().Single();
             mainForm.ToggleStreamerView();
         }
+
+        private void Save_Click(object sender, EventArgs e)
+        {
+            Config_Closing(sender, e);
+
+            Save.Text = "Saved";
+
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
+            {
+                Interval = 500,
+                Enabled = true
+            };
+
+            timer.Tick += (sender, e) =>
+            {
+                Save.Text = "Save";
+
+                timer.Dispose();
+            };
+        }
+
+        private void EnableDiscordNotifications_CheckedChanged(object sender, EventArgs e)
+        {
+            DiscordWebhook.Enabled = EnableDiscordNotifications.Checked;
+        }
+
+
     }
 }

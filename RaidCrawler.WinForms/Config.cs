@@ -76,6 +76,7 @@ namespace RaidCrawler.WinForms
         // Experimental
         public bool StreamerView { get; set; } = false;
         public string InstanceName { get; set; } = string.Empty;
-
+        public bool MapBackground { get; set; } = false;
+        public bool SearchTimeInTitle { get; set; } = false;
     }
 }

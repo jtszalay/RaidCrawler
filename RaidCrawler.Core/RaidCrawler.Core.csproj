@@ -45,8 +45,4 @@
     <EmbeddedResource Include="Resources\Base\raid_lottery_reward_item_array.json" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Custom UI\" />
-  </ItemGroup>
-
 </Project>

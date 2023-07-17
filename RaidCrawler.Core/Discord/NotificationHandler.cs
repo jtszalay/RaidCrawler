@@ -5,6 +5,7 @@ using SysBot.Base;
 using System.Globalization;
 using System.Text.Json;
 using System.Text;
+using System.Runtime.InteropServices.ObjectiveC;
 
 namespace RaidCrawler.Core.Discord
 {
@@ -84,6 +85,12 @@ namespace RaidCrawler.Core.Discord
                 await _client.PostAsync(url.Trim(), content, token).ConfigureAwait(false);
         }
 
+        public string GetAnnouncement(ITeraRaid encounter, Raid raid, RaidFilter filter, string time, IReadOnlyList<(int, int, int)> RewardsList, string hexColor, string spriteName, string eventtype) 
+        {
+            var announcement = GenerateWebhook(encounter, raid, filter, time, RewardsList, hexColor, spriteName, eventtype);
+            return announcement.ToString();
+        }
+
         private object GenerateWebhook(ITeraRaid encounter, Raid raid, RaidFilter filter, string time, IReadOnlyList<(int, int, int)> rewardsList, string hexColor, string spriteName, string eventtype)
         {
             var strings = GameInfo.GetStrings(1);
@@ -97,6 +104,7 @@ namespace RaidCrawler.Core.Discord
             Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
             var form = Utils.GetFormString(blank.Species, blank.Form, strings);
             var species = $"{strings.Species[encounter.Species]}";
+            var rarevariant = $"{(raid.EC % 100 == 0 && (encounter!.Species == 924 || encounter.Species == 206) ? " Rare Variant" : "" )}";
             var difficulty = Difficulty(encounter.Stars, raid.IsEvent, eventtype);
             var nature = $"{strings.Natures[blank.Nature]}";
             var ability = $"{strings.Ability[blank.Ability]}";
@@ -118,19 +126,19 @@ namespace RaidCrawler.Core.Discord
                            $"**__{perfectIvCount}__IV**: {ivs}  **Nature:** `{nature}`  **Ability:** `{ability}`\n" +
                            $"**Moves:** \n{movestr}\n" +
                            $"{(extramoves == "" ? "" : $"**Extra Moves:** \n{extramovesstr}\n")}" +
-                           $"**Rewards:** {rewards}\n" +
+                           $"{(rewards != "" ? $"**Rewards:** {rewards}\n :" : "")}" +
                            $"***Code:*** ";
             var technicalcopy = $"{encounter.Stars},{shiny},{species},{blank.Form},{blank.Gender},{teratype},{nature},{ability},{blank.Scale},{IVsStringEmoji(ToSpeedLast(blank.IVs), "technicalcopy")}";
             var SuccessWebHook = new
             {
-                username = "RaidCrawler" + Config.InstanceName,
+                username = "RaidCrawler " + Config.InstanceName,
                 avatar_url = "https://www.serebii.net/scarletviolet/ribbons/mightiestmark.png",
                 content = Config.DiscordMessageContent,
                 embeds = new List<object>
                 {
                     new
                     {
-                        title = $"{shiny} {species}{form} {gender} {teraemoji}",
+                        title = $"{shiny} {species}{form}{rarevariant} {gender} {teraemoji}",
                         description = "",
                         color = int.Parse(hexColor, NumberStyles.HexNumber),
                         thumbnail = new
@@ -154,6 +162,7 @@ namespace RaidCrawler.Core.Discord
                             new { name = rewards != "" ? "Rewards" : "", value = rewards, inline = true, },
                             new { name = "", value = "", inline = true, },
                             new { name = "Size", value = $"{PokeSizeDetailedUtil.GetSizeRating(scale)} ({scale})", inline = true, },
+                            ///new { name = "Species", value = encounter.Species, inline = true, },
                             //new { name = "# CopyTest", value = copy, inline = false, },
                             //new { name = "# TechnicalCopyTest", value = technicalcopy, inline = false, },
                         },

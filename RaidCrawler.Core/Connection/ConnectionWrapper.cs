@@ -12,11 +12,12 @@ namespace RaidCrawler.Core.Connection
     {
         public readonly ISwitchConnectionAsync Connection;
         public bool Connected { get => Connection is not null && IsConnected; }
+        public bool screenState = false;
         private bool IsConnected { get; set; }
         private readonly bool CRLF;
         private readonly Action<string> _statusUpdate;
         private static ulong BaseBlockKeyPointer = 0;
-
+        
         public ConnectionWrapperAsync(SwitchConnectionConfig config, Action<string> statusUpdate)
         {
             Connection = config.Protocol switch
@@ -36,7 +37,7 @@ namespace RaidCrawler.Core.Connection
 
             try
             {
-                _statusUpdate("Connecting...");
+                _statusUpdate("Connecting");
                 Connection.Connect();
                 BaseBlockKeyPointer = await Connection.PointerAll(BlockKeyPointer, token).ConfigureAwait(false);
                 IsConnected = true;
@@ -57,10 +58,10 @@ namespace RaidCrawler.Core.Connection
 
             try
             {
-                _statusUpdate("Disconnecting controller...");
+                _statusUpdate("Disconnecting controller");
                 await Connection.SendAsync(SwitchCommand.DetachController(CRLF), token).ConfigureAwait(false);
 
-                _statusUpdate("Disconnecting...");
+                _statusUpdate("Disconnecting");
                 Connection.Disconnect();
                 IsConnected = false;
                 _statusUpdate("Disconnected!");
@@ -189,7 +190,7 @@ namespace RaidCrawler.Core.Connection
             // Not great, but when adding/removing clicks, make sure to account for command count for an accurate StreamerView progress bar.
             int steps = (config.UseTouch ? 19 : 25) + (config.UseOvershoot ? 2 : config.SystemDownPresses) + (config.DodgeSystemUpdate ? 2 : 0) + config.DaysToSkip;
 
-            _statusUpdate("Changing date...");
+            _statusUpdate("Changing date");
             var BaseDelay = config.BaseDelay;
 
             // Sometimes the first command drops, click twice with shorter delays for good measure.
@@ -231,7 +232,7 @@ namespace RaidCrawler.Core.Connection
             UpdateProgressBar(action, steps);
 
             // Navigate to "Date and Time"
-            _statusUpdate("Navigating to \"Date and Time\"...");
+            _statusUpdate("Navigating to \"Date and Time\"");
             await Click(A, 0_300 + BaseDelay, token).ConfigureAwait(false);
             UpdateProgressBar(action, steps);
 
@@ -309,24 +310,24 @@ namespace RaidCrawler.Core.Connection
                 UpdateProgressBar(action, steps);
             }
 
-            _statusUpdate("Back in the game...");
+            _statusUpdate("Back in game");
         }
 
         public async Task CloseGame(CancellationToken token)
         {
             // Close out of the game
-            _statusUpdate("Closing the game!");
+            _statusUpdate("Closing game");
             await Click(B, 0_500, token).ConfigureAwait(false);
             await Click(HOME, 2_000, token).ConfigureAwait(false);
             await Click(X, 1_000, token).ConfigureAwait(false);
             await Click(A, 5_500, token).ConfigureAwait(false);
-            _statusUpdate("Closed out of the game!");
+            _statusUpdate("Closed game");
         }
 
         public async Task StartGame(CancellationToken token)
         {
             // Open game.
-            _statusUpdate("Starting the game!");
+            _statusUpdate("Starting game");
             await Click(A, 1_000, token).ConfigureAwait(false);
 
             // Attempt to dodge an update prompt;
@@ -344,13 +345,13 @@ namespace RaidCrawler.Core.Connection
             for (int i = 0; i < 20; i++)
                 await Click(A, 1_000, token).ConfigureAwait(false);
 
-            _statusUpdate("Back in the overworld! Refreshing the base block key pointer...");
+            _statusUpdate("Back in the overworld! Refreshing the base block key pointer");
             BaseBlockKeyPointer = await Connection.PointerAll(BlockKeyPointer, token).ConfigureAwait(false);
         }
 
         public async Task SaveGame(IDateAdvanceConfig config, CancellationToken token)
         {
-            _statusUpdate("Saving the game...");
+            _statusUpdate("Saving game");
             // B out in case we're in some menu.
             for (int i = 0; i < 4; i++)
                 await Click(B, 0_500, token).ConfigureAwait(false);
@@ -374,6 +375,12 @@ namespace RaidCrawler.Core.Connection
                 return;
 
             action.Invoke(steps);
+        }
+
+        public async Task ScreenToggle(CancellationToken token)
+        {
+            await Connection.SendAsync(SwitchCommand.SetScreen((screenState ? ScreenState.On : ScreenState.Off), CRLF), token).ConfigureAwait(false);
+            screenState = !screenState;
         }
     }
 }
