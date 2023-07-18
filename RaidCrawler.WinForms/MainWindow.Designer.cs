@@ -800,6 +800,7 @@ namespace RaidCrawler.WinForms
             PID.Name = "PID";
             PID.Size = new Size(100, 23);
             PID.TabIndex = 114;
+            PID.Click += Seed_Click;
             // 
             // EC
             // 
@@ -808,6 +809,7 @@ namespace RaidCrawler.WinForms
             EC.Name = "EC";
             EC.Size = new Size(100, 23);
             EC.TabIndex = 113;
+            EC.Click += Seed_Click;
             // 
             // Seed
             // 
@@ -816,6 +818,7 @@ namespace RaidCrawler.WinForms
             Seed.Name = "Seed";
             Seed.Size = new Size(100, 23);
             Seed.TabIndex = 112;
+            Seed.Click += Seed_Click;
             // 
             // spacerPanel2
             // 

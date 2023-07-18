@@ -116,7 +116,6 @@ namespace RaidCrawler.WinForms.SubForms
 
             Species.Enabled = SpeciesCheck.Checked;
             RareVariant.Visible = Species.SelectedIndex == 206 || Species.SelectedIndex == 924;
-            textBox1.Text = Species.SelectedIndex.ToString();
             Nature.Enabled = NatureCheck.Checked;
             Stars.Enabled = StarCheck.Checked;
             StarsComp.Enabled = StarCheck.Checked;

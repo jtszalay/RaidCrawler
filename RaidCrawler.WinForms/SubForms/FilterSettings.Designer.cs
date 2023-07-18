@@ -80,7 +80,6 @@
             SizeBox = new ComboBox();
             SizeCheck = new CheckBox();
             RareVariant = new CheckBox();
-            textBox1 = new TextBox();
             ((System.ComponentModel.ISupportInitialize)Form).BeginInit();
             PerfectIVFilterGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)IVSPE).BeginInit();
@@ -648,19 +647,11 @@
             RareVariant.UseVisualStyleBackColor = true;
             RareVariant.Visible = false;
             // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(379, 301);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(100, 23);
-            textBox1.TabIndex = 40;
-            // 
             // FilterSettings
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(502, 505);
-            Controls.Add(textBox1);
             Controls.Add(RareVariant);
             Controls.Add(SizeCheck);
             Controls.Add(SizeBox);
