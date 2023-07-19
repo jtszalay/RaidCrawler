@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text;
 using System.Runtime.InteropServices.ObjectiveC;
+using static System.Net.WebRequestMethods;
 
 namespace RaidCrawler.Core.Discord
 {
@@ -144,6 +145,7 @@ namespace RaidCrawler.Core.Discord
                         thumbnail = new
                         {
                             url = $"https://github.com/kwsch/PKHeX/blob/master/PKHeX.Drawing.PokeSprite/Resources/img/Artwork%20Pokemon%20Sprites/a{spriteName}.png?raw=true"
+                            //url = raid.CheckIsShiny(encounter) ? $"https://github.com/ViolentSpatula/PokeSprite/blob/main/SmallShiny/{encounter.Species-1}{(encounter.Form != 0 ? $"-{encounter.Form}" : "")}.gif?raw=true" : $"https://github.com/kwsch/PKHeX/blob/master/PKHeX.Drawing.PokeSprite/Resources/img/Artwork%20Pokemon%20Sprites/a{spriteName}.png?raw=true"
                         },
                         fields = new List<object>
                         {
