@@ -696,6 +696,7 @@ namespace RaidCrawler.WinForms
             Move4.Name = "Move4";
             Move4.Size = new Size(133, 23);
             Move4.TabIndex = 127;
+            Move4.Click += Move_Clicked;
             // 
             // Area
             // 
@@ -704,6 +705,7 @@ namespace RaidCrawler.WinForms
             Area.Name = "Area";
             Area.Size = new Size(270, 23);
             Area.TabIndex = 126;
+            Area.Click += DisplayMap;
             // 
             // Move2
             // 
@@ -712,6 +714,7 @@ namespace RaidCrawler.WinForms
             Move2.Name = "Move2";
             Move2.Size = new Size(133, 23);
             Move2.TabIndex = 125;
+            Move2.Click += Move_Clicked;
             // 
             // Scale
             // 
@@ -744,6 +747,7 @@ namespace RaidCrawler.WinForms
             Move3.Name = "Move3";
             Move3.Size = new Size(133, 23);
             Move3.TabIndex = 121;
+            Move3.Click += Move_Clicked;
             // 
             // Move1
             // 
@@ -752,6 +756,7 @@ namespace RaidCrawler.WinForms
             Move1.Name = "Move1";
             Move1.Size = new Size(133, 23);
             Move1.TabIndex = 120;
+            Move1.Click += Move_Clicked;
             // 
             // Ability
             // 
