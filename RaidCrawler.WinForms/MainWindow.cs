@@ -1135,7 +1135,7 @@ namespace RaidCrawler.WinForms
             return img;
         }
 
-        private static Image? GenerateMap(Raid raid, int teratype)
+        /*private static Image? GenerateMap(Raid raid, int teratype)
         {
             var original = PKHeX.Drawing.Misc.TypeSpriteUtil.GetTypeSpriteGem((byte)teratype);
             if (original is null)
@@ -1160,6 +1160,35 @@ namespace RaidCrawler.WinForms
                 x = (den_locations[$"{raid.Area}-{raid.Den}"][0] + 2.072021484) * 512 / 5000;
                 y = (den_locations[$"{raid.Area}-{raid.Den}"][2] + 5255.240018) * 512 / 5000;
                 return ImageUtil.LayerImage(map, gem, (int)x, (int)y);
+            }
+            catch { return null; }
+        }*/
+
+        private static Image? GenerateMap(Raid raid, int teratype)
+        {
+            var original = PKHeX.Drawing.Misc.TypeSpriteUtil.GetTypeSpriteGem((byte)teratype);
+            if (original == null)
+                return null;
+            var gem = (Image)new Bitmap(original, new Size(30, 30));
+            var gem2 = (Image)new Bitmap(original, new Size(30, 30));
+            SpriteUtil.GetSpriteGlow(gem, 0xFF, 0xFF, 0xFF, out var glow, true);
+            SpriteUtil.GetSpriteGlow(gem, 0xCC, 0xCC, 0xCC, out var glow2, true);
+            gem = ImageUtil.LayerImage(gem, ImageUtil.GetBitmap(glow, gem.Width, gem.Height, gem.PixelFormat), 0, 0);
+            gem2 = ImageUtil.LayerImage(gem, ImageUtil.GetBitmap(glow2, gem.Width, gem.Height, gem.PixelFormat), 0, 0);
+            if (den_locations == null || den_locations.Count == 0)
+                return null;
+            try
+            {
+                var x = (den_locations[$"{raid.Area}-{raid.Den}"][0] - 100.072021484) * 512 / 5000;
+                var y = (den_locations[$"{raid.Area}-{raid.Den}"][2] + 5350.240018) * 512 / 5000;
+                var mapimg = ImageUtil.LayerImage(map, gem, (int)x, (int)y);
+                if (den_locations.ContainsKey($"{raid.Area}-{raid.Den}_"))
+                {
+                    x = (den_locations[$"{raid.Area}-{raid.Den}_"][0] - 100.072021484) * 512 / 5000;
+                    y = (den_locations[$"{raid.Area}-{raid.Den}_"][2] + 5350.240018) * 512 / 5000;
+                    mapimg = ImageUtil.LayerImage(mapimg, gem2, (int)x, (int)y);
+                }
+                return mapimg;
             }
             catch { return null; }
         }
