@@ -111,6 +111,7 @@ namespace RaidCrawler.WinForms
             LabelShinyCount = new Label();
             DaySkipSuccessRate = new Label();
             SearchTime = new Label();
+            FomoTip = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)Sprite).BeginInit();
             ((System.ComponentModel.ISupportInitialize)GemIcon).BeginInit();
             ((System.ComponentModel.ISupportInitialize)SearchTimer).BeginInit();
@@ -200,9 +201,9 @@ namespace RaidCrawler.WinForms
             LabelLoadedRaids.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             LabelLoadedRaids.Location = new Point(3, 20);
             LabelLoadedRaids.Name = "LabelLoadedRaids";
-            LabelLoadedRaids.Size = new Size(65, 15);
+            LabelLoadedRaids.Size = new Size(74, 15);
             LabelLoadedRaids.TabIndex = 12;
-            LabelLoadedRaids.Text = "Met Filters:";
+            LabelLoadedRaids.Text = "Met Filters: 0";
             // 
             // ButtonNext
             // 
@@ -927,9 +928,9 @@ namespace RaidCrawler.WinForms
             Streak.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             Streak.Location = new Point(263, 37);
             Streak.Name = "Streak";
-            Streak.Size = new Size(42, 15);
+            Streak.Size = new Size(51, 15);
             Streak.TabIndex = 17;
-            Streak.Text = "Streak:";
+            Streak.Text = "Streak: 0";
             // 
             // TotalMiss
             // 
@@ -937,19 +938,19 @@ namespace RaidCrawler.WinForms
             TotalMiss.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             TotalMiss.Location = new Point(133, 37);
             TotalMiss.Name = "TotalMiss";
-            TotalMiss.Size = new Size(65, 15);
+            TotalMiss.Size = new Size(74, 15);
             TotalMiss.TabIndex = 16;
-            TotalMiss.Text = "Total Miss: ";
+            TotalMiss.Text = "Total Miss:  0";
             // 
             // LabelShinyCount
             // 
             LabelShinyCount.AutoSize = true;
             LabelShinyCount.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            LabelShinyCount.Location = new Point(193, 20);
+            LabelShinyCount.Location = new Point(218, 20);
             LabelShinyCount.Name = "LabelShinyCount";
-            LabelShinyCount.Size = new Size(112, 15);
+            LabelShinyCount.Size = new Size(96, 15);
             LabelShinyCount.TabIndex = 15;
-            LabelShinyCount.Text = "Total Shinies Found:";
+            LabelShinyCount.Text = "Shinies Missed: 0";
             // 
             // DaySkipSuccessRate
             // 
@@ -957,9 +958,9 @@ namespace RaidCrawler.WinForms
             DaySkipSuccessRate.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             DaySkipSuccessRate.Location = new Point(3, 37);
             DaySkipSuccessRate.Name = "DaySkipSuccessRate";
-            DaySkipSuccessRate.Size = new Size(58, 15);
+            DaySkipSuccessRate.Size = new Size(67, 15);
             DaySkipSuccessRate.TabIndex = 14;
-            DaySkipSuccessRate.Text = "Skip Rate:";
+            DaySkipSuccessRate.Text = "Skip Rate: 0";
             // 
             // SearchTime
             // 
@@ -967,9 +968,9 @@ namespace RaidCrawler.WinForms
             SearchTime.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             SearchTime.Location = new Point(3, 3);
             SearchTime.Name = "SearchTime";
-            SearchTime.Size = new Size(74, 15);
+            SearchTime.Size = new Size(88, 15);
             SearchTime.TabIndex = 13;
-            SearchTime.Text = "Search Time:";
+            SearchTime.Text = "Search Time: 0s";
             // 
             // MainWindow
             // 
@@ -1091,5 +1092,6 @@ namespace RaidCrawler.WinForms
         private Label label1;
         private Label Streak;
         private Label TotalMiss;
+        private ToolTip FomoTip;
     }
 }

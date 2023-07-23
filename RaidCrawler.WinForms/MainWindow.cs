@@ -1,4 +1,6 @@
 using Microsoft.VisualBasic;
+using Newtonsoft.Json.Linq;
+using NLog.Filters;
 using PKHeX.Core;
 using PKHeX.Drawing;
 using PKHeX.Drawing.Misc.Properties;
@@ -19,6 +21,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using static RaidCrawler.Core.Structures.Offsets;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ScrollBar;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace RaidCrawler.WinForms
 {
@@ -37,6 +40,7 @@ namespace RaidCrawler.WinForms
 
         private readonly RaidContainer RaidContainer;
         private NotificationHandler Webhook;
+        private NotificationHandler FomoWebhook;
 
         private List<RaidFilter> RaidFilters = new();
         private static readonly Image map = Image.FromStream(new MemoryStream(Utils.GetBinaryResource("paldea.png")));
@@ -48,6 +52,7 @@ namespace RaidCrawler.WinForms
         public int StatDaySkipStreak = 0;
         public int StatShinyCount = 0;
         public string formTitle;
+        public List<string> Fomo = new();
 
         private ulong RaidBlockOffset = 0;
         private bool IsReading = false;
@@ -102,6 +107,7 @@ namespace RaidCrawler.WinForms
             };
 
             Webhook = new(Config);
+            FomoWebhook = new(Config, true);
             InitializeComponent();
 
             btnOpenMap.Enabled = false;
@@ -173,6 +179,7 @@ namespace RaidCrawler.WinForms
         public int GetStatDaySkipSuccess() => StatDaySkipSuccess;
         public int GetStatDaySkipStreak() => StatDaySkipStreak;
         public int GetStatShinyCount() => StatShinyCount;
+        public List<string> GetFomo() => Fomo;
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
@@ -420,7 +427,9 @@ namespace RaidCrawler.WinForms
                 var advanceTextInit = $"Skip Rate: {GetStatDaySkipSuccess()}/{GetStatDaySkipTries()}";
                 var missInit = $"Total Miss: {GetStatDaySkipTries() - GetStatDaySkipSuccess()}";
                 var streakInit = $"Streak: {GetStatDaySkipStreak()}";
-                var shinyTextInint = $"Total Shinies Found: {GetStatShinyCount()}";
+                var shinyTextInint = $"Shinies Missed: {GetStatShinyCount()}";
+                var fomoInit = GetFomo();
+                Invoke(() => FomoTip.SetToolTip(LabelShinyCount, string.Join(Environment.NewLine, fomoInit)));
                 Invoke(() => DaySkipSuccessRate.Text = advanceTextInit);
                 Invoke(() => TotalMiss.Text = missInit);
                 Invoke(() => Streak.Text = streakInit);
@@ -450,7 +459,9 @@ namespace RaidCrawler.WinForms
                     var advanceText = $"Skip Rate: {GetStatDaySkipSuccess()}/{GetStatDaySkipTries()}";
                     var miss = $"Total Miss: {GetStatDaySkipTries() - GetStatDaySkipSuccess()}";
                     var streak = $"Streak: {GetStatDaySkipStreak()}";
-                    var shinyText = $"Total Shinies Found: {GetStatShinyCount()}";
+                    var shinyText = $"Shinies Missed: {GetStatShinyCount()}";
+                    var fomo = GetFomo();
+                    Invoke(() => FomoTip.SetToolTip(LabelShinyCount, string.Join(Environment.NewLine, fomo)));
                     Invoke(() => DaySkipSuccessRate.Text = advanceText);
                     Invoke(() => TotalMiss.Text = miss);
                     Invoke(() => Streak.Text = streak);
@@ -1157,6 +1168,8 @@ namespace RaidCrawler.WinForms
         {
             var raids = RaidContainer.Raids;
             var encounters = RaidContainer.Encounters;
+            var rewards = RaidContainer.Rewards;
+            var strings = GameInfo.GetStrings(1);
             var curSeeds = raids.Select(x => x.Seed).ToArray();
             var sameraids = curSeeds.Except(previousSeeds).ToArray().Length == 0;
 
@@ -1172,7 +1185,7 @@ namespace RaidCrawler.WinForms
             if (!Config.EnableFilters)
                 return true;
 
-            StatShinyCount += Enumerable.Range(0, raids.Count).Where(i => raids[i].CheckIsShiny(encounters[i])).Count();
+            //StatShinyCount += Enumerable.Range(0, raids.Count).Where(i => raids[i].CheckIsShiny(encounters[i])).Count();
 
             for (int i = 0; i < RaidFilters.Count; i++)
             {
@@ -1186,6 +1199,48 @@ namespace RaidCrawler.WinForms
                     return true;
             }
 
+            for (int i = 0; i < raids.Count; i++)
+            {
+                var raid = raids[i];
+                var encounter = encounters[i];
+                var reward = rewards[i];
+                var param = encounter.GetParam();
+
+                var timeSpan = stopwatch.Elapsed;
+                var timeEmpty = new TimeSpan(0, 0, 0, 0);
+                string time = string.Empty;
+                if (((int)timeSpan.TotalDays) != timeEmpty.TotalDays) { time = timeSpan.ToString(@"d\d\ %h\h\ mm\m\ ss\s"); }
+                else if (((int)timeSpan.TotalHours) != timeEmpty.TotalHours) { time = timeSpan.ToString(@"%h\h\ mm\m\ ss\s"); }
+                else if (((int)timeSpan.TotalMinutes) != timeEmpty.TotalMinutes) { time = timeSpan.ToString(@"%m\m\ ss\s"); }
+                else { time = timeSpan.ToString(@"%s\s"); }
+                var teraType = raids[i].GetTeraType(encounters[i]);
+                var color = TypeColor.GetTypeSpriteColor((byte)teraType);
+                var hexColor = $"{color.R:X2}{color.G:X2}{color.B:X2}";
+                var filter = new RaidFilter { Name = "FoMO" };
+
+                var blank = new PK9
+                {
+                    Species = encounter.Species,
+                    Form = encounter.Form,
+                    Gender = encounters[i].Gender,
+                };
+                blank.SetSuggestedFormArgument();
+                Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
+                var spriteName = GetSpriteNameForUrl(blank, raids[i].CheckIsShiny(encounters[i]));
+                var form = Utils.GetFormString(blank.Species, blank.Form, strings);
+                var species = $"{strings.Species[encounter.Species]}";
+                var shiny = $"{(raid.CheckIsShiny(encounter) ? (ShinyExtensions.IsSquareShinyExist(blank) ? "⛋" : "☆") : "")}";
+                if (raids[i].CheckIsShiny(encounters[i]))
+                {
+                    StatShinyCount++;
+                    Fomo.Add($"{shiny} {species}{form}");
+                    if (Config.EnableFomoNotification)
+                        Task.Run(async () => await FomoWebhook.SendNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token));
+                    //Task.Run(async () => await SendFomoWebhookAsync(encounter, raid, time, reward, hexColor, spriteName));
+                }
+
+            }
+
             return StopAdvances;
         }
 
@@ -1197,10 +1252,10 @@ namespace RaidCrawler.WinForms
                 RaidBlockOffset = await ConnectionWrapper.Connection.PointerAll(ConnectionWrapper.RaidBlockPointer, token).ConfigureAwait(false);
             }
 
-            RaidContainer.ClearRaids();
             RaidContainer.ClearEncounters();
             RaidContainer.ClearRewards();
 
+            RaidContainer.ClearRaids();
             UpdateStatus("Reading raid block");
             var data = await ConnectionWrapper.Connection.ReadBytesAbsoluteAsync(RaidBlockOffset + RaidBlock.HEADER_SIZE, (int)(RaidBlock.SIZE - RaidBlock.HEADER_SIZE), token).ConfigureAwait(false);
 
@@ -1486,6 +1541,11 @@ namespace RaidCrawler.WinForms
             await ErrorHandler.DisplayMessageBox(this, Webhook, "Please connect to your device and ensure a raid has been found.", token).ConfigureAwait(false);
         }
 
+        private async Task SendFomoWebhookAsync(ITeraRaid encounter, Raid raid, string time, IReadOnlyList<(int, int, int)> reward, RaidFilter filter, string hexColor, string spriteName)
+        {
+            await FomoWebhook.SendNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token).ConfigureAwait(false);
+        }
+
         public void ToggleStreamerView()
         {
             if (Config.StreamerView)
@@ -1566,6 +1626,7 @@ namespace RaidCrawler.WinForms
         public void UpdateWebhook(ClientConfig config)
         {
             Webhook = new(config);
+            FomoWebhook = new(config, true);
         }
     }
 }

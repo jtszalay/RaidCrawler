@@ -23,6 +23,13 @@ namespace RaidCrawler.Core.Discord
             DiscordWebhooks = config.EnableNotification ? config.DiscordWebhook.Split(',') : null;
         }
 
+        public NotificationHandler(IWebhookConfig config, bool fomo)
+        {
+            _client = new();
+            Config = config;
+            DiscordWebhooks = config.EnableFomoNotification ? config.DiscordFomoWebhook.Split(',') : null;
+        }
+
         public async Task SendNotification(ITeraRaid encounter, Raid raid, RaidFilter filter, string time, IReadOnlyList<(int, int, int)> RewardsList, string hexColor, string spriteName, CancellationToken token)
         {
             if (DiscordWebhooks is null || !Config.EnableNotification)
