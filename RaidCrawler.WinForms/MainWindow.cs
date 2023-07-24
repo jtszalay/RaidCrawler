@@ -183,7 +183,9 @@ namespace RaidCrawler.WinForms
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            CenterToScreen();
+            Location = Config.Location;
+            if (Location.X == 0 && Location.Y == 0)
+                CenterToScreen();
             InputSwitchIP.Text = Config.IP;
             Protocol_dropdown.SelectedIndex = (int)Config.Protocol;
             USB_Port_TB.Text = Config.UsbPort.ToString();
@@ -695,6 +697,7 @@ namespace RaidCrawler.WinForms
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Config.Location = Location;
             var configpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
             JsonSerializerOptions options = new() { WriteIndented = true };
             string output = JsonSerializer.Serialize(Config, options);

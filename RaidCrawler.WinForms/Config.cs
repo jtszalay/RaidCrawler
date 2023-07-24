@@ -13,6 +13,7 @@ namespace RaidCrawler.WinForms
         public int Progress { get; set; } = 0;
         public int EventProgress { get; set; } = 0;
         public bool EnableFilters { get; set; } = true;
+        public Point Location { get; set; } = new(0, 0);
 
         // Match
         public bool FocusWindow { get; set; } = true;
