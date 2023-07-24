@@ -764,6 +764,7 @@ namespace RaidCrawler.WinForms
                 EC.Text = !HideSeed ? $"{raid.EC:X8}" : "Hidden";
                 PID.Text = GetPIDString(raid, encounter);
                 Area.Text = $"{Areas.GetArea((int)(raid.Area - 1))} - Den {raid.Den}";
+                //textBox1.Text = $"{raid.Area}-{raid.Den}";
                 labelEvent.Visible = raid.IsEvent;
 
                 var teratype = raid.GetTeraType(encounter);
@@ -1140,10 +1141,13 @@ namespace RaidCrawler.WinForms
             var original = PKHeX.Drawing.Misc.TypeSpriteUtil.GetTypeSpriteGem((byte)teratype);
             if (original is null)
                 return null;
-
+            var mapimg = (Image)new Bitmap(original, new Size(30, 30));
             var gem = (Image)new Bitmap(original, new Size(30, 30));
+            var gem2 = (Image)new Bitmap(original, new Size(30, 30));
             SpriteUtil.GetSpriteGlow(gem, 0xFF, 0xFF, 0xFF, out var glow, true);
+            SpriteUtil.GetSpriteGlow(gem, 0xCC, 0xCC, 0xCC, out var glow2, true);
             gem = ImageUtil.LayerImage(gem, ImageUtil.GetBitmap(glow, gem.Width, gem.Height, gem.PixelFormat), 0, 0);
+            gem2 = ImageUtil.LayerImage(gem, ImageUtil.GetBitmap(glow2, gem.Width, gem.Height, gem.PixelFormat), 0, 0);
             if (den_locations is null || den_locations.Count == 0)
                 return null;
 
@@ -1154,12 +1158,15 @@ namespace RaidCrawler.WinForms
                 {
                     x = (value[0] + 2.072021484) * 512 / 5000;
                     y = (value[2] + 5255.240018) * 512 / 5000;
-                    return ImageUtil.LayerImage(map, gem, (int)x, (int)y);
+                    mapimg = ImageUtil.LayerImage(mapimg, gem, (int)x, (int)y);
+                    //return ImageUtil.LayerImage(map, gem, (int)x, (int)y);
                 }
 
                 x = (den_locations[$"{raid.Area}-{raid.Den}"][0] + 2.072021484) * 512 / 5000;
                 y = (den_locations[$"{raid.Area}-{raid.Den}"][2] + 5255.240018) * 512 / 5000;
-                return ImageUtil.LayerImage(map, gem, (int)x, (int)y);
+                mapimg = ImageUtil.LayerImage(mapimg, gem2, (int)x, (int)y);
+                //return ImageUtil.LayerImage(map, gem2, (int)x, (int)y);
+                return mapimg;
             }
             catch { return null; }
         }*/
@@ -1264,7 +1271,7 @@ namespace RaidCrawler.WinForms
                     StatShinyCount++;
                     Fomo.Add($"{shiny} {species}{form}");
                     if (Config.EnableFomoNotification)
-                        Task.Run(async () => await FomoWebhook.SendNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token));
+                        Task.Run(async () => await FomoWebhook.SendFomoNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token));
                     //Task.Run(async () => await SendFomoWebhookAsync(encounter, raid, time, reward, hexColor, spriteName));
                 }
 
@@ -1570,11 +1577,6 @@ namespace RaidCrawler.WinForms
             await ErrorHandler.DisplayMessageBox(this, Webhook, "Please connect to your device and ensure a raid has been found.", token).ConfigureAwait(false);
         }
 
-        private async Task SendFomoWebhookAsync(ITeraRaid encounter, Raid raid, string time, IReadOnlyList<(int, int, int)> reward, RaidFilter filter, string hexColor, string spriteName)
-        {
-            await FomoWebhook.SendNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token).ConfigureAwait(false);
-        }
-
         public void ToggleStreamerView()
         {
             if (Config.StreamerView)
@@ -1634,6 +1636,8 @@ namespace RaidCrawler.WinForms
                     Clipboard.SetText(Webhook.GetAnnouncement(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, "technicalcopy"));
                 else if (ModifierKeys == (Keys.Shift | Keys.Control))
                     Task.Run(async () => await Webhook.SendNotification(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, Source.Token));
+                else if (ModifierKeys == (Keys.Shift | Keys.Control | Keys.Alt))
+                    Task.Run(async () => await FomoWebhook.SendFomoNotification(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, Source.Token));
                 else
                     Clipboard.SetText(Webhook.GetAnnouncement(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, "copy"));
                 return;
