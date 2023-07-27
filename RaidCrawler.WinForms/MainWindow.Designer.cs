@@ -951,6 +951,7 @@ namespace RaidCrawler.WinForms
             LabelShinyCount.Size = new Size(96, 15);
             LabelShinyCount.TabIndex = 15;
             LabelShinyCount.Text = "Shinies Missed: 0";
+            LabelShinyCount.MouseDown += LabelShinyCount_Click;
             // 
             // DaySkipSuccessRate
             // 

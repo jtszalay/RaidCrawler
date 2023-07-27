@@ -53,6 +53,7 @@ namespace RaidCrawler.WinForms
         public int StatShinyCount = 0;
         public string formTitle;
         public List<string> Fomo = new();
+        public int FomoCount = 0;
 
         private ulong RaidBlockOffset = 0;
         private bool IsReading = false;
@@ -1275,6 +1276,8 @@ namespace RaidCrawler.WinForms
                     Fomo.Add($"{shiny} {species}{form}");
                     if (Config.EnableFomoNotification)
                         Task.Run(async () => await FomoWebhook.SendFomoNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token));
+                    if (Config.SaveOnFomo)
+                        Task.WaitAll(Task.Run(async () => await ConnectionWrapper.SaveGame(Config, Source.Token).ConfigureAwait(false)));
                     //Task.Run(async () => await SendFomoWebhookAsync(encounter, raid, time, reward, hexColor, spriteName));
                 }
 
@@ -1651,6 +1654,7 @@ namespace RaidCrawler.WinForms
         {
             Config.Protocol = (SysBot.Base.SwitchProtocol)Protocol_dropdown.SelectedIndex;
             Protocol_SelectedIndexChanged(Config.Protocol);
+            WriteConfig();
         }
 
         private async void ButtonScreenState_Click(object sender, EventArgs e)
@@ -1664,5 +1668,39 @@ namespace RaidCrawler.WinForms
             Webhook = new(config);
             FomoWebhook = new(config, true);
         }
+
+        public void WriteConfig()
+        {
+            JsonSerializerOptions options = new() { WriteIndented = true };
+            string output = JsonSerializer.Serialize(Config, options);
+            using StreamWriter sw = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json"));
+            sw.Write(output);
+        }
+
+        private void LabelShinyCount_Click(object sender, EventArgs e)
+        {
+            FomoCount++;
+            //LabelShinyCount.Text = LabelShinyCount.Text + "" + FomoCount.ToString();
+            if (FomoCount == 7)
+            {
+                FomoCount = 0;
+                Config.SaveOnFomo = !Config.SaveOnFomo;
+                LabelShinyCount.Text = $"FoMO Saves: {(Config.SaveOnFomo ? "On" : "Off")}";
+
+                System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
+                {
+                    Interval = 800,
+                    Enabled = true
+                };
+
+                timer.Tick += (sender, e) =>
+                {
+                    LabelShinyCount.Text = $"Shinies Missed: {GetStatShinyCount()}";
+                    WriteConfig();
+                    timer.Dispose();
+                };
+            }
+        }
+
     }
 }
