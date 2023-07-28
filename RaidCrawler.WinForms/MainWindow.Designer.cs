@@ -522,16 +522,16 @@ namespace RaidCrawler.WinForms
             // labelEvent
             // 
             labelEvent.AutoSize = true;
-            labelEvent.backColor = Color.FromArgb(125, 255, 255, 255);
+            labelEvent.backColor = Color.FromArgb(200, 30, 144, 255);
             labelEvent.BackColor = Color.Transparent;
-            labelEvent.backColor2 = SystemColors.ButtonHighlight;
+            labelEvent.backColor2 = Color.FromArgb(5, 70, 125);
             labelEvent.Font = new Font("Segoe UI", 9F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-            labelEvent.ForeColor = Color.DodgerBlue;
-            labelEvent.Location = new Point(294, 65);
+            labelEvent.ForeColor = Color.White;
+            labelEvent.Location = new Point(290, 65);
             labelEvent.Name = "labelEvent";
-            labelEvent.Size = new Size(37, 15);
+            labelEvent.Size = new Size(49, 15);
             labelEvent.TabIndex = 141;
-            labelEvent.Text = "Event";
+            labelEvent.Text = "  Event  ";
             labelEvent.Visible = false;
             // 
             // LabelScale
