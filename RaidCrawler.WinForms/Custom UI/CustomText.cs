@@ -30,7 +30,7 @@ public class TransparentTextBox : TextBox
         g.DrawString(this.Text, this.Font, new SolidBrush(ForeColor), 0, 0);
     }
 
-    public void UserControl2_OnTextChanged(object sender, EventArgs e)
+    public void UserControl2_OnTextChanged(object? sender, EventArgs e)
     {
         Invalidate();
     }

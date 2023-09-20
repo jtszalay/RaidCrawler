@@ -758,6 +758,6 @@
         private ComboBox SizeBox;
         private CheckBox SizeCheck;
         private CheckBox RareVariant;
-        private TextBox textBox1;
+        //private TextBox textBox1;
     }
 }

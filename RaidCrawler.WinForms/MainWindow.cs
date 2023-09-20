@@ -545,6 +545,8 @@ namespace RaidCrawler.WinForms
 
                 var stop = false;
                 var raids = RaidContainer.Raids;
+                int advances = 0;
+
                 while (!stop)
                 {
                     var previousSeeds = raids.Select(z => z.Seed).ToList();
@@ -552,9 +554,19 @@ namespace RaidCrawler.WinForms
 
                     bool streamer = Config.StreamerView && teraRaidView is not null;
                     Action<int>? action = streamer ? teraRaidView!.UpdateProgressBar : null;
+
+                    // Avoid lag by restarting the game every so often
+                    if (advances >= 50)
+                    {
+                        await ConnectionWrapper.CloseGame(token);
+                        await ConnectionWrapper.StartGame(token);
+                        RaidBlockOffsetBase = 0;
+                        advances = 0;
+                    }
                     await ConnectionWrapper
                         .AdvanceDate(Config, token, action)
                         .ConfigureAwait(false);
+                    advances++;
                     await ReadRaids(token).ConfigureAwait(false);
                     raids = RaidContainer.Raids;
 
@@ -1069,7 +1081,7 @@ namespace RaidCrawler.WinForms
                 Seed.Text = !HideSeed ? $"{raid.Seed:X8}" : "Hidden";
                 EC.Text = !HideSeed ? $"{raid.EC:X8}" : "Hidden";
                 PID.Text = GetPIDString(raid, encounter);
-                Area.Text = $"{Areas.GetArea((int)(raid.Area - 1))} - Den {raid.Den}";
+                Area.Text = $"{Areas.GetArea((int)(raid.Area - 1), raid.RaidType)} - Den {raid.Den}";
                 //textBox1.Text = $"{raid.Area}-{raid.Den}";
                 labelEvent.Visible = raid.IsEvent;
 
@@ -1609,13 +1621,19 @@ namespace RaidCrawler.WinForms
             gem = ImageUtil.LayerImage(gem, ImageUtil.GetBitmap(glow, gem.Width, gem.Height, gem.PixelFormat), 0, 0);
             gem2 = ImageUtil.LayerImage(gem, ImageUtil.GetBitmap(glow2, gem.Width, gem.Height, gem.PixelFormat), 0, 0);
 
+            double x, y;
             var loc_data =
                 raid.RaidType == RaidSerializationFormat.BaseROM
                     ? den_locations_base
                     : den_locations_kitakami;
             var map = raid.RaidType == RaidSerializationFormat.BaseROM ? map_base : map_kitakami;
 
-            if (den_locations == null || den_locations.Count == 0)
+            if (
+                den_locations_base is null
+                || den_locations_base.Count == 0
+                || den_locations_kitakami is null
+                || den_locations_kitakami.Count == 0
+            )
                 return null;
 
             try
@@ -2306,7 +2324,7 @@ namespace RaidCrawler.WinForms
 
         private async void ButtonScreenState_Click(object sender, EventArgs e)
         {
-            ButtonScreenState.Text = $"{(ConnectionWrapper.screenState ? "Screen Off" : "Screen On")}";
+            ButtonScreenState.Text = $"{(ConnectionWrapper.CurrentScreenState ? "Screen Off" : "Screen On")}";
             await ConnectionWrapper.ScreenToggle(Source.Token).ConfigureAwait(false);
         }
 

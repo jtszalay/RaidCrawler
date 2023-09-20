@@ -174,7 +174,6 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.1.1" />
-    <PackageReference Include="PKHeX.Core" Version="23.8.24" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
     <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -186,6 +185,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="PKHeX.Core">
+      <HintPath>..\..\RaidCrawlerV_fork\RaidCrawler.Core\deps\PKHeX.Core.dll</HintPath>
+    </Reference>
     <Reference Include="PKHeX.Drawing">
       <HintPath>deps\PKHeX.Drawing.dll</HintPath>
     </Reference>

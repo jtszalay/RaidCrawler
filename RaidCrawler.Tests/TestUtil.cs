@@ -71,7 +71,7 @@ namespace RaidCrawler.Tests
 
             // Read embedded base data and read all raids.
             var baseData = GetBinaryTestResource(GetTestResourceName(path, "base"));
-            var failed = container.ReadAllRaids(baseData, storyPrg, eventPrg, 0);
+            var failed = container.ReadAllRaids(baseData, storyPrg, eventPrg, 0, pkNX.Structures.FlatBuffers.Gen9.RaidSerializationFormat.BaseROM);
             return (failed, container);
         }
 

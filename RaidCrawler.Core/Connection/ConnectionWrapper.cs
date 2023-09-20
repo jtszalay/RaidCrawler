@@ -16,7 +16,7 @@ namespace RaidCrawler.Core.Connection
             get => Connection is not null && IsConnected;
         }
 
-        public bool ScreenState = false;
+        public bool CurrentScreenState = false;
         private bool IsConnected { get; set; }
         private readonly bool CRLF;
         private readonly Action<string> _statusUpdate;
@@ -427,6 +427,8 @@ namespace RaidCrawler.Core.Connection
             for (int i = 0; i < 20; i++)
                 await Click(A, 1_000, token).ConfigureAwait(false);
 
+            await Task.Delay(15_000, token).ConfigureAwait(false);
+
             _statusUpdate("Back in the overworld! Refreshing the base block key pointer...");
             BaseBlockKeyPointer = await Connection
                 .PointerAll(BlockKeyPointer, token)
@@ -463,8 +465,8 @@ namespace RaidCrawler.Core.Connection
 
         public async Task ScreenToggle(CancellationToken token)
         {
-            await Connection.SendAsync(SwitchCommand.SetScreen((screenState ? ScreenState.On : ScreenState.Off), CRLF), token).ConfigureAwait(false);
-            ScreenState = !ScreenState;
+            await Connection.SendAsync(SwitchCommand.SetScreen((CurrentScreenState ? ScreenState.On : ScreenState.Off), CRLF), token).ConfigureAwait(false);
+            CurrentScreenState = !CurrentScreenState;
         }
     }
 }

@@ -1089,8 +1089,8 @@ namespace RaidCrawler.WinForms
         private Label DaySkipSuccessRate;
         private Label SearchTime;
         private PictureBox GameVersionImg;
-        private Label label2;
-        private Label label1;
+        //private Label label2;
+        //private Label label1;
         private Label Streak;
         private Label TotalMiss;
         private ToolTip FomoTip;

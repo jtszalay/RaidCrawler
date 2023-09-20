@@ -12,7 +12,9 @@
 	</PackageReference>
 	<PackageReference Include="FlatSharp.Runtime" Version="7.1.0" />
     <PackageReference Include="LibUsbDotNet" Version="2.2.29" />
-    <PackageReference Include="PKHeX.Core" Version="23.8.24" />
+    <Reference Include="PKHeX.Core">
+      <HintPath>..\..\RaidCrawlerV_fork\RaidCrawler.Core\deps\PKHeX.Core.dll</HintPath>
+    </Reference>
 	<Reference Include="SysBot.Base">
 	  <HintPath>deps\SysBot.Base.dll</HintPath>
 	</Reference>

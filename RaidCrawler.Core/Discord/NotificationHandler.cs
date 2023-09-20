@@ -141,6 +141,12 @@ namespace RaidCrawler.Core.Discord
         public string GetAnnouncement(ITeraRaid encounter, Raid raid, RaidFilter filter, string time, IReadOnlyList<(int, int, int)> RewardsList, string hexColor, string spriteName, string eventtype) 
         {
             var announcement = GenerateWebhook(encounter, raid, filter, time, RewardsList, hexColor, spriteName, eventtype);
+
+            if (announcement == null)
+            {
+                return "Error generating announcement.";
+            }
+
             return announcement.ToString();
         }
 
