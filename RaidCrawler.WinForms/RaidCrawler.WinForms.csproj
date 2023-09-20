@@ -172,6 +172,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.1.1" />
     <PackageReference Include="PKHeX.Core" Version="23.8.24" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.12.0">

@@ -15,11 +15,13 @@ namespace RaidCrawler.Core.Connection
         {
             get => Connection is not null && IsConnected;
         }
+
+        public bool ScreenState = false;
         private bool IsConnected { get; set; }
         private readonly bool CRLF;
         private readonly Action<string> _statusUpdate;
         private static ulong BaseBlockKeyPointer = 0;
-
+        
         public ConnectionWrapperAsync(SwitchConnectionConfig config, Action<string> statusUpdate)
         {
             Connection = config.Protocol switch
@@ -457,6 +459,12 @@ namespace RaidCrawler.Core.Connection
                 return;
 
             action.Invoke(steps);
+        }
+
+        public async Task ScreenToggle(CancellationToken token)
+        {
+            await Connection.SendAsync(SwitchCommand.SetScreen((screenState ? ScreenState.On : ScreenState.Off), CRLF), token).ConfigureAwait(false);
+            ScreenState = !ScreenState;
         }
     }
 }

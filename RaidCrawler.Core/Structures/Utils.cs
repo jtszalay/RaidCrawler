@@ -75,8 +75,10 @@ namespace RaidCrawler.Core.Structures
         )
         {
             var result = ShowdownParsing.GetStringFromForm(form, formStrings, species, context);
+            if (result.Length > 0 && result == "F")
+                return result.Remove(0);
             if (result.Length > 0 && result[0] != '-')
-                return result.Insert(0, "-");
+                return result.Insert(0, " (") + ")";
             return result;
         }
 

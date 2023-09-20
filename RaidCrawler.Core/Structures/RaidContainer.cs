@@ -83,5 +83,6 @@ namespace RaidCrawler.Core.Structures
             Rewards = rewards;
 
         public void SetGame(string game) => Game = game;
+
     }
 }

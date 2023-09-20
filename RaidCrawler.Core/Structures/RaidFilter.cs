@@ -1,4 +1,5 @@
-﻿using PKHeX.Core;
+﻿using System.Diagnostics.Metrics;
+using PKHeX.Core;
 
 namespace RaidCrawler.Core.Structures
 {
@@ -6,6 +7,7 @@ namespace RaidCrawler.Core.Structures
     {
         public string? Name { get; set; }
         public int? Species { get; set; }
+        public bool RareVariant { get; set; }
         public int? Form { get; set; }
         public int? Stars { get; set; }
         public int StarsComp { get; set; }
@@ -14,6 +16,7 @@ namespace RaidCrawler.Core.Structures
         public int? Nature { get; set; }
         public int? TeraType { get; set; }
         public int? Gender { get; set; }
+        public int? Size { get; set; }
         public int IVBin { get; set; }
         public int IVComps { get; set; }
         public int IVVals { get; set; }
@@ -25,20 +28,23 @@ namespace RaidCrawler.Core.Structures
 
         public bool IsFilterSet()
         {
-            if (
-                Species == null
-                && Form == null
-                && Stars == null
-                && Shiny == false
-                && Square == false
-                && Nature == null
-                && TeraType == null
-                && Gender == null
-                && IVBin == 0
-                && (RewardItems == null || RewardsCount == 0)
-                && BatchFilters == null
-            )
+            if (Species == null &&
+                RareVariant == false &&
+                Form == null &&
+                Stars == null &&
+                Shiny == false &&
+                Square == false &&
+                Nature == null &&
+                TeraType == null &&
+                Gender == null &&
+                Size == null &&
+                IVBin == 0 &&
+                (RewardItems == null || RewardsCount == 0) &&
+                BatchFilters == null)
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -48,6 +54,13 @@ namespace RaidCrawler.Core.Structures
                 return true;
 
             return species == (ushort)Species;
+        }
+
+        public bool IsRareVariantSatisfied(Raid raid)
+        {
+            if (RareVariant == false)
+                return true;
+            return raid.EC % 100 == 0;
         }
 
         public bool IsFormSatisfied(byte form)
@@ -178,6 +191,56 @@ namespace RaidCrawler.Core.Structures
             return gender == Gender;
         }
 
+        public bool IsSizeSatisfied(ITeraRaid? enc, Raid raid)
+        {
+            if (Size == null)
+                return true;
+            if (enc == null)
+                return false;
+
+            var param = enc.GetParam();
+            var blank = new PK9()
+            {
+                Species = enc.Species,
+                Form = enc.Form
+            };
+            Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
+            var size = $"{PokeSizeDetailedUtil.GetSizeRating(blank.Scale)}";
+            var result = 0;
+            switch (size)
+            {
+                case "XXXS":
+                    result = 0;
+                    break;
+                case "XXS":
+                    result = 1;
+                    break;
+                case "XS":
+                    result = 2;
+                    break;
+                case "S":
+                    result = 3;
+                    break;
+                case "AV":
+                    result = 4;
+                    break;
+                case "L":
+                    result = 5;
+                    break;
+                case "XL":
+                    result = 6;
+                    break;
+                case "XXL":
+                    result = 7;
+                    break;
+                case "XXXL":
+                    result = 8;
+                    break;
+            }
+
+            return result == Size;
+        }
+
         public bool IsBatchFilterSatisfied(PK9 blank)
         {
             if (BatchFilters is null)
@@ -202,18 +265,9 @@ namespace RaidCrawler.Core.Structures
             var blank = new PK9 { Species = enc.Species, Form = enc.Form };
             Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
 
-            return Enabled
-                && IsIVsSatisfied(blank)
-                && IsShinySatisfied(blank)
-                && IsSquareSatisfied(blank)
-                && IsSpeciesSatisfied(blank.Species)
-                && IsFormSatisfied(blank.Form)
-                && IsNatureSatisfied(blank.Nature)
-                && IsStarsSatisfied(enc)
-                && IsTeraTypeSatisfied(raid)
-                && IsRewardsSatisfied(container, enc, raid, SandwichBoost)
-                && IsGenderSatisfied(enc, blank.Gender)
-                && IsBatchFilterSatisfied(blank);
+            return Enabled && IsIVsSatisfied(blank) && IsShinySatisfied(blank) && IsSquareSatisfied(blank) && IsSpeciesSatisfied(blank.Species) && IsRareVariantSatisfied(raid) && IsFormSatisfied(blank.Form)
+                && IsNatureSatisfied(blank.Nature) && IsStarsSatisfied(enc) && IsTeraTypeSatisfied(raid)
+                && IsRewardsSatisfied(container, enc, raid, SandwichBoost) && IsGenderSatisfied(enc, blank.Gender) && IsSizeSatisfied(enc, raid) && IsBatchFilterSatisfied(blank);
         }
 
         public bool FilterSatisfied(

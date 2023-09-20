@@ -12,7 +12,7 @@ namespace RaidCrawler.WinForms
             string caption = ""
         )
         {
-            caption = caption == "" ? "RaidCrawler Error" : caption;
+            caption = caption == "" ? "Error" : caption;
             await webhook.SendErrorNotification(msg, caption, token).ConfigureAwait(false);
             if (form.InvokeRequired)
                 form.Invoke(() =>
