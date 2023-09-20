@@ -78,11 +78,6 @@ namespace RaidCrawler.Core.Discord
         }
 
         public async Task SendErrorNotification(string error, string caption, CancellationToken token)
-        public async Task SendErrorNotification(
-            string error,
-            string caption,
-            CancellationToken token
-        )
         {
             if (DiscordWebhooks is null || !Config.EnableNotification)
                 return;
@@ -149,7 +144,7 @@ namespace RaidCrawler.Core.Discord
             return announcement.ToString();
         }
 
-        private object GenerateWebhook(ITeraRaid encounter, Raid raid, RaidFilter filter, string time, IReadOnlyList<(int, int, int)> rewardsList, string hexColor, string spriteName, string eventType)
+        private object GenerateWebhook(ITeraRaid encounter, Raid raid, RaidFilter filter, string time, IReadOnlyList<(int, int, int)> rewardsList, string hexColor, string spriteName, string eventtype)
         {
             var strings = GameInfo.GetStrings(1);
             var param = encounter.GetParam();
@@ -159,19 +154,19 @@ namespace RaidCrawler.Core.Discord
             var form = Utils.GetFormString(blank.Species, blank.Form, strings);
             var species = $"{strings.Species[encounter.Species]}";
             var rarevariant = $"{(raid.EC % 100 == 0 && (encounter!.Species == 924 || encounter.Species == 206) ? " Rare Variant" : "" )}";
-            var difficulty = Difficulty(encounter.Stars, raid.IsEvent, eventType);
+            var difficulty = Difficulty(encounter.Stars, raid.IsEvent, eventtype);
             var nature = $"{strings.Natures[blank.Nature]}";
             var ability = $"{strings.Ability[blank.Ability]}";
             var shiny = Shiny(
                 raid.CheckIsShiny(encounter),
                 ShinyExtensions.IsSquareShinyExist(blank),
-                eventType
+                eventtype
             );
-            var gender = GenderEmoji(blank.Gender, eventType);
+            var gender = GenderEmoji(blank.Gender, eventtype);
             var teratype = raid.GetTeraType(encounter);
             var tera = $"{strings.types[teratype]}";
-            var teraemoji = TeraEmoji(strings.types[teratype], eventType);
-            var ivs = IVsStringEmoji(ToSpeedLast(blank.IVs), eventType);
+            var teraemoji = TeraEmoji(strings.types[teratype], eventtype);
+            var ivs = IVsStringEmoji(ToSpeedLast(blank.IVs), eventtype);
             var perfectIvCount = blank.IVs.Count(iv => iv == 31);
             var moves = new ushort[4]
             {
