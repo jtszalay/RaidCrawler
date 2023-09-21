@@ -63,6 +63,9 @@ namespace RaidCrawler.WinForms.SubForms
             ExperimentalView = new CheckBox();
             InstanceName = new TextBox();
             label17 = new Label();
+            LocationGroup = new GroupBox();
+            KitakamiScanCheck = new CheckBox();
+            PaldeaScanCheck = new CheckBox();
             Protocol_dropdown = new ComboBox();
             Protocol_label = new Label();
             label23 = new Label();
@@ -80,6 +83,10 @@ namespace RaidCrawler.WinForms.SubForms
             PlayTone = new CheckBox();
             AlertMessage = new TextBox();
             tabAdvanceDate = new TabPage();
+            RelaunchDelay = new NumericUpDown();
+            L_RelaunchDelay = new Label();
+            SystemReset = new NumericUpDown();
+            L_SystemReset = new Label();
             UseSetStick = new CheckBox();
             DodgeSystemUpdate = new CheckBox();
             SaveGameDelay = new NumericUpDown();
@@ -118,6 +125,8 @@ namespace RaidCrawler.WinForms.SubForms
             labelAppVersion = new Label();
             Save = new Button();
             toolTip1 = new ToolTip(components);
+            ExtraOverworldWait = new NumericUpDown();
+            L_ExtraOverworldWait = new Label();
             ((System.ComponentModel.ISupportInitialize)SystemDDownPresses).BeginInit();
             ((System.ComponentModel.ISupportInitialize)NavigateToSettings).BeginInit();
             ((System.ComponentModel.ISupportInitialize)OpenSettings).BeginInit();
@@ -130,14 +139,18 @@ namespace RaidCrawler.WinForms.SubForms
             ((System.ComponentModel.ISupportInitialize)DaysToSkip).BeginInit();
             tabControl1.SuspendLayout();
             tabGeneral.SuspendLayout();
+            LocationGroup.SuspendLayout();
             tabMatch.SuspendLayout();
             tabAdvanceDate.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)RelaunchDelay).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)SystemReset).BeginInit();
             ((System.ComponentModel.ISupportInitialize)SaveGameDelay).BeginInit();
             ((System.ComponentModel.ISupportInitialize)SystemOvershoot).BeginInit();
             ((System.ComponentModel.ISupportInitialize)BaseDelay).BeginInit();
             tabWebhook.SuspendLayout();
             tabAbout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)picAppIcon).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ExtraOverworldWait).BeginInit();
             SuspendLayout();
             // 
             // L_AdvanceDate
@@ -370,6 +383,7 @@ namespace RaidCrawler.WinForms.SubForms
             tabGeneral.Controls.Add(ExperimentalView);
             tabGeneral.Controls.Add(InstanceName);
             tabGeneral.Controls.Add(label17);
+            tabGeneral.Controls.Add(LocationGroup);
             tabGeneral.Controls.Add(Protocol_dropdown);
             tabGeneral.Controls.Add(Protocol_label);
             tabGeneral.Controls.Add(label23);
@@ -382,7 +396,7 @@ namespace RaidCrawler.WinForms.SubForms
             tabGeneral.Location = new Point(4, 24);
             tabGeneral.Name = "tabGeneral";
             tabGeneral.Padding = new Padding(3);
-            tabGeneral.Size = new Size(341, 482);
+            tabGeneral.Size = new Size(372, 603);
             tabGeneral.TabIndex = 5;
             tabGeneral.Text = "General";
             tabGeneral.UseVisualStyleBackColor = true;
@@ -453,6 +467,41 @@ namespace RaidCrawler.WinForms.SubForms
             label17.Size = new Size(93, 15);
             label17.TabIndex = 112;
             label17.Text = "Instance Name:";
+            // 
+            // LocationGroup
+            // 
+            LocationGroup.Controls.Add(KitakamiScanCheck);
+            LocationGroup.Controls.Add(PaldeaScanCheck);
+            LocationGroup.Location = new Point(8, 137);
+            LocationGroup.Name = "LocationGroup";
+            LocationGroup.Size = new Size(200, 73);
+            LocationGroup.TabIndex = 115;
+            LocationGroup.TabStop = false;
+            LocationGroup.Text = "Scan Locations";
+            // 
+            // KitakamiScanCheck
+            // 
+            KitakamiScanCheck.AutoSize = true;
+            KitakamiScanCheck.Checked = true;
+            KitakamiScanCheck.CheckState = CheckState.Checked;
+            KitakamiScanCheck.Location = new Point(6, 47);
+            KitakamiScanCheck.Name = "KitakamiScanCheck";
+            KitakamiScanCheck.Size = new Size(72, 19);
+            KitakamiScanCheck.TabIndex = 113;
+            KitakamiScanCheck.Text = "Kitakami";
+            KitakamiScanCheck.UseVisualStyleBackColor = true;
+            // 
+            // PaldeaScanCheck
+            // 
+            PaldeaScanCheck.AutoSize = true;
+            PaldeaScanCheck.Checked = true;
+            PaldeaScanCheck.CheckState = CheckState.Checked;
+            PaldeaScanCheck.Location = new Point(6, 22);
+            PaldeaScanCheck.Name = "PaldeaScanCheck";
+            PaldeaScanCheck.Size = new Size(61, 19);
+            PaldeaScanCheck.TabIndex = 112;
+            PaldeaScanCheck.Text = "Paldea";
+            PaldeaScanCheck.UseVisualStyleBackColor = true;
             // 
             // Protocol_dropdown
             // 
@@ -621,6 +670,12 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // tabAdvanceDate
             // 
+            tabAdvanceDate.Controls.Add(ExtraOverworldWait);
+            tabAdvanceDate.Controls.Add(L_ExtraOverworldWait);
+            tabAdvanceDate.Controls.Add(RelaunchDelay);
+            tabAdvanceDate.Controls.Add(L_RelaunchDelay);
+            tabAdvanceDate.Controls.Add(SystemReset);
+            tabAdvanceDate.Controls.Add(L_SystemReset);
             tabAdvanceDate.Controls.Add(UseSetStick);
             tabAdvanceDate.Controls.Add(DodgeSystemUpdate);
             tabAdvanceDate.Controls.Add(SaveGameDelay);
@@ -659,6 +714,42 @@ namespace RaidCrawler.WinForms.SubForms
             tabAdvanceDate.TabIndex = 1;
             tabAdvanceDate.Text = "Advance Date";
             tabAdvanceDate.UseVisualStyleBackColor = true;
+            // 
+            // RelaunchDelay
+            // 
+            RelaunchDelay.Location = new Point(296, 489);
+            RelaunchDelay.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
+            RelaunchDelay.Name = "RelaunchDelay";
+            RelaunchDelay.Size = new Size(68, 23);
+            RelaunchDelay.TabIndex = 49;
+            // 
+            // L_RelaunchDelay
+            // 
+            L_RelaunchDelay.AutoSize = true;
+            L_RelaunchDelay.Location = new Point(8, 491);
+            L_RelaunchDelay.Name = "L_RelaunchDelay";
+            L_RelaunchDelay.Size = new Size(198, 15);
+            L_RelaunchDelay.TabIndex = 48;
+            L_RelaunchDelay.Text = "Extra time to wait to relaunch game:";
+            // 
+            // SystemReset
+            // 
+            SystemReset.Location = new Point(296, 459);
+            SystemReset.Maximum = new decimal(new int[] { 2000, 0, 0, 0 });
+            SystemReset.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            SystemReset.Name = "SystemReset";
+            SystemReset.Size = new Size(68, 23);
+            SystemReset.TabIndex = 47;
+            SystemReset.Value = new decimal(new int[] { 30, 0, 0, 0 });
+            // 
+            // L_SystemReset
+            // 
+            L_SystemReset.AutoSize = true;
+            L_SystemReset.Location = new Point(8, 461);
+            L_SystemReset.Name = "L_SystemReset";
+            L_SystemReset.Size = new Size(203, 15);
+            L_SystemReset.TabIndex = 46;
+            L_SystemReset.Text = "Relaunch game after this many skips:";
             // 
             // UseSetStick
             // 
@@ -1048,6 +1139,24 @@ namespace RaidCrawler.WinForms.SubForms
             Save.UseVisualStyleBackColor = true;
             Save.Click += Save_Click;
             // 
+            // ExtraOverworldWait
+            // 
+            ExtraOverworldWait.Location = new Point(296, 519);
+            ExtraOverworldWait.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            ExtraOverworldWait.Name = "ExtraOverworldWait";
+            ExtraOverworldWait.Size = new Size(68, 23);
+            ExtraOverworldWait.TabIndex = 51;
+            // 
+            // L_ExtraOverworldWait
+            // 
+            L_ExtraOverworldWait.AutoSize = true;
+            L_ExtraOverworldWait.Location = new Point(8, 521);
+            L_ExtraOverworldWait.Name = "L_ExtraOverworldWait";
+            L_ExtraOverworldWait.Size = new Size(218, 15);
+            L_ExtraOverworldWait.TabIndex = 50;
+            L_ExtraOverworldWait.Text = "Extra time to wait for Overworld to load:";
+            L_ExtraOverworldWait.UseMnemonic = false;
+            // 
             // ConfigWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1075,10 +1184,14 @@ namespace RaidCrawler.WinForms.SubForms
             tabControl1.ResumeLayout(false);
             tabGeneral.ResumeLayout(false);
             tabGeneral.PerformLayout();
+            LocationGroup.ResumeLayout(false);
+            LocationGroup.PerformLayout();
             tabMatch.ResumeLayout(false);
             tabMatch.PerformLayout();
             tabAdvanceDate.ResumeLayout(false);
             tabAdvanceDate.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)RelaunchDelay).EndInit();
+            ((System.ComponentModel.ISupportInitialize)SystemReset).EndInit();
             ((System.ComponentModel.ISupportInitialize)SaveGameDelay).EndInit();
             ((System.ComponentModel.ISupportInitialize)SystemOvershoot).EndInit();
             ((System.ComponentModel.ISupportInitialize)BaseDelay).EndInit();
@@ -1087,6 +1200,7 @@ namespace RaidCrawler.WinForms.SubForms
             tabAbout.ResumeLayout(false);
             tabAbout.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picAppIcon).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ExtraOverworldWait).EndInit();
             ResumeLayout(false);
         }
 
@@ -1178,5 +1292,14 @@ namespace RaidCrawler.WinForms.SubForms
         private CheckBox EnableFomoNotifications;
         private TextBox FomoWebhook;
         private ToolTip toolTip1;
+        private CheckBox PaldeaScanCheck;
+        private GroupBox LocationGroup;
+        private CheckBox KitakamiScanCheck;
+        private NumericUpDown SystemReset;
+        private Label L_SystemReset;
+        private NumericUpDown RelaunchDelay;
+        private Label L_RelaunchDelay;
+        private NumericUpDown ExtraOverworldWait;
+        private Label L_ExtraOverworldWait;
     }
 }
