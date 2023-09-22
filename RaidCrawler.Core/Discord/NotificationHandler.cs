@@ -83,7 +83,7 @@ namespace RaidCrawler.Core.Discord
                 return;
 
             var instance =
-                Config.InstanceName != "" ? $"RaidCrawler {Config.InstanceName}" : "RaidCrawler";
+                Config.InstanceName != "" ? $"RaidCrawler{Config.InstanceName}" : "RaidCrawler";
             var webhook = new
             {
                 username = instance,
@@ -154,7 +154,11 @@ namespace RaidCrawler.Core.Discord
         {
             var strings = GameInfo.GetStrings(1);
             var param = encounter.GetParam();
-            var blank = new PK9 { Species = encounter.Species, Form = encounter.Form };
+            var blank = new PK9
+            {
+                Species = encounter.Species,
+                Form = encounter.Form
+            };
 
             Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
             var form = Utils.GetFormString(blank.Species, blank.Form, strings);
