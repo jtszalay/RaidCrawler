@@ -85,10 +85,10 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabAdvanceDate = new System.Windows.Forms.TabPage();
             this.ExtraOverworldWait = new System.Windows.Forms.NumericUpDown();
             this.L_ExtraOverworldWait = new System.Windows.Forms.Label();
+            this.L_SystemReset = new System.Windows.Forms.Label();
             this.RelaunchDelay = new System.Windows.Forms.NumericUpDown();
             this.L_RelaunchDelay = new System.Windows.Forms.Label();
             this.SystemReset = new System.Windows.Forms.NumericUpDown();
-            this.L_SystemReset = new System.Windows.Forms.Label();
             this.UseSetStick = new System.Windows.Forms.CheckBox();
             this.DodgeSystemUpdate = new System.Windows.Forms.CheckBox();
             this.SaveGameDelay = new System.Windows.Forms.NumericUpDown();
@@ -472,7 +472,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabGeneral.Location = new System.Drawing.Point(4, 24);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGeneral.Size = new System.Drawing.Size(341, 482);
+            this.tabGeneral.Size = new System.Drawing.Size(341, 578);
             this.tabGeneral.TabIndex = 5;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
@@ -591,6 +591,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.Protocol_dropdown.Size = new System.Drawing.Size(48, 23);
             this.Protocol_dropdown.TabIndex = 111;
             this.Protocol_dropdown.Text = "w";
+            Protocol_dropdown.SelectedValueChanged += Protocol_Changed;
             // 
             // Protocol_label
             // 
@@ -655,6 +656,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.Game.Size = new System.Drawing.Size(96, 23);
             this.Game.TabIndex = 105;
             this.Game.Text = "w";
+            Game.SelectedIndexChanged += Game_SelectedIndexChanged;
             // 
             // LabelStoryProgress
             // 
@@ -692,7 +694,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabMatch.Location = new System.Drawing.Point(4, 24);
             this.tabMatch.Name = "tabMatch";
             this.tabMatch.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMatch.Size = new System.Drawing.Size(341, 482);
+            this.tabMatch.Size = new System.Drawing.Size(341, 578);
             this.tabMatch.TabIndex = 0;
             this.tabMatch.Text = "Match";
             this.tabMatch.UseVisualStyleBackColor = true;
@@ -736,6 +738,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.EnableAlert.TabIndex = 2;
             this.EnableAlert.Text = "Show an alert window with the following message:";
             this.EnableAlert.UseVisualStyleBackColor = true;
+            EnableAlert.CheckedChanged += EnableAlert_CheckedChanged;
             // 
             // PlayTone
             // 
@@ -823,6 +826,15 @@ namespace RaidCrawler.WinForms.SubForms
             this.L_ExtraOverworldWait.Text = "Extra time to wait for Overworld to load:";
             this.L_ExtraOverworldWait.UseMnemonic = false;
             // 
+            // L_SystemReset
+            // 
+            this.L_SystemReset.AutoSize = true;
+            this.L_SystemReset.Location = new System.Drawing.Point(7, 487);
+            this.L_SystemReset.Name = "L_SystemReset";
+            this.L_SystemReset.Size = new System.Drawing.Size(203, 15);
+            this.L_SystemReset.TabIndex = 46;
+            this.L_SystemReset.Text = "Relaunch game after this many skips:";
+            // 
             // RelaunchDelay
             // 
             this.RelaunchDelay.Location = new System.Drawing.Point(265, 515);
@@ -866,15 +878,6 @@ namespace RaidCrawler.WinForms.SubForms
             0,
             0});
             // 
-            // L_SystemReset
-            // 
-            this.L_SystemReset.AutoSize = true;
-            this.L_SystemReset.Location = new System.Drawing.Point(7, 487);
-            this.L_SystemReset.Name = "L_SystemReset";
-            this.L_SystemReset.Size = new System.Drawing.Size(203, 15);
-            this.L_SystemReset.TabIndex = 46;
-            this.L_SystemReset.Text = "Relaunch game after this many skips:";
-            // 
             // UseSetStick
             // 
             this.UseSetStick.AutoSize = true;
@@ -884,6 +887,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.UseSetStick.TabIndex = 45;
             this.UseSetStick.Text = "Use SetStick instead of PressAndHold";
             this.UseSetStick.UseVisualStyleBackColor = true;
+            UseSetStick.CheckedChanged += UseSetStick_CheckedChanged;
             // 
             // DodgeSystemUpdate
             // 
@@ -946,6 +950,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.UseOvershoot.TabIndex = 38;
             this.UseOvershoot.Text = "Use overshoot instead of DDOWN (faster, experimental)";
             this.UseOvershoot.UseVisualStyleBackColor = true;
+            UseOvershoot.CheckedChanged += UseOvershoot_CheckedChanged;
             // 
             // BaseDelay
             // 
@@ -982,7 +987,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabWebhook.Controls.Add(this.EnableEmoji);
             this.tabWebhook.Location = new System.Drawing.Point(4, 24);
             this.tabWebhook.Name = "tabWebhook";
-            this.tabWebhook.Size = new System.Drawing.Size(341, 482);
+            this.tabWebhook.Size = new System.Drawing.Size(341, 578);
             this.tabWebhook.TabIndex = 3;
             this.tabWebhook.Text = "Webhook";
             this.tabWebhook.UseVisualStyleBackColor = true;
@@ -997,6 +1002,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.EnableFomoNotifications.Text = "FOMO alerts to Discord webhooks (comma separated)";
             this.toolTip1.SetToolTip(this.EnableFomoNotifications, "It has no functional purpose, it just makes me feel bad!");
             this.EnableFomoNotifications.UseVisualStyleBackColor = true;
+            EnableFomoNotifications.CheckedChanged += EnableFomoNotifications_CheckedChanged;
             // 
             // FomoWebhook
             // 
@@ -1014,6 +1020,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.EnableDiscordNotifications.TabIndex = 50;
             this.EnableDiscordNotifications.Text = "Send alerts to Discord webhooks (comma separated)";
             this.EnableDiscordNotifications.UseVisualStyleBackColor = true;
+            EnableDiscordNotifications.CheckedChanged += EnableDiscordNotifications_CheckedChanged;
             // 
             // DiscordWebhook
             // 
@@ -1047,6 +1054,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.EmojiConfig.TabIndex = 46;
             this.EmojiConfig.Text = "Emoji Config";
             this.EmojiConfig.UseVisualStyleBackColor = true;
+            EmojiConfig.Click += EmojiConfig_Click;
             // 
             // labelWebhooks
             // 
@@ -1091,6 +1099,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.btnTestWebHook.TabIndex = 22;
             this.btnTestWebHook.Text = "Test Webhook";
             this.btnTestWebHook.UseVisualStyleBackColor = true;
+            btnTestWebHook.Click += BtnTestWebHook_Click;
             // 
             // denToggle
             // 
@@ -1180,7 +1189,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabAbout.Location = new System.Drawing.Point(4, 24);
             this.tabAbout.Name = "tabAbout";
             this.tabAbout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAbout.Size = new System.Drawing.Size(341, 482);
+            this.tabAbout.Size = new System.Drawing.Size(341, 578);
             this.tabAbout.TabIndex = 4;
             this.tabAbout.Text = "About";
             this.tabAbout.UseVisualStyleBackColor = true;
@@ -1214,6 +1223,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.linkLabel2.TabIndex = 5;
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "https://github.com/ViolentSpatula/RaidCrawlerV";
+            linkLabel2.LinkClicked += linkLabel2_LinkClicked;
             // 
             // linkLabel1
             // 
@@ -1225,6 +1235,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.linkLabel1.TabIndex = 4;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "https://github.com/LegoFigure11/RaidCrawler";
+            linkLabel1.LinkClicked += LinkLabel1_LinkClicked;
             // 
             // labelAppName
             // 
@@ -1268,6 +1279,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.Save.TabIndex = 116;
             this.Save.Text = "Save";
             this.Save.UseVisualStyleBackColor = true;
+            this.Save.Click += new System.EventHandler(this.Save_Click);
             // 
             // ConfigWindow
             // 
@@ -1282,6 +1294,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.Name = "ConfigWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "RaidCrawler Settings";
+            FormClosing += Config_Closing;
             ((System.ComponentModel.ISupportInitialize)(this.SystemDDownPresses)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NavigateToSettings)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.OpenSettings)).EndInit();
