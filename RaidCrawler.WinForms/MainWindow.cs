@@ -1096,7 +1096,7 @@ namespace RaidCrawler.WinForms
                 Difficulty.Text = string.Concat(Enumerable.Repeat("☆", starCount));
 
                 ///vio thing
-                var map = GenerateMap(raid, teratype);
+                var map = GenerateMap(raid, teraType);
                 statsPanel.BackgroundImage = (Config.MapBackground ? map : null);
                 ///vio thing
 
@@ -1685,7 +1685,7 @@ namespace RaidCrawler.WinForms
             var didRaidsChange = curSeeds.Except(previousSeeds).ToArray().Length == 0;
 
             StatDaySkipTries++;
-            if (sameraids)
+            if (didRaidsChange)
             {
                 StatDaySkipStreak = 0;
                 return false;
