@@ -109,7 +109,7 @@ namespace RaidCrawler.WinForms
             else
                 Config = new();
 
-            formTitle = $"RaidCrawler v{v.Major}.{v.Minor}.{v.Build} {Config.InstanceName}";
+            formTitle = $"RaidCrawler v{v.Major}.{v.Minor}.{v.Build}{build} {Config.InstanceName}";
             Text = formTitle;
 
             // load raids
@@ -548,10 +548,23 @@ namespace RaidCrawler.WinForms
 
                 while (!stop)
                 {
+                    bool streamer = Config.StreamerView && teraRaidView is not null;
+                    Action<int>? action = streamer ? teraRaidView!.UpdateProgressBar : null;
+
                     if (skips >= Config.SystemReset)
                     {
                         await ConnectionWrapper.CloseGame(token).ConfigureAwait(false);
                         await ConnectionWrapper.StartGame(Config, token).ConfigureAwait(false);
+
+                        // Raids for the current and next day are already generated in a save.
+                        // Attempt to advance one day and save to avoid rescanning the same
+                        // first raids every reset.
+                        UpdateStatus("Skipping previously scanned raids...");
+                        await ConnectionWrapper
+                            .AdvanceDate(Config, token, action)
+                            .ConfigureAwait(false);
+                        await ConnectionWrapper.SaveGame(Config, token).ConfigureAwait(false);
+
                         RaidBlockOffsetBase = 0;
                         RaidBlockOffsetKitakami = 0;
                         skips = 0;
@@ -559,9 +572,6 @@ namespace RaidCrawler.WinForms
 
                     var previousSeeds = raids.Select(z => z.Seed).ToList();
                     UpdateStatus("Changing date");
-
-                    bool streamer = Config.StreamerView && teraRaidView is not null;
-                    Action<int>? action = streamer ? teraRaidView!.UpdateProgressBar : null;
                     await ConnectionWrapper
                         .AdvanceDate(Config, token, action)
                         .ConfigureAwait(false);
@@ -839,7 +849,7 @@ namespace RaidCrawler.WinForms
                     var data = ConnectionWrapper.Connection
                         .ReadBytesAbsoluteAsync(
                             RaidBlockOffsetBase,
-                            (int)RaidBlock.TOTAL_SIZE_BASE,
+                            (int)RaidBlock.SIZE_BASE,
                             Source.Token
                         )
                         .Result;
@@ -1027,19 +1037,19 @@ namespace RaidCrawler.WinForms
                     return;
             }
 
-            var deliveryRaidPriorityBlock = await ConnectionWrapper
+            var deliveryRaidPriorityFlatbuffer = await ConnectionWrapper
                 .ReadBlockDefault(BCATRaidPriorityLocation, "raid_priority_array", force, token)
                 .ConfigureAwait(false);
-            (var group_id, var priority) = FlatbufferDumper.DumpDeliveryPriorities(
-                deliveryRaidPriorityBlock
+            (var groupID, var priority) = FlatbufferDumper.DumpDeliveryPriorities(
+                deliveryRaidPriorityFlatbuffer
             );
             if (priority == 0)
                 return;
 
-            var deliveryRaidBlock = await ConnectionWrapper
+            var deliveryRaidFlatbuffer = await ConnectionWrapper
                 .ReadBlockDefault(BCATRaidBinaryLocation, "raid_enemy_array", force, token)
                 .ConfigureAwait(false);
-            var deliveryFixedRewardBlock = await ConnectionWrapper
+            var deliveryFixedRewardFlatbuffer = await ConnectionWrapper
                 .ReadBlockDefault(
                     BCATRaidFixedRewardLocation,
                     "fixed_reward_item_array",
@@ -1047,7 +1057,7 @@ namespace RaidCrawler.WinForms
                     token
                 )
                 .ConfigureAwait(false);
-            var deliveryLotteryRewardBlock = await ConnectionWrapper
+            var deliveryLotteryRewardFlatbuffer = await ConnectionWrapper
                 .ReadBlockDefault(
                     BCATRaidLotteryRewardLocation,
                     "lottery_reward_item_array",
@@ -1056,14 +1066,14 @@ namespace RaidCrawler.WinForms
                 )
                 .ConfigureAwait(false);
 
-            RaidContainer.DistTeraRaids = TeraDistribution.GetAllEncounters(deliveryRaidBlock);
-            RaidContainer.MightTeraRaids = TeraMight.GetAllEncounters(deliveryRaidBlock);
-            RaidContainer.DeliveryRaidPriority = group_id;
+            RaidContainer.DistTeraRaids = TeraDistribution.GetAllEncounters(deliveryRaidFlatbuffer);
+            RaidContainer.MightTeraRaids = TeraMight.GetAllEncounters(deliveryRaidFlatbuffer);
+            RaidContainer.DeliveryRaidPriority = groupID;
             RaidContainer.DeliveryRaidFixedRewards = FlatbufferDumper.DumpFixedRewards(
-                deliveryFixedRewardBlock
+                deliveryFixedRewardFlatbuffer
             );
             RaidContainer.DeliveryRaidLotteryRewards = FlatbufferDumper.DumpLotteryRewards(
-                deliveryLotteryRewardBlock
+                deliveryLotteryRewardFlatbuffer
             );
         }
 
@@ -1792,9 +1802,20 @@ namespace RaidCrawler.WinForms
             {
                 UpdateStatus("Reading Paldea raid block...");
                 data = await ConnectionWrapper.Connection
-                    .ReadBytesAbsoluteAsync(RaidBlockOffsetBase + RaidBlock.HEADER_SIZE_BASE, (int)(RaidBlock.TOTAL_SIZE_BASE - RaidBlock.HEADER_SIZE_BASE), token).ConfigureAwait(false);
+                    .ReadBytesAbsoluteAsync(
+                        RaidBlockOffsetBase + RaidBlock.HEADER_SIZE,
+                        (int)RaidBlock.SIZE_BASE,
+                        token
+                    )
+                    .ConfigureAwait(false);
 
-                (delivery, enc) = RaidContainer.ReadAllRaids(data, Config.Progress, Config.EventProgress, GetRaidBoost(), TeraRaidMapParent.Paldea);
+                (delivery, enc) = RaidContainer.ReadAllRaids(
+                    data,
+                    Config.Progress,
+                    Config.EventProgress,
+                    GetRaidBoost(),
+                    TeraRaidMapParent.Paldea
+                );
                 if (enc > 0)
                     msg += $"Failed to find encounters for {enc} raid(s).\n";
 
@@ -1804,7 +1825,7 @@ namespace RaidCrawler.WinForms
 
                 if (msg != string.Empty)
                 {
-                    msg += "\nMore info can be found in the \"raid_dbg.txt\" file.";
+                    msg += $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Paldea}.txt\" file.";
                     await ErrorHandler
                         .DisplayMessageBox(this, Webhook, msg, token, "Raid Read Error")
                         .ConfigureAwait(false);
@@ -1825,7 +1846,7 @@ namespace RaidCrawler.WinForms
                 data = await ConnectionWrapper.Connection
                     .ReadBytesAbsoluteAsync(
                         RaidBlockOffsetKitakami,
-                        (int)RaidBlock.TOTAL_SIZE_KITAKAMI,
+                        (int)RaidBlock.SIZE_KITAKAMI,
                         token
                     )
                     .ConfigureAwait(false);
@@ -1847,7 +1868,7 @@ namespace RaidCrawler.WinForms
 
                 if (msg != string.Empty)
                 {
-                    msg += "\nMore info can be found in the \"raid_dbg.txt\" file.";
+                    msg += $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Kitakami}.txt\" file.";
                     await ErrorHandler
                         .DisplayMessageBox(this, Webhook, msg, token, "Raid Read Error")
                         .ConfigureAwait(false);
