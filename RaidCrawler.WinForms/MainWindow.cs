@@ -1649,11 +1649,8 @@ namespace RaidCrawler.WinForms
                 x =
                     (
                         (
-                            (
-                                raid.MapParent == TeraRaidMapParent.Paldea
-                                    ? 1
-                                    : 2.766970605475146
-                            ) * locData[$"{raid.Area}-{raid.DisplayType}-{raid.Den}"][0]
+                            (raid.MapParent == TeraRaidMapParent.Paldea ? 1 : 2.766970605475146)
+                            * locData[$"{raid.Area}-{raid.LotteryGroup}-{raid.Den}"][0]
                         )
                         + (
                             raid.MapParent == TeraRaidMapParent.Paldea
@@ -1666,11 +1663,8 @@ namespace RaidCrawler.WinForms
                 y =
                     (
                         (
-                            (
-                                raid.MapParent == TeraRaidMapParent.Paldea
-                                    ? 1
-                                    : 2.5700782642623805
-                            ) * locData[$"{raid.Area}-{raid.DisplayType}-{raid.Den}"][2]
+                            (raid.MapParent == TeraRaidMapParent.Paldea ? 1 : 2.5700782642623805)
+                            * locData[$"{raid.Area}-{raid.LotteryGroup}-{raid.Den}"][2]
                         )
                         + (
                             raid.MapParent == TeraRaidMapParent.Paldea
@@ -1692,10 +1686,10 @@ namespace RaidCrawler.WinForms
             var rewards = RaidContainer.Rewards;
             var strings = GameInfo.GetStrings(1);
             var curSeeds = raids.Select(x => x.Seed).ToArray();
-            var didRaidsChange = curSeeds.Except(previousSeeds).ToArray().Length == 0;
+            var sameRaids = curSeeds.Except(previousSeeds).ToArray().Length == 0;
 
             StatDaySkipTries++;
-            if (didRaidsChange)
+            if (sameRaids)
             {
                 StatDaySkipStreak = 0;
                 return false;

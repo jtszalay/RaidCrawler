@@ -126,12 +126,12 @@ namespace RaidCrawler.Core.Structures
             return blank.IsShiny && ShinyExtensions.IsSquareShinyExist(blank);
         }
 
-        public bool IsTeraTypeSatisfied(Raid raid)
+        public bool IsTeraTypeSatisfied(Raid raid, ITeraRaid enc)
         {
             if (TeraType is null)
                 return true;
 
-            return raid.TeraType == TeraType;
+            return raid.GetTeraType(enc) == TeraType;
         }
 
         public bool IsNatureSatisfied(int nature)
@@ -266,7 +266,7 @@ namespace RaidCrawler.Core.Structures
             Encounter9RNG.GenerateData(blank, param, EncounterCriteria.Unrestricted, raid.Seed);
 
             return Enabled && IsIVsSatisfied(blank) && IsShinySatisfied(blank) && IsSquareSatisfied(blank) && IsSpeciesSatisfied(blank.Species) && IsRareVariantSatisfied(raid) && IsFormSatisfied(blank.Form)
-                && IsNatureSatisfied(blank.Nature) && IsStarsSatisfied(enc) && IsTeraTypeSatisfied(raid)
+                && IsNatureSatisfied(blank.Nature) && IsStarsSatisfied(enc) && IsTeraTypeSatisfied(raid, enc)
                 && IsRewardsSatisfied(container, enc, raid, SandwichBoost) && IsGenderSatisfied(enc, blank.Gender) && IsSizeSatisfied(enc, raid) && IsBatchFilterSatisfied(blank);
         }
 
