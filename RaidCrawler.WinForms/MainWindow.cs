@@ -1784,6 +1784,7 @@ namespace RaidCrawler.WinForms
                     .ConfigureAwait(false);
             }
 
+            RaidContainer.ClearRaids();
             RaidContainer.ClearEncounters();
             RaidContainer.ClearRewards();
 
