@@ -556,23 +556,26 @@ namespace RaidCrawler.WinForms
                         await ConnectionWrapper.CloseGame(token).ConfigureAwait(false);
                         await ConnectionWrapper.StartGame(Config, token).ConfigureAwait(false);
 
-                        UpdateStatus("Skipping previously scanned raids...");
-                        await ConnectionWrapper
-                            .AdvanceDate(Config, token, action)
-                            .ConfigureAwait(false);
+                        // When raids are generated, the game determines raids for both the current and next day.
+                        // In order to avoid rescanning the same raids on a reset, advance them day and save the
+                        // game after resetting.
+                        // The only exception to this is when FoMO saves are turned on. In which case, don't
+                        // save in order to preserve the last found FoMO raid. Also, don't advance in case
+                        // a FoMO raid triggered a save immediately before the reset.
+                        if (!Config.SaveOnFomo)
+                        {
+                            UpdateStatus("Skipping previously scanned raids");
+                            await ConnectionWrapper
+                                .AdvanceDate(Config, token, action)
+                                .ConfigureAwait(false);
+                            
+                            await ConnectionWrapper.SaveGame(Config, token).ConfigureAwait(false);
+                        }
 
                         RaidBlockOffsetBase = 0;
                         RaidBlockOffsetKitakami = 0;
+                        raids = new List<Raid>();
                         skips = 0;
-
-                        if (!Config.SaveOnFomo)
-                        {
-                            // When raids are generated, the game determines raids for both the current and next day.
-                            // In order to avoid rescanning the same raids on a reset, save the game after resetting.
-                            // The only exception to this is when FoMO saves are turned on. In which case, don't
-                            // save in order to preserve the last found FoMO raid.
-                            await ConnectionWrapper.SaveGame(Config, token).ConfigureAwait(false);
-                        }
                     }
 
                     var previousSeeds = raids.Select(z => z.Seed).ToList();
