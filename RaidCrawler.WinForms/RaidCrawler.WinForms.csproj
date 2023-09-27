@@ -185,9 +185,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PKHeX.Core">
-      <HintPath>..\..\RaidCrawlerV_fork\RaidCrawler.Core\deps\PKHeX.Core.dll</HintPath>
-    </Reference>
     <Reference Include="PKHeX.Drawing">
       <HintPath>deps\PKHeX.Drawing.dll</HintPath>
     </Reference>

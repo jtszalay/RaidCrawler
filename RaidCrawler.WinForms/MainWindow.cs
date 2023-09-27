@@ -556,18 +556,23 @@ namespace RaidCrawler.WinForms
                         await ConnectionWrapper.CloseGame(token).ConfigureAwait(false);
                         await ConnectionWrapper.StartGame(Config, token).ConfigureAwait(false);
 
-                        // Raids for the current and next day are already generated in a save.
-                        // Attempt to advance one day and save to avoid rescanning the same
-                        // first raids every reset.
                         UpdateStatus("Skipping previously scanned raids...");
                         await ConnectionWrapper
                             .AdvanceDate(Config, token, action)
                             .ConfigureAwait(false);
-                        await ConnectionWrapper.SaveGame(Config, token).ConfigureAwait(false);
 
                         RaidBlockOffsetBase = 0;
                         RaidBlockOffsetKitakami = 0;
                         skips = 0;
+
+                        if (!Config.SaveOnFomo)
+                        {
+                            // When raids are generated, the game determines raids for both the current and next day.
+                            // In order to avoid rescanning the same raids on a reset, save the game after resetting.
+                            // The only exception to this is when FoMO saves are turned on. In which case, don't
+                            // save in order to preserve the last found FoMO raid.
+                            await ConnectionWrapper.SaveGame(Config, token).ConfigureAwait(false);
+                        }
                     }
 
                     var previousSeeds = raids.Select(z => z.Seed).ToList();

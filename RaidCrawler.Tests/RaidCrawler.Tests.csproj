@@ -114,10 +114,4 @@
     <EmbeddedResource Include="Blocks\anubis_Might_cleared_VL\lottery_reward_item_array" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="PKHeX.Core">
-      <HintPath>..\RaidCrawler.WinForms\deps\PKHeX.Core.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
