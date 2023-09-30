@@ -357,7 +357,7 @@ namespace RaidCrawler.WinForms
             // 
             // SearchTimer
             // 
-            SearchTimer.Enabled = true;
+            SearchTimer.Enabled = false;
             SearchTimer.Interval = 1D;
             SearchTimer.SynchronizingObject = this;
             SearchTimer.Elapsed += SearchTimer_Elapsed;

@@ -65,6 +65,7 @@ namespace RaidCrawler.WinForms
         public string formTitle;
         public List<string> Fomo = new();
         public int FomoCount = 0;
+        public uint LastSentFomoSeed = 0;
 
         private ulong RaidBlockOffsetBase = 0;
         private ulong RaidBlockOffsetKitakami = 0;
@@ -553,28 +554,20 @@ namespace RaidCrawler.WinForms
 
                     if (skips >= Config.SystemReset)
                     {
-                        await ConnectionWrapper.CloseGame(token).ConfigureAwait(false);
-                        await ConnectionWrapper.StartGame(Config, token).ConfigureAwait(false);
-
                         // When raids are generated, the game determines raids for both the current and next day.
-                        // In order to avoid rescanning the same raids on a reset, advance them day and save the
-                        // game after resetting.
+                        // In order to avoid rescanning the same raids on a reset, save the game before reset.
                         // The only exception to this is when FoMO saves are turned on. In which case, don't
-                        // save in order to preserve the last found FoMO raid. Also, don't advance in case
-                        // a FoMO raid triggered a save immediately before the reset.
+                        // save in order to preserve the last found FoMO raid.
                         if (!Config.SaveOnFomo)
                         {
-                            UpdateStatus("Skipping previously scanned raids");
-                            await ConnectionWrapper
-                                .AdvanceDate(Config, token, action)
-                                .ConfigureAwait(false);
-                            
                             await ConnectionWrapper.SaveGame(Config, token).ConfigureAwait(false);
                         }
 
+                        await ConnectionWrapper.CloseGame(token).ConfigureAwait(false);
+                        await ConnectionWrapper.StartGame(Config, token).ConfigureAwait(false);
+
                         RaidBlockOffsetBase = 0;
                         RaidBlockOffsetKitakami = 0;
-                        raids = new List<Raid>();
                         skips = 0;
                     }
 
@@ -1759,7 +1752,13 @@ namespace RaidCrawler.WinForms
                 var shiny = $"{(raid.CheckIsShiny(encounter) ? (ShinyExtensions.IsSquareShinyExist(blank) ? "⛋" : "☆") : "")}";
                 if (raids[i].CheckIsShiny(encounters[i]))
                 {
+                    if (raid.Seed == LastSentFomoSeed)
+                    {
+                        continue;
+                    }
+
                     StatShinyCount++;
+                    LastSentFomoSeed = raid.Seed;
                     Fomo.Add($"{shiny} {species}{form}");
                     if (Config.EnableFomoNotification)
                         Task.Run(async () => await FomoWebhook.SendFomoNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token));
