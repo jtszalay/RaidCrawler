@@ -646,9 +646,7 @@ namespace RaidCrawler.WinForms
                                 )
                             )
                             {
-                                satisfiedFilters.Add(
-                                    (filter, encounters[i], raids[i], rewards[i])
-                                );
+                                satisfiedFilters.Add((filter, encounters[i], raids[i], rewards[i]));
                                 if (InvokeRequired)
                                     Invoke(() =>
                                     {
@@ -1776,7 +1774,15 @@ namespace RaidCrawler.WinForms
         {
             if (!Config.PaldeaScan && !Config.KitakamiScan)
             {
-                await ErrorHandler.DisplayMessageBox(this, Webhook, "Please select a location to scan in your General Settings.", token, "No locations selected").ConfigureAwait(false);
+                await ErrorHandler
+                    .DisplayMessageBox(
+                        this,
+                        Webhook,
+                        "Please select a location to scan in your General Settings.",
+                        token,
+                        "No locations selected"
+                    )
+                    .ConfigureAwait(false);
                 return;
             }
 
@@ -1795,10 +1801,11 @@ namespace RaidCrawler.WinForms
             RaidContainer.ClearEncounters();
             RaidContainer.ClearRewards();
 
-            // Base            
+            // Base
             byte[]? data = null!;
             var msg = string.Empty;
-            int delivery, enc;
+            int delivery,
+                enc;
 
             if (Config.PaldeaScan)
             {
@@ -1827,7 +1834,8 @@ namespace RaidCrawler.WinForms
 
                 if (msg != string.Empty)
                 {
-                    msg += $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Paldea}.txt\" file.";
+                    msg +=
+                        $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Paldea}.txt\" file.";
                     await ErrorHandler
                         .DisplayMessageBox(this, Webhook, msg, token, "Raid Read Error")
                         .ConfigureAwait(false);
@@ -1870,7 +1878,8 @@ namespace RaidCrawler.WinForms
 
                 if (msg != string.Empty)
                 {
-                    msg += $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Kitakami}.txt\" file.";
+                    msg +=
+                        $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Kitakami}.txt\" file.";
                     await ErrorHandler
                         .DisplayMessageBox(this, Webhook, msg, token, "Raid Read Error")
                         .ConfigureAwait(false);

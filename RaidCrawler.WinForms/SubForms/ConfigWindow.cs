@@ -43,6 +43,7 @@ namespace RaidCrawler.WinForms.SubForms
             SaveGame.Checked = c.SaveOnMatch;
             DodgeSystemUpdate.Checked = c.DodgeSystemUpdate;
             UseSetStick.Checked = c.UseSetStick;
+            UseMapTrick.Checked = c.UseMapTrick;
 
             OpenHome.Value = c.OpenHomeDelay;
             NavigateToSettings.Value = c.NavigateToSettingsDelay;
@@ -127,6 +128,7 @@ namespace RaidCrawler.WinForms.SubForms
             c.SaveOnMatch = SaveGame.Checked;
             c.DodgeSystemUpdate = DodgeSystemUpdate.Checked;
             c.UseSetStick = UseSetStick.Checked;
+            c.UseMapTrick = UseMapTrick.Checked;
 
             c.OpenHomeDelay = (int)OpenHome.Value;
             c.NavigateToSettingsDelay = (int)NavigateToSettings.Value;
