@@ -125,6 +125,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.labelAppName = new System.Windows.Forms.Label();
             this.picAppIcon = new System.Windows.Forms.PictureBox();
             this.labelAppVersion = new System.Windows.Forms.Label();
+            this.UseMapTrick = new CheckBox();
             this.Save = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.SystemDDownPresses)).BeginInit();
@@ -166,7 +167,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_BaseDelay
             // 
             this.L_BaseDelay.AutoSize = true;
-            this.L_BaseDelay.Location = new System.Drawing.Point(6, 109);
+            this.L_BaseDelay.Location = new System.Drawing.Point(6, 129);
             this.L_BaseDelay.Name = "L_BaseDelay";
             this.L_BaseDelay.Size = new System.Drawing.Size(196, 15);
             this.L_BaseDelay.TabIndex = 8;
@@ -174,7 +175,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // SystemDDownPresses
             // 
-            this.SystemDDownPresses.Location = new System.Drawing.Point(265, 252);
+            this.SystemDDownPresses.Location = new System.Drawing.Point(265, 272);
             this.SystemDDownPresses.Maximum = new decimal(new int[] {
             99,
             0,
@@ -192,7 +193,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_DdownInput
             // 
             this.L_DdownInput.AutoSize = true;
-            this.L_DdownInput.Location = new System.Drawing.Point(6, 254);
+            this.L_DdownInput.Location = new System.Drawing.Point(6, 274);
             this.L_DdownInput.Name = "L_DdownInput";
             this.L_DdownInput.Size = new System.Drawing.Size(228, 15);
             this.L_DdownInput.TabIndex = 11;
@@ -200,7 +201,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // NavigateToSettings
             // 
-            this.NavigateToSettings.Location = new System.Drawing.Point(265, 165);
+            this.NavigateToSettings.Location = new System.Drawing.Point(265, 185);
             this.NavigateToSettings.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -217,7 +218,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // OpenSettings
             // 
-            this.OpenSettings.Location = new System.Drawing.Point(265, 194);
+            this.OpenSettings.Location = new System.Drawing.Point(265, 214);
             this.OpenSettings.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -234,7 +235,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // OpenHome
             // 
-            this.OpenHome.Location = new System.Drawing.Point(265, 136);
+            this.OpenHome.Location = new System.Drawing.Point(265, 156);
             this.OpenHome.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -252,7 +253,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_OpenHOME
             // 
             this.L_OpenHOME.AutoSize = true;
-            this.L_OpenHOME.Location = new System.Drawing.Point(6, 138);
+            this.L_OpenHOME.Location = new System.Drawing.Point(6, 158);
             this.L_OpenHOME.Name = "L_OpenHOME";
             this.L_OpenHOME.Size = new System.Drawing.Size(140, 15);
             this.L_OpenHOME.TabIndex = 19;
@@ -261,7 +262,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_NavigateSettings
             // 
             this.L_NavigateSettings.AutoSize = true;
-            this.L_NavigateSettings.Location = new System.Drawing.Point(6, 167);
+            this.L_NavigateSettings.Location = new System.Drawing.Point(6, 187);
             this.L_NavigateSettings.Name = "L_NavigateSettings";
             this.L_NavigateSettings.Size = new System.Drawing.Size(146, 15);
             this.L_NavigateSettings.TabIndex = 20;
@@ -270,7 +271,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_OpenSettingsDelay
             // 
             this.L_OpenSettingsDelay.AutoSize = true;
-            this.L_OpenSettingsDelay.Location = new System.Drawing.Point(6, 196);
+            this.L_OpenSettingsDelay.Location = new System.Drawing.Point(6, 216);
             this.L_OpenSettingsDelay.Name = "L_OpenSettingsDelay";
             this.L_OpenSettingsDelay.Size = new System.Drawing.Size(114, 15);
             this.L_OpenSettingsDelay.TabIndex = 21;
@@ -279,7 +280,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_ScrollSystem
             // 
             this.L_ScrollSystem.AutoSize = true;
-            this.L_ScrollSystem.Location = new System.Drawing.Point(6, 225);
+            this.L_ScrollSystem.Location = new System.Drawing.Point(6, 245);
             this.L_ScrollSystem.Name = "L_ScrollSystem";
             this.L_ScrollSystem.Size = new System.Drawing.Size(187, 15);
             this.L_ScrollSystem.TabIndex = 23;
@@ -287,7 +288,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // Hold
             // 
-            this.Hold.Location = new System.Drawing.Point(265, 223);
+            this.Hold.Location = new System.Drawing.Point(265, 243);
             this.Hold.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -305,7 +306,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_SubmenuDelay
             // 
             this.L_SubmenuDelay.AutoSize = true;
-            this.L_SubmenuDelay.Location = new System.Drawing.Point(6, 283);
+            this.L_SubmenuDelay.Location = new System.Drawing.Point(6, 303);
             this.L_SubmenuDelay.Name = "L_SubmenuDelay";
             this.L_SubmenuDelay.Size = new System.Drawing.Size(123, 15);
             this.L_SubmenuDelay.TabIndex = 25;
@@ -313,7 +314,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // Submenu
             // 
-            this.Submenu.Location = new System.Drawing.Point(265, 281);
+            this.Submenu.Location = new System.Drawing.Point(265, 301);
             this.Submenu.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -331,7 +332,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_DateChangeDelay
             // 
             this.L_DateChangeDelay.AutoSize = true;
-            this.L_DateChangeDelay.Location = new System.Drawing.Point(6, 312);
+            this.L_DateChangeDelay.Location = new System.Drawing.Point(6, 332);
             this.L_DateChangeDelay.Name = "L_DateChangeDelay";
             this.L_DateChangeDelay.Size = new System.Drawing.Size(138, 15);
             this.L_DateChangeDelay.TabIndex = 27;
@@ -339,7 +340,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // DateChange
             // 
-            this.DateChange.Location = new System.Drawing.Point(265, 310);
+            this.DateChange.Location = new System.Drawing.Point(265, 330);
             this.DateChange.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -357,7 +358,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_ReturnHomeDelay
             // 
             this.L_ReturnHomeDelay.AutoSize = true;
-            this.L_ReturnHomeDelay.Location = new System.Drawing.Point(6, 370);
+            this.L_ReturnHomeDelay.Location = new System.Drawing.Point(6, 390);
             this.L_ReturnHomeDelay.Name = "L_ReturnHomeDelay";
             this.L_ReturnHomeDelay.Size = new System.Drawing.Size(160, 15);
             this.L_ReturnHomeDelay.TabIndex = 29;
@@ -365,7 +366,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // ReturnHome
             // 
-            this.ReturnHome.Location = new System.Drawing.Point(265, 368);
+            this.ReturnHome.Location = new System.Drawing.Point(265, 388);
             this.ReturnHome.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -383,7 +384,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_ReOpenGameDelay
             // 
             this.L_ReOpenGameDelay.AutoSize = true;
-            this.L_ReOpenGameDelay.Location = new System.Drawing.Point(6, 399);
+            this.L_ReOpenGameDelay.Location = new System.Drawing.Point(6, 419);
             this.L_ReOpenGameDelay.Name = "L_ReOpenGameDelay";
             this.L_ReOpenGameDelay.Size = new System.Drawing.Size(119, 15);
             this.L_ReOpenGameDelay.TabIndex = 31;
@@ -391,7 +392,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // ReturnGame
             // 
-            this.ReturnGame.Location = new System.Drawing.Point(265, 397);
+            this.ReturnGame.Location = new System.Drawing.Point(265, 417);
             this.ReturnGame.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -409,7 +410,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_DaysToSkip
             // 
             this.L_DaysToSkip.AutoSize = true;
-            this.L_DaysToSkip.Location = new System.Drawing.Point(6, 341);
+            this.L_DaysToSkip.Location = new System.Drawing.Point(6, 361);
             this.L_DaysToSkip.Name = "L_DaysToSkip";
             this.L_DaysToSkip.Size = new System.Drawing.Size(179, 15);
             this.L_DaysToSkip.TabIndex = 33;
@@ -417,7 +418,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // DaysToSkip
             // 
-            this.DaysToSkip.Location = new System.Drawing.Point(265, 339);
+            this.DaysToSkip.Location = new System.Drawing.Point(265, 359);
             this.DaysToSkip.Maximum = new decimal(new int[] {
             99,
             0,
@@ -447,7 +448,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(349, 606);
+            this.tabControl1.Size = new System.Drawing.Size(349, 626);
             this.tabControl1.TabIndex = 41;
             // 
             // tabGeneral
@@ -472,7 +473,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabGeneral.Location = new System.Drawing.Point(4, 24);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGeneral.Size = new System.Drawing.Size(341, 578);
+            this.tabGeneral.Size = new System.Drawing.Size(341, 603);
             this.tabGeneral.TabIndex = 5;
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
@@ -694,7 +695,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabMatch.Location = new System.Drawing.Point(4, 24);
             this.tabMatch.Name = "tabMatch";
             this.tabMatch.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMatch.Size = new System.Drawing.Size(341, 578);
+            this.tabMatch.Size = new System.Drawing.Size(341, 603);
             this.tabMatch.TabIndex = 0;
             this.tabMatch.Text = "Match";
             this.tabMatch.UseVisualStyleBackColor = true;
@@ -759,6 +760,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // tabAdvanceDate
             // 
+            this.tabAdvanceDate.Controls.Add(this.UseMapTrick);
             this.tabAdvanceDate.Controls.Add(this.ExtraOverworldWait);
             this.tabAdvanceDate.Controls.Add(this.L_ExtraOverworldWait);
             this.tabAdvanceDate.Controls.Add(this.L_SystemReset);
@@ -799,14 +801,14 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabAdvanceDate.Location = new System.Drawing.Point(4, 24);
             this.tabAdvanceDate.Name = "tabAdvanceDate";
             this.tabAdvanceDate.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAdvanceDate.Size = new System.Drawing.Size(341, 578);
+            this.tabAdvanceDate.Size = new System.Drawing.Size(341, 603);
             this.tabAdvanceDate.TabIndex = 1;
             this.tabAdvanceDate.Text = "Advance Date";
             this.tabAdvanceDate.UseVisualStyleBackColor = true;
             // 
             // ExtraOverworldWait
             // 
-            this.ExtraOverworldWait.Location = new System.Drawing.Point(265, 545);
+            this.ExtraOverworldWait.Location = new System.Drawing.Point(265, 565);
             this.ExtraOverworldWait.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -819,7 +821,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_ExtraOverworldWait
             // 
             this.L_ExtraOverworldWait.AutoSize = true;
-            this.L_ExtraOverworldWait.Location = new System.Drawing.Point(7, 547);
+            this.L_ExtraOverworldWait.Location = new System.Drawing.Point(7, 567);
             this.L_ExtraOverworldWait.Name = "L_ExtraOverworldWait";
             this.L_ExtraOverworldWait.Size = new System.Drawing.Size(218, 15);
             this.L_ExtraOverworldWait.TabIndex = 50;
@@ -829,7 +831,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_SystemReset
             // 
             this.L_SystemReset.AutoSize = true;
-            this.L_SystemReset.Location = new System.Drawing.Point(7, 487);
+            this.L_SystemReset.Location = new System.Drawing.Point(7, 507);
             this.L_SystemReset.Name = "L_SystemReset";
             this.L_SystemReset.Size = new System.Drawing.Size(203, 15);
             this.L_SystemReset.TabIndex = 46;
@@ -837,7 +839,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // RelaunchDelay
             // 
-            this.RelaunchDelay.Location = new System.Drawing.Point(265, 515);
+            this.RelaunchDelay.Location = new System.Drawing.Point(265, 535);
             this.RelaunchDelay.Maximum = new decimal(new int[] {
             20000,
             0,
@@ -850,7 +852,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_RelaunchDelay
             // 
             this.L_RelaunchDelay.AutoSize = true;
-            this.L_RelaunchDelay.Location = new System.Drawing.Point(7, 517);
+            this.L_RelaunchDelay.Location = new System.Drawing.Point(7, 537);
             this.L_RelaunchDelay.Name = "L_RelaunchDelay";
             this.L_RelaunchDelay.Size = new System.Drawing.Size(198, 15);
             this.L_RelaunchDelay.TabIndex = 48;
@@ -858,7 +860,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // SystemReset
             // 
-            this.SystemReset.Location = new System.Drawing.Point(265, 485);
+            this.SystemReset.Location = new System.Drawing.Point(265, 505);
             this.SystemReset.Maximum = new decimal(new int[] {
             2000,
             0,
@@ -901,7 +903,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // SaveGameDelay
             // 
-            this.SaveGameDelay.Location = new System.Drawing.Point(265, 455);
+            this.SaveGameDelay.Location = new System.Drawing.Point(265, 475);
             this.SaveGameDelay.Name = "SaveGameDelay";
             this.SaveGameDelay.Size = new System.Drawing.Size(68, 23);
             this.SaveGameDelay.TabIndex = 43;
@@ -909,7 +911,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_SaveGame
             // 
             this.L_SaveGame.AutoSize = true;
-            this.L_SaveGame.Location = new System.Drawing.Point(6, 458);
+            this.L_SaveGame.Location = new System.Drawing.Point(6, 478);
             this.L_SaveGame.Name = "L_SaveGame";
             this.L_SaveGame.Size = new System.Drawing.Size(186, 15);
             this.L_SaveGame.TabIndex = 42;
@@ -918,7 +920,7 @@ namespace RaidCrawler.WinForms.SubForms
             // L_OvershootHold
             // 
             this.L_OvershootHold.AutoSize = true;
-            this.L_OvershootHold.Location = new System.Drawing.Point(6, 428);
+            this.L_OvershootHold.Location = new System.Drawing.Point(6, 448);
             this.L_OvershootHold.Name = "L_OvershootHold";
             this.L_OvershootHold.Size = new System.Drawing.Size(236, 15);
             this.L_OvershootHold.TabIndex = 40;
@@ -926,7 +928,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // SystemOvershoot
             // 
-            this.SystemOvershoot.Location = new System.Drawing.Point(265, 426);
+            this.SystemOvershoot.Location = new System.Drawing.Point(265, 446);
             this.SystemOvershoot.Maximum = new decimal(new int[] {
             1200,
             0,
@@ -954,7 +956,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             // BaseDelay
             // 
-            this.BaseDelay.Location = new System.Drawing.Point(265, 107);
+            this.BaseDelay.Location = new System.Drawing.Point(265, 127);
             this.BaseDelay.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -987,7 +989,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabWebhook.Controls.Add(this.EnableEmoji);
             this.tabWebhook.Location = new System.Drawing.Point(4, 24);
             this.tabWebhook.Name = "tabWebhook";
-            this.tabWebhook.Size = new System.Drawing.Size(341, 578);
+            this.tabWebhook.Size = new System.Drawing.Size(341, 603);
             this.tabWebhook.TabIndex = 3;
             this.tabWebhook.Text = "Webhook";
             this.tabWebhook.UseVisualStyleBackColor = true;
@@ -1189,7 +1191,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.tabAbout.Location = new System.Drawing.Point(4, 24);
             this.tabAbout.Name = "tabAbout";
             this.tabAbout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAbout.Size = new System.Drawing.Size(341, 578);
+            this.tabAbout.Size = new System.Drawing.Size(341, 603);
             this.tabAbout.TabIndex = 4;
             this.tabAbout.Text = "About";
             this.tabAbout.UseVisualStyleBackColor = true;
@@ -1269,11 +1271,21 @@ namespace RaidCrawler.WinForms.SubForms
             this.labelAppVersion.TabIndex = 0;
             this.labelAppVersion.Text = "v0.0.0-000000";
             this.labelAppVersion.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            //
+            // UseMapTrick
+            //
+            UseMapTrick.AutoSize = true;
+            UseMapTrick.Location = new Point(8, 102);
+            UseMapTrick.Name = "UseMapTrick";
+            UseMapTrick.Size = new Size(164, 19);
+            UseMapTrick.TabIndex = 52;
+            UseMapTrick.Text = "Use Map Trick to avoid lag";
+            UseMapTrick.UseVisualStyleBackColor = true;
             // 
             // Save
             // 
             this.Save.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.Save.Location = new System.Drawing.Point(2, 607);
+            this.Save.Location = new System.Drawing.Point(2, 627);
             this.Save.Name = "Save";
             this.Save.Size = new System.Drawing.Size(345, 32);
             this.Save.TabIndex = 116;
@@ -1285,7 +1297,7 @@ namespace RaidCrawler.WinForms.SubForms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(349, 642);
+            this.ClientSize = new System.Drawing.Size(349, 662);
             this.Controls.Add(this.Save);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -1426,5 +1438,6 @@ namespace RaidCrawler.WinForms.SubForms
         private Label L_RelaunchDelay;
         private NumericUpDown ExtraOverworldWait;
         private Label L_ExtraOverworldWait;
+        private CheckBox UseMapTrick;
     }
 }
