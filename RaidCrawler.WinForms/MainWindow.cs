@@ -1720,13 +1720,15 @@ namespace RaidCrawler.WinForms
                     return true;
             }
 
+            // Vio thing: FoMO match detection
+            bool alreadySaved = false;
+
             for (int i = 0; i < raids.Count; i++)
             {
                 var raid = raids[i];
                 var encounter = encounters[i];
                 var reward = rewards[i];
                 var param = encounter.GetParam();
-                bool alreadySaved = false;
 
                 var timeSpan = stopwatch.Elapsed;
                 var timeEmpty = new TimeSpan(0, 0, 0, 0);
