@@ -65,7 +65,6 @@ namespace RaidCrawler.WinForms
         public string formTitle;
         public List<string> Fomo = new();
         public int FomoCount = 0;
-        public uint LastSentFomoSeed = 0;
 
         private ulong RaidBlockOffsetBase = 0;
         private ulong RaidBlockOffsetKitakami = 0;
@@ -1727,6 +1726,7 @@ namespace RaidCrawler.WinForms
                 var encounter = encounters[i];
                 var reward = rewards[i];
                 var param = encounter.GetParam();
+                bool alreadySaved = false;
 
                 var timeSpan = stopwatch.Elapsed;
                 var timeEmpty = new TimeSpan(0, 0, 0, 0);
@@ -1754,19 +1754,15 @@ namespace RaidCrawler.WinForms
                 var shiny = $"{(raid.CheckIsShiny(encounter) ? (ShinyExtensions.IsSquareShinyExist(blank) ? "⛋" : "☆") : "")}";
                 if (raids[i].CheckIsShiny(encounters[i]))
                 {
-                    if (raid.Seed == LastSentFomoSeed)
-                    {
-                        continue;
-                    }
-
                     StatShinyCount++;
-                    LastSentFomoSeed = raid.Seed;
                     Fomo.Add($"{shiny} {species}{form}");
                     if (Config.EnableFomoNotification)
                         Task.Run(async () => await FomoWebhook.SendFomoNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token));
-                    if (Config.SaveOnFomo)
+                    if (Config.SaveOnFomo && !alreadySaved)
+                    {
                         Task.WaitAll(Task.Run(async () => await ConnectionWrapper.SaveGame(Config, Source.Token).ConfigureAwait(false)));
-                    //Task.Run(async () => await SendFomoWebhookAsync(encounter, raid, time, reward, hexColor, spriteName));
+                        alreadySaved = true;
+                    }
                 }
 
             }
