@@ -569,6 +569,10 @@ namespace RaidCrawler.WinForms
                         RaidBlockOffsetBase = 0;
                         RaidBlockOffsetKitakami = 0;
                         skips = 0;
+
+                        // Read the initial raids upon reopening the game to correctly detect if the next advance fails
+                        await ReadRaids(token).ConfigureAwait(false);
+                        raids = RaidContainer.Raids;
                     }
 
                     var previousSeeds = raids.Select(z => z.Seed).ToList();
