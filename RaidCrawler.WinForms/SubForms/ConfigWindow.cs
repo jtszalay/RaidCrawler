@@ -38,6 +38,8 @@ namespace RaidCrawler.WinForms.SubForms
             FomoWebhook.Text = c.DiscordFomoWebhook;
             FomoWebhook.Enabled = EnableFomoNotifications.Checked;
 
+            ZyroMethod.Checked = c.ZyroMethod;
+
             UseTouch.Checked = c.UseTouch;
             UseOvershoot.Checked = c.UseOvershoot;
             SaveGame.Checked = c.SaveOnMatch;
@@ -122,6 +124,8 @@ namespace RaidCrawler.WinForms.SubForms
             c.DiscordMessageContent = DiscordMessageContent.Text;
             c.EnableFomoNotification = EnableFomoNotifications.Checked;
             c.DiscordFomoWebhook = FomoWebhook.Text;
+
+            c.ZyroMethod = ZyroMethod.Checked;
 
             c.UseTouch = UseTouch.Checked;
             c.UseOvershoot = UseOvershoot.Checked;

@@ -357,10 +357,31 @@ namespace RaidCrawler.WinForms
                     return;
                 }
 
-                ButtonEnable(new[] { ButtonAdvanceDate, ButtonReadRaids, ButtonDisconnect, ButtonViewRAM, ButtonDownloadEvents, SendScreenshot, btnOpenMap, Rewards, CopyAnnounce, ButtonScreenState }, true);
-                if (InvokeRequired)
-                    Invoke(() => { ComboIndex.Enabled = true; ComboIndex.SelectedIndex = 0; });
-                else ComboIndex.SelectedIndex = 0;
+                    ButtonEnable(
+                        new[]
+                        {
+                            ButtonAdvanceDate,
+                            ButtonReadRaids,
+                            ButtonDisconnect,
+                            ButtonViewRAM,
+                            ButtonDownloadEvents,
+                            SendScreenshot,
+                            btnOpenMap,
+                            Rewards,
+                            CopyAnnounce,
+                            ButtonScreenState
+                            B_ResetTime
+                        },
+                        true
+                    );
+                    if (InvokeRequired)
+                        Invoke(() =>
+                        {
+                            ComboIndex.Enabled = true;
+                            ComboIndex.SelectedIndex = 0;
+                        });
+                    else
+                        ComboIndex.SelectedIndex = 0;
 
                     UpdateStatus("Completed!");
                 },
@@ -392,7 +413,8 @@ namespace RaidCrawler.WinForms
                             ButtonDisconnect,
                             ButtonViewRAM,
                             ButtonDownloadEvents,
-                            SendScreenshot
+                            SendScreenshot,
+                            B_ResetTime
                         },
                         false
                     );
@@ -577,7 +599,7 @@ namespace RaidCrawler.WinForms
                     var previousSeeds = raids.Select(z => z.Seed).ToList();
                     UpdateStatus("Changing date");
                     await ConnectionWrapper
-                        .AdvanceDate(Config, token, action)
+                        .AdvanceDate(Config, skips, token, action)
                         .ConfigureAwait(false);
                     await ReadRaids(token).ConfigureAwait(false);
                     raids = RaidContainer.Raids;
@@ -2406,5 +2428,30 @@ namespace RaidCrawler.WinForms
             }
         }
 
+
+        private void B_ResetTime_Click(object sender, EventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    UpdateStatus("Resetting date");
+                    await ConnectionWrapper.ResetTime(Source.Token).ConfigureAwait(false);
+                    UpdateStatus("Date reset!");
+                }
+                catch (Exception ex)
+                {
+                    await ErrorHandler
+                        .DisplayMessageBox(
+                            this,
+                            Webhook,
+                            $"Could not reset the date: {ex.Message}",
+                            Source.Token
+                        )
+                        .ConfigureAwait(false);
+                    return;
+                }
+            });
+        }
     }
 }

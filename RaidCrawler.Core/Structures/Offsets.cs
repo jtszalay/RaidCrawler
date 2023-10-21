@@ -7,15 +7,15 @@
 
         public IReadOnlyList<long> RaidBlockPointerBase = new List<long>()
         {
-            0x4617648,
-            0x1C0,
+            0x4623A30,
+            0x198,
             0x88,
             0x40
         };
         public IReadOnlyList<long> RaidBlockPointerKitakami = new List<long>()
         {
-            0x4617648,
-            0x1C0,
+            0x4623A30,
+            0x198,
             0x88,
             0xCD8
         };
