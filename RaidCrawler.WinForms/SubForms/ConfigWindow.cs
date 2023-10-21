@@ -34,11 +34,14 @@ namespace RaidCrawler.WinForms.SubForms
             DiscordMessageContent.Text = c.DiscordMessageContent;
             DiscordMessageContent.Enabled = EnableDiscordNotifications.Checked;
 
+            ZyroMethod.Checked = c.ZyroMethod;
+
             UseTouch.Checked = c.UseTouch;
             UseOvershoot.Checked = c.UseOvershoot;
             SaveGame.Checked = c.SaveOnMatch;
             DodgeSystemUpdate.Checked = c.DodgeSystemUpdate;
             UseSetStick.Checked = c.UseSetStick;
+            UseMapTrick.Checked = c.UseMapTrick;
 
             OpenHome.Value = c.OpenHomeDelay;
             NavigateToSettings.Value = c.NavigateToSettingsDelay;
@@ -109,11 +112,14 @@ namespace RaidCrawler.WinForms.SubForms
             c.DiscordWebhook = DiscordWebhook.Text;
             c.DiscordMessageContent = DiscordMessageContent.Text;
 
+            c.ZyroMethod = ZyroMethod.Checked;
+
             c.UseTouch = UseTouch.Checked;
             c.UseOvershoot = UseOvershoot.Checked;
             c.SaveOnMatch = SaveGame.Checked;
             c.DodgeSystemUpdate = DodgeSystemUpdate.Checked;
             c.UseSetStick = UseSetStick.Checked;
+            c.UseMapTrick = UseMapTrick.Checked;
 
             c.OpenHomeDelay = (int)OpenHome.Value;
             c.NavigateToSettingsDelay = (int)NavigateToSettings.Value;

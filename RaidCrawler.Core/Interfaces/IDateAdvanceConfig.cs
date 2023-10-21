@@ -6,6 +6,8 @@
         bool UseOvershoot { get; set; }
         bool DodgeSystemUpdate { get; set; }
         bool UseSetStick { get; set; }
+        bool UseMapTrick { get; set; }
+        bool ZyroMethod { get; set; }
 
         int OpenHomeDelay { get; set; }
         int NavigateToSettingsDelay { get; set; }

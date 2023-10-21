@@ -27,11 +27,13 @@ namespace RaidCrawler.WinForms
         public string DiscordMessageContent { get; set; } = string.Empty;
 
         // Date Advance
+        public bool ZyroMethod { get; set; } = false;
         public bool UseTouch { get; set; } = false;
         public bool UseOvershoot { get; set; } = false;
         public bool DodgeSystemUpdate { get; set; } = false;
         public bool SaveOnMatch { get; set; } = true;
         public bool UseSetStick { get; set; } = false;
+        public bool UseMapTrick { get; set; } = false;
 
         public int OpenHomeDelay { get; set; } = 1_800;
         public int NavigateToSettingsDelay { get; set; } = 0_100;

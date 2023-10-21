@@ -380,7 +380,8 @@ namespace RaidCrawler.WinForms
                             ButtonDownloadEvents,
                             SendScreenshot,
                             btnOpenMap,
-                            Rewards
+                            Rewards,
+                            B_ResetTime
                         },
                         true
                     );
@@ -423,7 +424,8 @@ namespace RaidCrawler.WinForms
                             ButtonDisconnect,
                             ButtonViewRAM,
                             ButtonDownloadEvents,
-                            SendScreenshot
+                            SendScreenshot,
+                            B_ResetTime
                         },
                         false
                     );
@@ -569,11 +571,19 @@ namespace RaidCrawler.WinForms
                 {
                     if (skips >= Config.SystemReset)
                     {
+                        // When raids are generated, the game determines raids for both the current and next day.
+                        // In order to avoid rescanning the same raids on a reset, save the game before reset.
+                        await ConnectionWrapper.SaveGame(Config, token).ConfigureAwait(false);
                         await ConnectionWrapper.CloseGame(token).ConfigureAwait(false);
                         await ConnectionWrapper.StartGame(Config, token).ConfigureAwait(false);
+
                         RaidBlockOffsetBase = 0;
                         RaidBlockOffsetKitakami = 0;
                         skips = 0;
+
+                        // Read the initial raids upon reopening the game to correctly detect if the next advance fails
+                        await ReadRaids(token).ConfigureAwait(false);
+                        raids = RaidContainer.Raids;
                     }
 
                     var previousSeeds = raids.Select(z => z.Seed).ToList();
@@ -581,7 +591,7 @@ namespace RaidCrawler.WinForms
                     bool streamer = Config.StreamerView && teraRaidView is not null;
                     Action<int>? action = streamer ? teraRaidView!.UpdateProgressBar : null;
                     await ConnectionWrapper
-                        .AdvanceDate(Config, token, action)
+                        .AdvanceDate(Config, skips, token, action)
                         .ConfigureAwait(false);
                     await ReadRaids(token).ConfigureAwait(false);
                     raids = RaidContainer.Raids;
@@ -646,9 +656,7 @@ namespace RaidCrawler.WinForms
                                 )
                             )
                             {
-                                satisfiedFilters.Add(
-                                    (filter, encounters[i], raids[i], rewards[i])
-                                );
+                                satisfiedFilters.Add((filter, encounters[i], raids[i], rewards[i]));
                                 if (InvokeRequired)
                                     Invoke(() =>
                                     {
@@ -1690,7 +1698,15 @@ namespace RaidCrawler.WinForms
         {
             if (!Config.PaldeaScan && !Config.KitakamiScan)
             {
-                await ErrorHandler.DisplayMessageBox(this, Webhook, "Please select a location to scan in your General Settings.", token, "No locations selected").ConfigureAwait(false);
+                await ErrorHandler
+                    .DisplayMessageBox(
+                        this,
+                        Webhook,
+                        "Please select a location to scan in your General Settings.",
+                        token,
+                        "No locations selected"
+                    )
+                    .ConfigureAwait(false);
                 return;
             }
 
@@ -1709,10 +1725,11 @@ namespace RaidCrawler.WinForms
             RaidContainer.ClearEncounters();
             RaidContainer.ClearRewards();
 
-            // Base            
+            // Base
             byte[]? data = null!;
             var msg = string.Empty;
-            int delivery, enc;
+            int delivery,
+                enc;
 
             if (Config.PaldeaScan)
             {
@@ -1741,7 +1758,8 @@ namespace RaidCrawler.WinForms
 
                 if (msg != string.Empty)
                 {
-                    msg += $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Paldea}.txt\" file.";
+                    msg +=
+                        $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Paldea}.txt\" file.";
                     await ErrorHandler
                         .DisplayMessageBox(this, Webhook, msg, token, "Raid Read Error")
                         .ConfigureAwait(false);
@@ -1784,7 +1802,8 @@ namespace RaidCrawler.WinForms
 
                 if (msg != string.Empty)
                 {
-                    msg += $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Kitakami}.txt\" file.";
+                    msg +=
+                        $"\nMore info can be found in the \"raid_dbg_{TeraRaidMapParent.Kitakami}.txt\" file.";
                     await ErrorHandler
                         .DisplayMessageBox(this, Webhook, msg, token, "Raid Read Error")
                         .ConfigureAwait(false);
@@ -2183,6 +2202,31 @@ namespace RaidCrawler.WinForms
                 shiny
             )[1..];
             return spriteName.Replace('_', '-').Insert(0, "_");
+        }
+
+        private void B_ResetTime_Click(object sender, EventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    UpdateStatus("Resetting date...");
+                    await ConnectionWrapper.ResetTime(Source.Token).ConfigureAwait(false);
+                    UpdateStatus("Date reset!");
+                }
+                catch (Exception ex)
+                {
+                    await ErrorHandler
+                        .DisplayMessageBox(
+                            this,
+                            Webhook,
+                            $"Could not reset the date: {ex.Message}",
+                            Source.Token
+                        )
+                        .ConfigureAwait(false);
+                    return;
+                }
+            });
         }
     }
 }
