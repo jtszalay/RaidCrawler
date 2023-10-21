@@ -369,8 +369,8 @@ namespace RaidCrawler.WinForms
                             btnOpenMap,
                             Rewards,
                             CopyAnnounce,
-                            ButtonScreenState
-                            B_ResetTime
+                            ButtonScreenState,
+                            ButtonResetTime
                         },
                         true
                     );
@@ -414,7 +414,7 @@ namespace RaidCrawler.WinForms
                             ButtonViewRAM,
                             ButtonDownloadEvents,
                             SendScreenshot,
-                            B_ResetTime
+                            ButtonResetTime
                         },
                         false
                     );

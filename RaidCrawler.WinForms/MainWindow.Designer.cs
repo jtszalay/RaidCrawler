@@ -44,6 +44,7 @@ namespace RaidCrawler.WinForms
             ButtonPrevious = new Button();
             ButtonReadRaids = new Button();
             ButtonViewRAM = new Button();
+            ButtonResetTime = new Button();
             StopFilter = new Button();
             Sprite = new PictureBox();
             GemIcon = new PictureBox();
@@ -292,10 +293,21 @@ namespace RaidCrawler.WinForms
             ButtonDownloadEvents.Text = "Pull Events";
             ButtonDownloadEvents.UseVisualStyleBackColor = true;
             ButtonDownloadEvents.Click += DownloadEvents_Click;
+            //
+            // ButtonResetTime
+            //
+            ButtonResetTime.Enabled = false;
+            ButtonResetTime.Location = new Point(9, 99);
+            ButtonResetTime.Name = "ButtonResetTime";
+            ButtonResetTime.Size = new Size(90, 25);
+            ButtonResetTime.TabIndex = 130;
+            ButtonResetTime.Text = "Reset Date";
+            ButtonResetTime.UseVisualStyleBackColor = true;
+            ButtonResetTime.Click += B_ResetTime_Click;
             // 
             // ConfigSettings
             // 
-            ConfigSettings.Location = new Point(6, 384);
+            ConfigSettings.Location = new Point(6, 411);
             ConfigSettings.Name = "ConfigSettings";
             ConfigSettings.Size = new Size(200, 33);
             ConfigSettings.TabIndex = 115;
@@ -307,7 +319,7 @@ namespace RaidCrawler.WinForms
             // 
             Rewards.Location = new Point(77, 301);
             Rewards.Name = "Rewards";
-            Rewards.Size = new Size(72, 25);
+            Rewards.Size = new Size(72, 23);
             Rewards.TabIndex = 116;
             Rewards.Text = "Rewards";
             Rewards.UseVisualStyleBackColor = true;
@@ -380,9 +392,10 @@ namespace RaidCrawler.WinForms
             groupBox1.Controls.Add(btnOpenMap);
             groupBox1.Controls.Add(SendScreenshot);
             groupBox1.Controls.Add(ButtonReadRaids);
+            groupBox1.Controls.Add(ButtonResetTime);
             groupBox1.Location = new Point(6, 274);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(200, 104);
+            groupBox1.Size = new Size(200, 131);
             groupBox1.TabIndex = 125;
             groupBox1.TabStop = false;
             groupBox1.Text = "Raid Controls";
@@ -875,7 +888,7 @@ namespace RaidCrawler.WinForms
             interfacePanel.Controls.Add(ButtonAdvanceDate);
             interfacePanel.Location = new Point(5, 5);
             interfacePanel.Name = "interfacePanel";
-            interfacePanel.Size = new Size(212, 420);
+            interfacePanel.Size = new Size(212, 447);
             interfacePanel.TabIndex = 134;
             // 
             // GameVersionImg
@@ -917,7 +930,7 @@ namespace RaidCrawler.WinForms
             extrasPanel.Controls.Add(DaySkipSuccessRate);
             extrasPanel.Controls.Add(SearchTime);
             extrasPanel.Controls.Add(LabelLoadedRaids);
-            extrasPanel.Location = new Point(223, 370);
+            extrasPanel.Location = new Point(223, 397);
             extrasPanel.Name = "extrasPanel";
             extrasPanel.Size = new Size(350, 55);
             extrasPanel.TabIndex = 135;
@@ -977,7 +990,7 @@ namespace RaidCrawler.WinForms
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(578, 452);
+            ClientSize = new Size(578, 479);
             Controls.Add(extrasPanel);
             Controls.Add(interfacePanel);
             Controls.Add(navigationPanel);
@@ -1023,6 +1036,7 @@ namespace RaidCrawler.WinForms
         private Button ButtonReadRaids;
         private Button ButtonAdvanceDate;
         private Button ButtonViewRAM;
+        private Button ButtonResetTime;
         private Button StopFilter;
         private PictureBox Sprite;
         private PictureBox GemIcon;
