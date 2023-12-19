@@ -182,7 +182,7 @@ public partial class ConfigWindow : Form
             mainForm.formTitle = "RaidCrawlerV v" + v.Major + "." + v.Minor + "." + v.Build + build + " " + c.InstanceName;
             Invoke(() => mainForm.Text = mainForm.formTitle);
         }
-        if (DiscordWebhook.Modified)
+        /*if (DiscordWebhook.Modified)
         {
             DiscordWebhook.Enabled = EnableDiscordNotifications.Checked;
             labelWebhooks.Text = "Webhooks are " + (DiscordWebhook.Enabled ? "enabled." : "disabled.");
@@ -194,7 +194,7 @@ public partial class ConfigWindow : Form
             FomoWebhook.Enabled = EnableFomoNotifications.Checked;
             var mainForm = Application.OpenForms.OfType<MainWindow>().Single();
             mainForm.UpdateWebhook(c);
-        }
+        }*/
         //end update stuff
 
         string output = JsonSerializer.Serialize(c, Options);
@@ -242,6 +242,11 @@ public partial class ConfigWindow : Form
                 UseShellExecute = true,
             }
         );
+    }
+
+    private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(((LinkLabel)sender).Text) { UseShellExecute = true });
     }
 
     private void Game_SelectedIndexChanged(object sender, EventArgs e)

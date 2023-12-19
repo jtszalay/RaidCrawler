@@ -40,7 +40,7 @@ public partial class MainWindow : Form
 
     private readonly RaidContainer RaidContainer;
     private readonly NotificationHandler Webhook;
-    private readonly NotificationHandler FomoWebhook;
+    private readonly FomoNotificationHandler FomoWebhook;
 
     private List<RaidFilter> RaidFilters = [];
     private static readonly Image MapBase = Image.FromStream(
@@ -61,7 +61,7 @@ public partial class MainWindow : Form
     public int StatDaySkipSuccess = 0;
     public int StatDaySkipStreak = 0;
     public int StatShinyCount = 0;
-    public readonly string formTitle;
+    public string formTitle;
     public List<string> Fomo = new();
     public int FomoCount = 0;
 
@@ -134,7 +134,7 @@ public partial class MainWindow : Form
         };
 
         Webhook = new(Config);
-        FomoWebhook = new(Config, true);
+        FomoWebhook = new(Config);
         InitializeComponent();
 
         btnOpenMap.Enabled = false;
@@ -658,7 +658,7 @@ public partial class MainWindow : Form
                     await ConnectionWrapper.SaveGame(Config, token).ConfigureAwait(false);
 
                 if (Config.EnableAlertWindow)
-                    await this.DisplayMessageBox(this, Webhook, $"{Config.AlertWindowMessage}\n\nTime Spent: {time}", token, "Result found!").ConfigureAwait(false);
+                    await this.DisplayMessageBox(Webhook, $"{Config.AlertWindowMessage}\n\nTime Spent: {time}", token, "Result found!").ConfigureAwait(false);
 
                 if (Config.SearchTimeInTitle)
                     Invoke(() => Text = $"{formTitle} [Match Found in {time}]");
@@ -1478,7 +1478,6 @@ public partial class MainWindow : Form
     private bool StopAdvanceDate(IEnumerable<uint> previousSeeds)
     {
         var raids = RaidContainer.Raids;
-        var encounters = RaidContainer.Encounters;
         var rewards = RaidContainer.Rewards;
         var strings = GameInfo.GetStrings(1);
         var curSeeds = raids.Select(x => x.Seed).ToArray();
@@ -1496,17 +1495,10 @@ public partial class MainWindow : Form
         if (!Config.EnableFilters)
             return true;
 
-        foreach (RaidFilter rf in RaidFilters)
-        {
-            var index = Invoke(() => RaidBoost.SelectedIndex);
-            var encounters = RaidContainer.Encounters;
-            if (rf.FilterSatisfied(RaidContainer, encounters, raids, index))
-                return true;
-        }
+        bool alreadySaved = false;
+        var encounters = RaidContainer.Encounters;
 
         // Vio thing: FoMO match detection
-        bool alreadySaved = false;
-
         for (int i = 0; i < raids.Count; i++)
         {
             var raid = raids[i];
@@ -1543,14 +1535,21 @@ public partial class MainWindow : Form
                 StatShinyCount++;
                 Fomo.Add($"{shiny} {species}{form}");
                 if (Config.EnableFomoNotification)
-                    Task.Run(async () => await FomoWebhook.SendFomoNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token));
+                    Task.Run(async () => await FomoWebhook.SendNotification(encounter, raid, filter, time, reward, hexColor, spriteName, Source.Token));
                 if (Config.SaveOnFomo && !alreadySaved)
                 {
                     Task.WaitAll(Task.Run(async () => await ConnectionWrapper.SaveGame(Config, Source.Token).ConfigureAwait(false)));
                     alreadySaved = true;
                 }
             }
+        }
 
+        foreach (RaidFilter rf in RaidFilters)
+        {
+            var index = Invoke(() => RaidBoost.SelectedIndex);
+            
+            if (rf.FilterSatisfied(RaidContainer, encounters, raids, index))
+                return true;
         }
 
         return StopAdvances;
@@ -1753,153 +1752,185 @@ public partial class MainWindow : Form
     public void Protocol_SelectedIndexChanged(SwitchProtocol protocol)
     {
         Config.Protocol = protocol;
-        public void Protocol_SelectedIndexChanged(SwitchProtocol protocol)
+        ConnectionConfig.Protocol = protocol;
+        if (protocol is SwitchProtocol.USB)
         {
-            Config.Protocol = protocol;
-            ConnectionConfig.Protocol = protocol;
-            if (protocol is SwitchProtocol.USB)
-            {
-                InputSwitchIP.Visible = false;
-                LabelSwitchIP.Visible = false;
-                USB_Port_label.Visible = true;
-                USB_Port_TB.Visible = true;
-                ConnectionConfig.Port = Config.UsbPort;
-            }
-            else
-            {
-                InputSwitchIP.Visible = true;
-                LabelSwitchIP.Visible = true;
-                USB_Port_label.Visible = false;
-                USB_Port_TB.Visible = false;
-                ConnectionConfig.Port = 6000;
-            }
+            InputSwitchIP.Visible = false;
+            LabelSwitchIP.Visible = false;
+            USB_Port_label.Visible = true;
+            USB_Port_TB.Visible = true;
+            ConnectionConfig.Port = Config.UsbPort;
+        }
+        else
+        {
+            InputSwitchIP.Visible = true;
+            LabelSwitchIP.Visible = true;
+            USB_Port_label.Visible = false;
+            USB_Port_TB.Visible = false;
+            ConnectionConfig.Port = 6000;
+        }
+    }
+
+    private void DisplayMap(object sender, EventArgs e)
+    {
+        var raids = RaidContainer.Raids;
+        if (raids.Count == 0)
+        {
+            Task.Run(async () => await this.DisplayMessageBox(Webhook, "Raids not loaded.", Source.Token).ConfigureAwait(false), Source.Token);
+            return;
         }
 
-        private void DisplayMap(object sender, EventArgs e)
+        var raid = raids[ComboIndex.SelectedIndex];
+        var encounter = RaidContainer.Encounters[ComboIndex.SelectedIndex];
+        var teraType = raid.GetTeraType(encounter);
+        var map = GenerateMap(raid, teraType);
+        if (map is null)
         {
-            var raids = RaidContainer.Raids;
-            if (raids.Count == 0)
-            {
-                Task.Run(async () => await this.DisplayMessageBox(Webhook, "Raids not loaded.", Source.Token).ConfigureAwait(false), Source.Token);
-                return;
-            }
-
-            var raid = raids[ComboIndex.SelectedIndex];
-            var encounter = RaidContainer.Encounters[ComboIndex.SelectedIndex];
-            var teraType = raid.GetTeraType(encounter);
-            var map = GenerateMap(raid, teraType);
-            if (map is null)
-            {
-                Task.Run(async () => await this.DisplayMessageBox(Webhook, "Error generating map.", Source.Token).ConfigureAwait(false), Source.Token);
-                return;
-            }
-
-            var form = new MapView(map);
-            ShowDialog(form);
+            Task.Run(async () => await this.DisplayMessageBox(Webhook, "Error generating map.", Source.Token).ConfigureAwait(false), Source.Token);
+            return;
         }
 
-        private void Rewards_Click(object sender, EventArgs e)
+        var form = new MapView(map);
+        ShowDialog(form);
+    }
+
+    private void Rewards_Click(object sender, EventArgs e)
+    {
+        if (RaidContainer.Raids.Count == 0)
         {
-            if (RaidContainer.Raids.Count == 0)
-            {
-                Task.Run(async () => await this.DisplayMessageBox(Webhook, "Raids not loaded.", Source.Token).ConfigureAwait(false), Source.Token);
-                return;
-            }
-
-            var rewards = RaidContainer.Rewards[ComboIndex.SelectedIndex];
-            if (rewards is null)
-            {
-                Task.Run(async () => await this.DisplayMessageBox(Webhook, "Error while displaying rewards.", Source.Token).ConfigureAwait(false), Source.Token);
-                return;
-            }
-
-            var form = new RewardsView(RaidContainer.Strings.Item, RaidContainer.Strings.Move, rewards);
-            ShowDialog(form);
+            Task.Run(async () => await this.DisplayMessageBox(Webhook, "Raids not loaded.", Source.Token).ConfigureAwait(false), Source.Token);
+            return;
         }
 
-        private void RaidBoost_SelectedIndexChanged(object sender, EventArgs e)
+        var rewards = RaidContainer.Rewards[ComboIndex.SelectedIndex];
+        if (rewards is null)
         {
-            RaidContainer.ClearRewards();
-            var raids = RaidContainer.Raids;
-            var encounters = RaidContainer.Encounters;
+            Task.Run(async () => await this.DisplayMessageBox(Webhook, "Error while displaying rewards.", Source.Token).ConfigureAwait(false), Source.Token);
+            return;
+        }
 
-            List<List<(int, int, int)>> newRewards = [];
-            for (int i = 0; i < raids.Count; i++)
+        var form = new RewardsView(RaidContainer.Strings.Item, RaidContainer.Strings.Move, rewards);
+        ShowDialog(form);
+    }
+
+    private void RaidBoost_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        RaidContainer.ClearRewards();
+        var raids = RaidContainer.Raids;
+        var encounters = RaidContainer.Encounters;
+
+        List<List<(int, int, int)>> newRewards = [];
+        for (int i = 0; i < raids.Count; i++)
+        {
+            var raid = raids[i];
+            var encounter = encounters[i];
+            newRewards.Add(encounter.GetRewards(RaidContainer, raid, RaidBoost.SelectedIndex));
+        }
+        RaidContainer.SetRewards(newRewards);
+    }
+
+    private void Move_Clicked(object sender, EventArgs e)
+    {
+        if (RaidContainer.Raids.Count == 0)
+        {
+            Task.Run(async () => await this.DisplayMessageBox(Webhook, "Raids not loaded.", Source.Token).ConfigureAwait(false), Source.Token);
+            return;
+        }
+
+        var encounter = RaidContainer.Encounters[ComboIndex.SelectedIndex];
+        if (encounter is null)
+            return;
+
+        ShowExtraMoves ^= true;
+        LabelMoves.Text = ShowExtraMoves ? "Extra:" : "Moves:";
+        LabelMoves.Location = LabelMoves.Location with { X = LabelMoves.Location.X + (ShowExtraMoves ? 9 : -9) };
+
+        var length = encounter.ExtraMoves.Length < 4 ? 4 : encounter.ExtraMoves.Length;
+        var extraMoves = new ushort[length];
+        for (int i = 0; i < encounter.ExtraMoves.Length; i++)
+            extraMoves[i] = encounter.ExtraMoves[i];
+
+        Move1.Text = ShowExtraMoves
+            ? RaidContainer.Strings.Move[extraMoves[0]]
+            : RaidContainer.Strings.Move[encounter.Move1];
+        Move2.Text = ShowExtraMoves
+            ? RaidContainer.Strings.Move[extraMoves[1]]
+            : RaidContainer.Strings.Move[encounter.Move2];
+        Move3.Text = ShowExtraMoves
+            ? RaidContainer.Strings.Move[extraMoves[2]]
+            : RaidContainer.Strings.Move[encounter.Move3];
+        Move4.Text = ShowExtraMoves
+            ? RaidContainer.Strings.Move[extraMoves[3]]
+            : RaidContainer.Strings.Move[encounter.Move4];
+    }
+
+    private void ComboIndex_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (RaidContainer.Raids.Count == 0)
+            return;
+
+        DisplayRaid();
+        if (Config.StreamerView)
+            DisplayPrettyRaid();
+    }
+
+    private void SendScreenshot_Click(object sender, EventArgs e)
+    {
+        Task.Run(async () =>
             {
-                var raid = raids[i];
-                var encounter = encounters[i];
-                newRewards.Add(encounter.GetRewards(RaidContainer, raid, RaidBoost.SelectedIndex));
-            }
-            RaidContainer.SetRewards(newRewards);
-        }
-
-        private void Move_Clicked(object sender, EventArgs e)
-        {
-            if (RaidContainer.Raids.Count == 0)
-            {
-                Task.Run(async () => await this.DisplayMessageBox(Webhook, "Raids not loaded.", Source.Token).ConfigureAwait(false), Source.Token);
-                return;
-            }
-
-            var encounter = RaidContainer.Encounters[ComboIndex.SelectedIndex];
-            if (encounter is null)
-                return;
-
-            ShowExtraMoves ^= true;
-            LabelMoves.Text = ShowExtraMoves ? "Extra:" : "Moves:";
-            LabelMoves.Location = LabelMoves.Location with { X = LabelMoves.Location.X + (ShowExtraMoves ? 9 : -9) };
-
-            var length = encounter.ExtraMoves.Length < 4 ? 4 : encounter.ExtraMoves.Length;
-            var extraMoves = new ushort[length];
-            for (int i = 0; i < encounter.ExtraMoves.Length; i++)
-                extraMoves[i] = encounter.ExtraMoves[i];
-
-            Move1.Text = ShowExtraMoves
-                ? RaidContainer.Strings.Move[extraMoves[0]]
-                : RaidContainer.Strings.Move[encounter.Move1];
-            Move2.Text = ShowExtraMoves
-                ? RaidContainer.Strings.Move[extraMoves[1]]
-                : RaidContainer.Strings.Move[encounter.Move2];
-            Move3.Text = ShowExtraMoves
-                ? RaidContainer.Strings.Move[extraMoves[2]]
-                : RaidContainer.Strings.Move[encounter.Move3];
-            Move4.Text = ShowExtraMoves
-                ? RaidContainer.Strings.Move[extraMoves[3]]
-                : RaidContainer.Strings.Move[encounter.Move4];
-        }
-
-        private void ComboIndex_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (RaidContainer.Raids.Count == 0)
-                return;
-
-            DisplayRaid();
-            if (Config.StreamerView)
-                DisplayPrettyRaid();
-        }
-
-        private void SendScreenshot_Click(object sender, EventArgs e)
-        {
-            Task.Run(async () =>
+                try
                 {
-                    try
-                    {
-                        await Webhook.SendScreenshot(ConnectionWrapper.Connection, Source.Token).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        await this.DisplayMessageBox(Webhook, $"Could not send the screenshot: {ex.Message}", Source.Token).ConfigureAwait(false);
-                    }
-                },
-                Source.Token
-            );
-        }
+                    await Webhook.SendScreenshot(ConnectionWrapper.Connection, Source.Token).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    await this.DisplayMessageBox(Webhook, $"Could not send the screenshot: {ex.Message}", Source.Token).ConfigureAwait(false);
+                }
+            },
+            Source.Token
+        );
+    }
 
-        private void SearchTimer_Elapsed(object sender, EventArgs e)
+    private void SearchTimer_Elapsed(object sender, EventArgs e)
+    {
+        if (!stopwatch.IsRunning)
+            return;
+
+        var timeSpan = stopwatch.Elapsed;
+        var timeEmpty = new TimeSpan(0, 0, 0, 0);
+        string time = string.Empty;
+        if (((int)timeSpan.TotalDays) != timeEmpty.TotalDays) { time = timeSpan.ToString(@"d\d\ %h\h\ mm\m\ ss\s"); }
+        else if (((int)timeSpan.TotalHours) != timeEmpty.TotalHours) { time = timeSpan.ToString(@"%h\h\ mm\m\ ss\s"); }
+        else if (((int)timeSpan.TotalMinutes) != timeEmpty.TotalMinutes) { time = timeSpan.ToString(@"%m\m\ ss\s"); }
+        else { time = timeSpan.ToString(@"%s\s"); }
+
+        if (Config.SearchTimeInTitle)
+            Invoke(() => Text = formTitle + " [Searching for " + time + "]");
+        SearchTime.Text = "Searching for: " + time;
+        if (Config.StreamerView && teraRaidView is not null)
+            Invoke(() => teraRaidView.textSearchTime.Text = time);
+    }
+
+    public void TestWebhook() => Task.Run(async () => await TestWebhookAsync(Source.Token).ConfigureAwait(false), Source.Token);
+
+    private async Task TestWebhookAsync(CancellationToken token)
+    {
+        var filter = new RaidFilter { Name = "Test Webhook" };
+
+        int i = -1;
+        if (InvokeRequired)
+            i = Invoke(() =>
+            {
+                return ComboIndex.SelectedIndex;
+            });
+        else
+            i = ComboIndex.SelectedIndex;
+
+        var raids = RaidContainer.Raids;
+        var encounters = RaidContainer.Encounters;
+        var rewards = RaidContainer.Rewards;
+        if (i > -1 && encounters[i] is not null && raids[i] is not null)
         {
-            if (!stopwatch.IsRunning)
-                return;
-
             var timeSpan = stopwatch.Elapsed;
             var timeEmpty = new TimeSpan(0, 0, 0, 0);
             string time = string.Empty;
@@ -1907,212 +1938,169 @@ public partial class MainWindow : Form
             else if (((int)timeSpan.TotalHours) != timeEmpty.TotalHours) { time = timeSpan.ToString(@"%h\h\ mm\m\ ss\s"); }
             else if (((int)timeSpan.TotalMinutes) != timeEmpty.TotalMinutes) { time = timeSpan.ToString(@"%m\m\ ss\s"); }
             else { time = timeSpan.ToString(@"%s\s"); }
+            var teraType = raids[i].GetTeraType(encounters[i]);
+            var color = TypeColor.GetTypeSpriteColor((byte)teraType);
+            var hexColor = $"{color.R:X2}{color.G:X2}{color.B:X2}";
 
-            if (Config.SearchTimeInTitle)
-                Invoke(() => Text = formTitle + " [Searching for " + time + "]");
-            SearchTime.Text = "Searching for: " + time;
-            if (Config.StreamerView && teraRaidView is not null)
-                Invoke(() => teraRaidView.textSearchTime.Text = time);
-        }
-
-        public void TestWebhook() => Task.Run(async () => await TestWebhookAsync(Source.Token).ConfigureAwait(false), Source.Token);
-
-        private async Task TestWebhookAsync(CancellationToken token)
-        {
-            var filter = new RaidFilter { Name = "Test Webhook" };
-
-            int i = -1;
-            if (InvokeRequired)
-                i = Invoke(() =>
-                {
-                    return ComboIndex.SelectedIndex;
-                });
-            else
-                i = ComboIndex.SelectedIndex;
-
-            var raids = RaidContainer.Raids;
-            var encounters = RaidContainer.Encounters;
-            var rewards = RaidContainer.Rewards;
-            if (i > -1 && encounters[i] is not null && raids[i] is not null)
+            var blank = new PK9
             {
-                var timeSpan = stopwatch.Elapsed;
-                var timeEmpty = new TimeSpan(0, 0, 0, 0);
-                string time = string.Empty;
-                if (((int)timeSpan.TotalDays) != timeEmpty.TotalDays) { time = timeSpan.ToString(@"d\d\ %h\h\ mm\m\ ss\s"); }
-                else if (((int)timeSpan.TotalHours) != timeEmpty.TotalHours) { time = timeSpan.ToString(@"%h\h\ mm\m\ ss\s"); }
-                else if (((int)timeSpan.TotalMinutes) != timeEmpty.TotalMinutes) { time = timeSpan.ToString(@"%m\m\ ss\s"); }
-                else { time = timeSpan.ToString(@"%s\s"); }
-                var teraType = raids[i].GetTeraType(encounters[i]);
-                var color = TypeColor.GetTypeSpriteColor((byte)teraType);
-                var hexColor = $"{color.R:X2}{color.G:X2}{color.B:X2}";
+                Species = encounters[i].Species,
+                Form = encounters[i].Form,
+                Gender = encounters[i].Gender,
+            };
+            blank.SetSuggestedFormArgument();
 
-                var blank = new PK9
-                {
-                    Species = encounters[i].Species,
-                    Form = encounters[i].Form,
-                    Gender = encounters[i].Gender,
-                };
-                blank.SetSuggestedFormArgument();
-
-                var spriteName = GetSpriteNameForUrl(blank, raids[i].CheckIsShiny(encounters[i]));
-                await Webhook
-                    .SendNotification(
-                        encounters[i],
-                        raids[i],
-                        filter,
-                        time,
-                        rewards[i],
-                        hexColor,
-                        spriteName,
-                        token
-                    )
-                    .ConfigureAwait(false);
-                return;
-            }
-
-            await ErrorHandler
-                .DisplayMessageBox(
-                    this,
-                    Webhook,
-                    "Please connect to your device and ensure a raid has been found.",
+            var spriteName = GetSpriteNameForUrl(blank, raids[i].CheckIsShiny(encounters[i]));
+            await Webhook
+                .SendNotification(
+                    encounters[i],
+                    raids[i],
+                    filter,
+                    time,
+                    rewards[i],
+                    hexColor,
+                    spriteName,
                     token
                 )
                 .ConfigureAwait(false);
+            return;
         }
 
-        public void ToggleStreamerView()
+        await ErrorHandler
+            .DisplayMessageBox(
+                this,
+                Webhook,
+                "Please connect to your device and ensure a raid has been found.",
+                token
+            )
+            .ConfigureAwait(false);
+    }
+
+    public void ToggleStreamerView()
+    {
+        if (Config.StreamerView)
         {
-            if (Config.StreamerView)
-            {
-                teraRaidView = new();
-                teraRaidView.Map.Image = MapBase;
-                teraRaidView.Show();
-            }
-        }
-
-        private static string GetSpriteNameForUrl(PK9 pk, bool shiny)
-        {
-            // Since we're later using this for URL assembly later, we need dashes instead of underscores for forms.
-            var spriteName = SpriteName.GetResourceStringSprite(pk.Species, pk.Form, pk.Gender, pk.FormArgument, EntityContext.Gen9, shiny)[1..];
-            return spriteName.Replace('_', '-').Insert(0, "_");
-        }
-
-        private void CopyAnnounce_Click(object sender, EventArgs e)
-        {
-
-            var filter = new RaidFilter { Name = "Test Webhook" };
-
-            int i = -1;
-            if (InvokeRequired)
-                i = Invoke(() => { return ComboIndex.SelectedIndex; });
-            else i = ComboIndex.SelectedIndex;
-
-            var raids = RaidContainer.Raids;
-            var encounters = RaidContainer.Encounters;
-            var rewards = RaidContainer.Rewards;
-            if (i > -1 && encounters[i] is not null && raids[i] is not null)
-            {
-                var timeSpan = stopwatch.Elapsed;
-                var timeEmpty = new TimeSpan(0, 0, 0, 0);
-                string time = string.Empty;
-                if (((int)timeSpan.TotalDays) != timeEmpty.TotalDays) { time = timeSpan.ToString(@"d\d\ %h\h\ mm\m\ ss\s"); }
-                else if (((int)timeSpan.TotalHours) != timeEmpty.TotalHours) { time = timeSpan.ToString(@"%h\h\ mm\m\ ss\s"); }
-                else if (((int)timeSpan.TotalMinutes) != timeEmpty.TotalMinutes) { time = timeSpan.ToString(@"%m\m\ ss\s"); }
-                else { time = timeSpan.ToString(@"%s\s"); }
-                var teraType = raids[i].GetTeraType(encounters[i]);
-                var color = TypeColor.GetTypeSpriteColor((byte)teraType);
-                var hexColor = $"{color.R:X2}{color.G:X2}{color.B:X2}";
-
-                var blank = new PK9
-                {
-                    Species = encounters[i].Species,
-                    Form = encounters[i].Form,
-                    Gender = encounters[i].Gender,
-                };
-                blank.SetSuggestedFormArgument();
-
-                var spriteName = GetSpriteNameForUrl(blank, raids[i].CheckIsShiny(encounters[i]));
-
-                if (ModifierKeys == Keys.Control)
-                    Clipboard.SetText(Webhook.GetAnnouncement(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, "technicalcopy"));
-                else if (ModifierKeys == (Keys.Shift | Keys.Control))
-                    Task.Run(async () => await Webhook.SendNotification(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, Source.Token));
-                else if (ModifierKeys == (Keys.Shift | Keys.Control | Keys.Alt))
-                    Task.Run(async () => await FomoWebhook.SendFomoNotification(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, Source.Token));
-                else
-                    Clipboard.SetText(Webhook.GetAnnouncement(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, "copy"));
-                return;
-            }
-        }
-
-        private void Protocol_dropdown_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Config.Protocol = (SysBot.Base.SwitchProtocol)Protocol_dropdown.SelectedIndex;
-            Protocol_SelectedIndexChanged(Config.Protocol);
-            WriteConfig();
-        }
-
-        private async void ButtonScreenState_Click(object sender, EventArgs e)
-        {
-            ButtonScreenState.Text = $"{(ConnectionWrapper.CurrentScreenState ? "Screen Off" : "Screen On")}";
-            await ConnectionWrapper.ScreenToggle(Source.Token).ConfigureAwait(false);
-        }
-
-        public void UpdateWebhook(ClientConfig config)
-        {
-            Webhook = new(config);
-            FomoWebhook = new(config, true);
-        }
-
-        public void WriteConfig()
-        {
-            JsonSerializerOptions options = new() { WriteIndented = true };
-            string output = JsonSerializer.Serialize(Config, options);
-            using StreamWriter sw = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json"));
-            sw.Write(output);
-        }
-
-        private void LabelShinyCount_Click(object sender, EventArgs e)
-        {
-            FomoCount++;
-            //LabelShinyCount.Text = LabelShinyCount.Text + "" + FomoCount.ToString();
-            if (FomoCount == 7)
-            {
-                FomoCount = 0;
-                Config.SaveOnFomo = !Config.SaveOnFomo;
-                LabelShinyCount.Text = $"FoMO Saves: {(Config.SaveOnFomo ? "On" : "Off")}";
-
-                System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
-                {
-                    Interval = 800,
-                    Enabled = true
-                };
-
-                timer.Tick += (sender, e) =>
-                {
-                    LabelShinyCount.Text = $"Shinies Missed: {GetStatShinyCount()}";
-                    WriteConfig();
-                    timer.Dispose();
-                };
-            }
-        }
-
-        private void B_ResetTime_Click(object sender, EventArgs e)
-        {
-            Task.Run(async () =>
-            {
-                try
-                {
-                    UpdateStatus("Resetting date");
-                    await ConnectionWrapper.ResetTime(Source.Token).ConfigureAwait(false);
-                    UpdateStatus("Date reset");
-                }
-                catch (Exception ex)
-                {
-                    await this.DisplayMessageBox(Webhook, $"Could not reset the date: {ex.Message}", Source.Token).ConfigureAwait(false);
-                }
-            });
+            teraRaidView = new();
+            teraRaidView.Map.Image = MapBase;
+            teraRaidView.Show();
         }
     }
+
+    private static string GetSpriteNameForUrl(PK9 pk, bool shiny)
+    {
+        // Since we're later using this for URL assembly later, we need dashes instead of underscores for forms.
+        var spriteName = SpriteName.GetResourceStringSprite(pk.Species, pk.Form, pk.Gender, pk.FormArgument, EntityContext.Gen9, shiny)[1..];
+        return spriteName.Replace('_', '-').Insert(0, "_");
+    }
+
+    private void CopyAnnounce_Click(object sender, EventArgs e)
+    {
+
+        var filter = new RaidFilter { Name = "Test Webhook" };
+
+        int i = -1;
+        if (InvokeRequired)
+            i = Invoke(() => { return ComboIndex.SelectedIndex; });
+        else i = ComboIndex.SelectedIndex;
+
+        var raids = RaidContainer.Raids;
+        var encounters = RaidContainer.Encounters;
+        var rewards = RaidContainer.Rewards;
+        if (i > -1 && encounters[i] is not null && raids[i] is not null)
+        {
+            var timeSpan = stopwatch.Elapsed;
+            var timeEmpty = new TimeSpan(0, 0, 0, 0);
+            string time = string.Empty;
+            if (((int)timeSpan.TotalDays) != timeEmpty.TotalDays) { time = timeSpan.ToString(@"d\d\ %h\h\ mm\m\ ss\s"); }
+            else if (((int)timeSpan.TotalHours) != timeEmpty.TotalHours) { time = timeSpan.ToString(@"%h\h\ mm\m\ ss\s"); }
+            else if (((int)timeSpan.TotalMinutes) != timeEmpty.TotalMinutes) { time = timeSpan.ToString(@"%m\m\ ss\s"); }
+            else { time = timeSpan.ToString(@"%s\s"); }
+            var teraType = raids[i].GetTeraType(encounters[i]);
+            var color = TypeColor.GetTypeSpriteColor((byte)teraType);
+            var hexColor = $"{color.R:X2}{color.G:X2}{color.B:X2}";
+
+            var blank = new PK9
+            {
+                Species = encounters[i].Species,
+                Form = encounters[i].Form,
+                Gender = encounters[i].Gender,
+            };
+            blank.SetSuggestedFormArgument();
+
+            var spriteName = GetSpriteNameForUrl(blank, raids[i].CheckIsShiny(encounters[i]));
+
+            if (ModifierKeys == Keys.Control)
+                Clipboard.SetText(Webhook.GetAnnouncement(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, "technicalcopy"));
+            else if (ModifierKeys == (Keys.Shift | Keys.Control))
+                Task.Run(async () => await Webhook.SendNotification(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, Source.Token));
+            else if (ModifierKeys == (Keys.Shift | Keys.Control | Keys.Alt))
+                Task.Run(async () => await FomoWebhook.SendNotification(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, Source.Token));
+            else
+                Clipboard.SetText(Webhook.GetAnnouncement(encounters[i], raids[i], filter, time, rewards[i], hexColor, spriteName, "copy"));
+            return;
+        }
+    }
+
+    private void Protocol_dropdown_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        Config.Protocol = (SysBot.Base.SwitchProtocol)Protocol_dropdown.SelectedIndex;
+        Protocol_SelectedIndexChanged(Config.Protocol);
+        WriteConfig();
+    }
+
+    private async void ButtonScreenState_Click(object sender, EventArgs e)
+    {
+        ButtonScreenState.Text = $"{(ConnectionWrapper.CurrentScreenState ? "Screen Off" : "Screen On")}";
+        await ConnectionWrapper.ScreenToggle(Source.Token).ConfigureAwait(false);
+    }
+
+    public void WriteConfig()
+    {
+        JsonSerializerOptions options = new() { WriteIndented = true };
+        string output = JsonSerializer.Serialize(Config, options);
+        using StreamWriter sw = new(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json"));
+        sw.Write(output);
+    }
+
+    private void LabelShinyCount_Click(object sender, EventArgs e)
+    {
+        FomoCount++;
+        //LabelShinyCount.Text = LabelShinyCount.Text + "" + FomoCount.ToString();
+        if (FomoCount == 7)
+        {
+            FomoCount = 0;
+            Config.SaveOnFomo = !Config.SaveOnFomo;
+            LabelShinyCount.Text = $"FoMO Saves: {(Config.SaveOnFomo ? "On" : "Off")}";
+
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer()
+            {
+                Interval = 800,
+                Enabled = true
+            };
+
+            timer.Tick += (sender, e) =>
+            {
+                LabelShinyCount.Text = $"Shinies Missed: {GetStatShinyCount()}";
+                WriteConfig();
+                timer.Dispose();
+            };
+        }
+    }
+
+    private void B_ResetTime_Click(object sender, EventArgs e)
+    {
+        Task.Run(async () =>
+        {
+            try
+            {
+                UpdateStatus("Resetting date");
+                await ConnectionWrapper.ResetTime(Source.Token).ConfigureAwait(false);
+                UpdateStatus("Date reset");
+            }
+            catch (Exception ex)
+            {
+                await this.DisplayMessageBox(Webhook, $"Could not reset the date: {ex.Message}", Source.Token).ConfigureAwait(false);
+            }
+        });
+    }
 }
-        

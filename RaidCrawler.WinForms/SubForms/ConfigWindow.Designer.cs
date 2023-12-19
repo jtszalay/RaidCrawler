@@ -1,4 +1,4 @@
-﻿using SysBot.Base;
+using SysBot.Base;
 
 namespace RaidCrawler.WinForms.SubForms
 {
@@ -64,6 +64,7 @@ namespace RaidCrawler.WinForms.SubForms
             this.InstanceName = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.LocationGroup = new System.Windows.Forms.GroupBox();
+            this.BlueberryScanCheck = new System.Windows.Forms.CheckBox();
             this.KitakamiScanCheck = new System.Windows.Forms.CheckBox();
             this.PaldeaScanCheck = new System.Windows.Forms.CheckBox();
             this.Protocol_dropdown = new System.Windows.Forms.ComboBox();
@@ -547,12 +548,13 @@ namespace RaidCrawler.WinForms.SubForms
             this.label17.Text = "Instance Name:";
             // 
             // LocationGroup
-            // 
+            //
+            this.LocationGroup.Controls.Add(this.BlueberryScanCheck);
             this.LocationGroup.Controls.Add(this.KitakamiScanCheck);
             this.LocationGroup.Controls.Add(this.PaldeaScanCheck);
-            this.LocationGroup.Location = new System.Drawing.Point(8, 204);
+            this.LocationGroup.Location = new System.Drawing.Point(8, 190);
             this.LocationGroup.Name = "LocationGroup";
-            this.LocationGroup.Size = new System.Drawing.Size(200, 73);
+            this.LocationGroup.Size = new System.Drawing.Size(200, 98);
             this.LocationGroup.TabIndex = 115;
             this.LocationGroup.TabStop = false;
             this.LocationGroup.Text = "Scan Locations";

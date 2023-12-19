@@ -13,6 +13,7 @@ public class ClientConfig : IDateAdvanceConfig, IWebhookConfig
     public int Progress { get; set; }
     public int EventProgress { get; set; }
     public bool EnableFilters { get; set; } = true;
+    public Point Location { get; set; } = new(0, 0);
     public bool PaldeaScan { get; set; } = true;
     public bool KitakamiScan { get; set; } = true;
     public bool BlueberryScan { get; set; } = true;
