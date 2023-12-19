@@ -1305,6 +1305,18 @@ namespace RaidCrawler.WinForms.SubForms
             this.Save.UseVisualStyleBackColor = true;
             this.Save.Click += new System.EventHandler(this.Save_Click);
             // 
+            // BlueberryScanCheck
+            // 
+            BlueberryScanCheck.AutoSize = true;
+            BlueberryScanCheck.Checked = true;
+            BlueberryScanCheck.CheckState = CheckState.Checked;
+            BlueberryScanCheck.Location = new Point(6, 72);
+            BlueberryScanCheck.Name = "BlueberryScanCheck";
+            BlueberryScanCheck.Size = new Size(76, 19);
+            BlueberryScanCheck.TabIndex = 114;
+            BlueberryScanCheck.Text = "Blueberry";
+            BlueberryScanCheck.UseVisualStyleBackColor = true;
+            // 
             // ConfigWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1452,5 +1464,6 @@ namespace RaidCrawler.WinForms.SubForms
         private Label L_ExtraOverworldWait;
         private CheckBox UseMapTrick;
         private CheckBox ZyroMethod;
+        private CheckBox BlueberryScanCheck;
     }
 }
