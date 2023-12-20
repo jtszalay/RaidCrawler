@@ -13,7 +13,9 @@ namespace RaidCrawler.Core.Discord;
 public class NotificationHandler(IWebhookConfig config)
 {
     protected readonly HttpClient _client = new();
-    private readonly string[]? DiscordWebhooks = config.EnableNotification ? config.DiscordWebhook.Split(',') : null;
+    private readonly string[]? _discordWebhooks = config.EnableNotification ? config.DiscordWebhook.Split(',') : null;
+    protected virtual string[]? DiscordWebhooks {  get {  return _discordWebhooks; } }
+    protected virtual string MessageContent { get { return config.DiscordMessageContent; } }
 
     public virtual async Task SendNotification(ITeraRaid encounter, Raid raid, RaidFilter filter, string time, IReadOnlyList<(int, int, int)> RewardsList,
         string hexColor, string spriteName, CancellationToken token
@@ -28,12 +30,7 @@ public class NotificationHandler(IWebhookConfig config)
             await _client.PostAsync(url.Trim(), content, token).ConfigureAwait(false);
     }
 
-    public virtual async Task SendErrorNotification(string error, string caption, CancellationToken token)
-    {
-        await SendErrorNotificationHelper(error, caption, token, config.DiscordMessageContent);
-    }
-
-    protected async Task SendErrorNotificationHelper(string error, string caption, CancellationToken token, string discordMessageContent)
+    public async Task SendErrorNotification(string error, string caption, CancellationToken token)
     {
         if (DiscordWebhooks is null || !config.EnableNotification)
             return;
@@ -43,7 +40,7 @@ public class NotificationHandler(IWebhookConfig config)
         {
             username = instance,
             avatar_url = "https://www.serebii.net/scarletviolet/ribbons/mightiestmark.png",
-            content = discordMessageContent,
+            content = MessageContent,
             embeds = new List<object>
             {
                 new
@@ -141,7 +138,7 @@ public class NotificationHandler(IWebhookConfig config)
         {
             username = "RaidCrawler " + config.InstanceName,
             avatar_url = "https://www.serebii.net/scarletviolet/ribbons/mightiestmark.png",
-            content = config.DiscordMessageContent,
+            content = MessageContent,
             embeds = new List<object>
                 {
                     new

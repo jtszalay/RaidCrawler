@@ -509,6 +509,9 @@ public partial class MainWindow : Form
             StatShinyCount = 0;
             _WindowState = WindowState;
 
+            // Clear shinies missed tooltip
+            Fomo.Clear();
+
             var advanceTextInit = $"Skip Rate: {GetStatDaySkipSuccess()}/{GetStatDaySkipTries()}";
             var missInit = $"Total Miss: {GetStatDaySkipTries() - GetStatDaySkipSuccess()}";
             var streakInit = $"Streak: {GetStatDaySkipStreak()}";
@@ -1495,8 +1498,17 @@ public partial class MainWindow : Form
         if (!Config.EnableFilters)
             return true;
 
-        bool alreadySaved = false;
         var encounters = RaidContainer.Encounters;
+
+        foreach (RaidFilter rf in RaidFilters)
+        {
+            var index = Invoke(() => RaidBoost.SelectedIndex);
+
+            if (rf.FilterSatisfied(RaidContainer, encounters, raids, index))
+                return true;
+        }
+
+        bool alreadySaved = false;
 
         // Vio thing: FoMO match detection
         for (int i = 0; i < raids.Count; i++)
@@ -1542,14 +1554,6 @@ public partial class MainWindow : Form
                     alreadySaved = true;
                 }
             }
-        }
-
-        foreach (RaidFilter rf in RaidFilters)
-        {
-            var index = Invoke(() => RaidBoost.SelectedIndex);
-            
-            if (rf.FilterSatisfied(RaidContainer, encounters, raids, index))
-                return true;
         }
 
         return StopAdvances;

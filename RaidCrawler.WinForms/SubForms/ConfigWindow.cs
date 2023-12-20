@@ -103,14 +103,6 @@ public partial class ConfigWindow : Form
         AlertMessage.Enabled = EnableAlert.Checked;
     }
 
-    private void EnableDiscordNotifications_Click(object sender, EventArgs e)
-    {
-        DiscordWebhook.Enabled = EnableDiscordNotifications.Checked;
-        DiscordMessageContent.Enabled = EnableDiscordNotifications.Checked;
-        labelWebhooks.Text =
-            "Webhooks are " + (DiscordWebhook.Enabled ? "enabled." : "disabled.");
-    }
-
     private void Config_Closing(object sender, EventArgs e)
     {
         c.InstanceName = InstanceName.Text;
@@ -300,6 +292,9 @@ public partial class ConfigWindow : Form
     private void EnableDiscordNotifications_CheckedChanged(object sender, EventArgs e)
     {
         DiscordWebhook.Enabled = EnableDiscordNotifications.Checked;
+        DiscordMessageContent.Enabled = EnableDiscordNotifications.Checked;
+        labelWebhooks.Text =
+            "Webhooks are " + (DiscordWebhook.Enabled ? "enabled." : "disabled.");
     }
 
     private void EnableFomoNotifications_CheckedChanged(object sender, EventArgs e)
