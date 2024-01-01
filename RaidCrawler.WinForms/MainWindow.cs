@@ -90,9 +90,24 @@ public partial class MainWindow : Form
         var build = "";
 #endif
         var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version!;
-        var filterPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "filters.json");
-        if (File.Exists(filterPath))
-            RaidFilters = JsonSerializer.Deserialize<List<RaidFilter>>(File.ReadAllText(filterPath)) ?? [];
+        // check for all files of pattern filter*.json
+        // load them all into a list of RaidFilters
+
+        DirectoryInfo di = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+
+        var searchPattern = "filter*.json";
+        var filterFiles =
+            di.GetFiles(searchPattern, SearchOption.TopDirectoryOnly);
+        for (int i = 0; i < filterFiles.Length; i++)
+        {
+            var filterPath = filterFiles[i];
+            var filter = JsonSerializer.Deserialize<List<RaidFilter>>(File.ReadAllText(filterPath)) ?? [];
+            RaidFilters.AddRange(filter);
+        }
+
+        // var filterPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "filters.json");
+        // if (File.Exists(filterPath))
+        //     RaidFilters = JsonSerializer.Deserialize<List<RaidFilter>>(File.ReadAllText(filterPath)) ?? [];
         DenLocationsBase = JsonSerializer.Deserialize<Dictionary<string, float[]>>(Utils.GetStringResource("den_locations_base.json") ?? "{}");
         DenLocationsKitakami = JsonSerializer.Deserialize<Dictionary<string, float[]>>(Utils.GetStringResource("den_locations_kitakami.json") ?? "{}");
         DenLocationsBlueberry = JsonSerializer.Deserialize<Dictionary<string, float[]>>(Utils.GetStringResource("den_locations_blueberry.json") ?? "{}");
